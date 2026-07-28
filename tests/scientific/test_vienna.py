@@ -6,18 +6,6 @@ from foldq.schemas.structure import Stem
 
 DEMO = "GGGAAAUCCCU"
 
-# DEMO with its trailing, unpaired 3' U dropped. DEMO's MFE fold leaves that
-# base dangling outside the (0, 9) stem, in the exterior loop; ViennaRNA's
-# default (dangles=2) model then charges a dangling-end term (confirmed via
-# fc.eval_structure_verbose: "External loop: -120" dekacal/mol) that neither
-# eval_int_loop nor eval_hp_loop can see, since both are loop-local. That
-# extra term is real physics, not a units/index bug -- but it breaks the
-# "stack + hairpin == whole structure" identity for DEMO specifically. Here,
-# the stem consumes the entire sequence (no dangling tail), so the identity
-# holds exactly under the same default model. See task-3-report.md for the
-# full diagnosis (raw-API cross-check and eval_structure_verbose output).
-HAIRPIN_ONLY = "GGGAAAUCCC"
-
 
 @pytest.fixture
 def backend():
@@ -50,18 +38,42 @@ def test_hairpin_energy_is_positive_and_small(backend):
     assert 0.0 < energy < 20.0
 
 
-def test_stack_plus_hairpin_reconstructs_vienna_energy(backend):
-    """For a lone hairpin, stacking + closure IS the whole structure energy.
+def test_stack_plus_hairpin_reconstructs_vienna_energy():
+    """For a lone hairpin under dangles=0, stacking + closure IS the whole energy.
 
-    Uses HAIRPIN_ONLY rather than DEMO: DEMO's MFE structure leaves one base
-    dangling outside the stem, which adds an exterior-loop dangling-end term
-    that stack_energy/hairpin_energy cannot see (they only evaluate loop-
-    local energies). HAIRPIN_ONLY's stem consumes the whole sequence, so
-    there is no such term and the identity holds exactly.
+    This is the acceptance test for both unit and index conversions: it fails if
+    any eval_* call is missing its +1 or its /100.0.
+
+    It requires dangles=0 because ViennaRNA's default dangles=2 model adds
+    dangling-end bonuses on unpaired nucleotides adjacent to a helix. Those terms
+    live on unpaired context rather than on stems, so a stem-indexed QUBO with only
+    1-body and 2-body terms cannot represent them. See
+    test_dangles_gap_is_measured_not_hidden for the size of that term.
+    """
+    backend = ViennaBackend(dangles=0)
+    stem = Stem(i=0, j=9, k=3)
+    total = backend.stack_energy(DEMO, stem) + backend.hairpin_energy(DEMO, stem)
+    assert total == pytest.approx(backend.fold(DEMO).mfe_energy, abs=0.01)
+
+
+def test_dangles_gap_is_measured_not_hidden():
+    """Quantify what the stem-additive surrogate cannot represent under dangles=2.
+
+    The default model contributes an exterior-loop dangling-end term that no
+    combination of stem 1-body and 2-body coefficients can express. Recording it
+    here means the surrogate's known blind spot is asserted, not discovered later.
     """
     stem = Stem(i=0, j=9, k=3)
-    total = backend.stack_energy(HAIRPIN_ONLY, stem) + backend.hairpin_energy(HAIRPIN_ONLY, stem)
-    assert total == pytest.approx(backend.fold(HAIRPIN_ONLY).mfe_energy, abs=0.01)
+    standard = ViennaBackend(dangles=2)
+    additive = standard.stack_energy(DEMO, stem) + standard.hairpin_energy(DEMO, stem)
+    gap = additive - standard.fold(DEMO).mfe_energy
+    assert gap == pytest.approx(1.20, abs=0.01)
+
+    exact = ViennaBackend(dangles=0)
+    assert (
+        exact.stack_energy(DEMO, stem) + exact.hairpin_energy(DEMO, stem)
+        - exact.fold(DEMO).mfe_energy
+    ) == pytest.approx(0.0, abs=0.01)
 
 
 def test_single_pair_stem_has_zero_stacking(backend):

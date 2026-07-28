@@ -3,6 +3,20 @@
 Two conversions live here and nowhere else in the codebase:
   * ViennaRNA indices are 1-based; ours are 0-based.
   * ViennaRNA `eval_*` helpers return dekacal/mol; we work in kcal/mol.
+
+A third thing lives here too, deliberately made explicit rather than left as
+an implicit default: the dangling-end model, `dangles`. `dangles=2` (the
+class default) matches standard ViennaRNA/RNAfold behaviour, and is what
+`fold()`/`eval_structure()` should normally use. `dangles=0` turns off
+dangling-end bonuses on unpaired nucleotides adjacent to a helix, which
+makes the energy model exactly additive over loops (whole-structure energy
+== sum of each loop's own energy, nothing left over). That additivity is
+exactly what the stem-indexed QUBO surrogate assumes -- it has only 1-body
+and 2-body terms over stems, with nowhere to put a term that lives on
+unpaired context next to a helix rather than on the helix itself. See
+`tests/scientific/test_vienna.py::test_dangles_gap_is_measured_not_hidden`
+for the measured size of what `dangles=2` adds that the surrogate can't
+represent.
 """
 
 from __future__ import annotations
@@ -49,13 +63,16 @@ class ViennaBackend:
         self,
         temperature_celsius: float = DEFAULT_TEMPERATURE_C,
         no_lonely_pairs: bool = False,
+        dangles: int = 2,
     ) -> None:
         self.temperature_celsius = temperature_celsius
         self.no_lonely_pairs = no_lonely_pairs
+        self.dangles = dangles
 
     def _model(self) -> RNA.md:
         model = RNA.md()
         model.temperature = self.temperature_celsius
+        model.dangles = self.dangles
         if self.no_lonely_pairs:
             model.noLP = 1
         return model
