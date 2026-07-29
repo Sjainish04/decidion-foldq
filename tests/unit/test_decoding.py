@@ -112,3 +112,56 @@ def test_decode_without_repair_preserves_the_violation():
     )
     assert not candidate.validation.is_valid
     assert not candidate.was_repaired
+
+
+def test_pseudoknot_mode_does_not_silently_rebracket_a_crossing():
+    """A crossing structure must not be rendered as different nested pairs.
+
+    In pseudoknot mode `validate_stems` does not populate `crossing_pairs`,
+    because crossings are legal there. Keying renderability off that field made
+    decode_sample emit a dot-bracket encoding DIFFERENT pairs than were selected:
+    Stem(0,10,1) + Stem(5,15,1) rendered as pairs (0,15)/(5,10), and ViennaRNA
+    then scored a structure that was never chosen. Renderability is a property of
+    the structure, not of the mode.
+    """
+    import math
+
+    from foldq.schemas.qubo import QuboProblem
+
+    left, right = Stem(0, 10, 1), Stem(5, 15, 1)
+    sequence = "GGGCAUAAAAGCUUUUGCCCAAAGC"
+    problem = QuboProblem(
+        linear={0: -1.0, 1: -1.0},
+        quadratic={},
+        offset=0.0,
+        variable_map=(left, right),
+        sequence=sequence,
+        metadata={},
+    )
+    candidate = decode_sample(
+        Sample((1, 1), -2.0),
+        problem,
+        ViennaBackend(dangles=0),
+        repair=False,
+        forbid_crossing=False,
+    )
+    assert candidate.is_pseudoknotted is True
+    assert set(candidate.dot_bracket) == {"."}, (
+        f"crossing structure rendered as {candidate.dot_bracket!r}; "
+        "single-bracket notation cannot express it"
+    )
+    assert math.isnan(candidate.vienna_energy)
+
+
+def test_non_crossing_structure_still_renders_normally_in_pseudoknot_mode():
+    """Relaxing crossing must not disable rendering for ordinary nested folds."""
+    problem = _conflicting_problem()
+    bits = tuple(1 if index == 0 else 0 for index in range(problem.num_variables))
+    candidate = decode_sample(
+        Sample(bits, problem.energy(bits)),
+        problem,
+        ViennaBackend(dangles=0),
+        forbid_crossing=False,
+    )
+    assert candidate.is_pseudoknotted is False
+    assert "(" in candidate.dot_bracket

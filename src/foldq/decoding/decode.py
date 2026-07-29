@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import itertools
+
 from foldq.biology.conflicts import stems_cross, stems_overlap
 from foldq.biology.dotbracket import stems_to_dotbracket
 from foldq.classical.vienna import ViennaBackend
@@ -53,9 +55,17 @@ def decode_sample(
         stems, operations, was_repaired = repaired, tuple(ops), True
         report = validate_stems(stems, forbid_crossing=forbid_crossing)
 
-    # Crossing structures cannot be written in single-bracket notation, so a
-    # pseudoknotted candidate has no scorable dot-bracket and gets NaN energy.
-    if report.crossing_pairs or not report.is_valid:
+    # Renderability is a property of the structure, not of the mode. Crossing
+    # helices cannot be written in single-bracket notation at all: rendering them
+    # anyway silently re-brackets the crossing into different pairs. In
+    # pseudoknot mode `validate_stems` does not populate `crossing_pairs`
+    # (crossings are legal there), so this must be checked directly.
+    has_crossing = any(
+        stems_cross(left, right)
+        for left, right in itertools.combinations(stems, 2)
+    )
+
+    if has_crossing or not report.is_valid:
         dot_bracket = "." * len(problem.sequence)
         vienna_energy = float("nan")
     else:
@@ -75,4 +85,5 @@ def decode_sample(
         validation=report,
         repairs=operations,
         was_repaired=was_repaired,
+        is_pseudoknotted=has_crossing,
     )

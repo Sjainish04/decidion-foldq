@@ -41,7 +41,12 @@ class SolverResult:
 
 @dataclass(frozen=True)
 class FoldCandidate:
-    """A decoded, validated, repaired, and rescored structure."""
+    """A decoded, validated, repaired, and rescored structure.
+
+    `is_pseudoknotted` is True when the selected helices cross, so the
+    structure cannot be written in single-bracket dot-bracket notation and
+    carries a NaN ViennaRNA energy.
+    """
 
     stems: tuple[Stem, ...]
     dot_bracket: str
@@ -50,3 +55,4 @@ class FoldCandidate:
     validation: ValidationReport
     repairs: tuple[RepairOp, ...] = field(default_factory=tuple)
     was_repaired: bool = False
+    is_pseudoknotted: bool = False
