@@ -57,15 +57,21 @@ def ising_energy(
 def to_sparse_pauli_op(problem: QuboProblem):
     """Build the Qiskit cost Hamiltonian for this problem.
 
+    Convention: variable `index` lives on qubit `index`. This is the convention
+    the QAOA solver's measurement decoder depends on -- Qiskit counts keys are
+    little-endian strings (rightmost character is qubit 0), so decoding with
+    `reversed(bitstring)` yields `bits[k] == qubit k`, and `problem.energy(bits)`
+    then treats `bits[k]` as variable `k`.
+
     Qiskit's Pauli label strings list qubit (n-1) first (leftmost) and qubit 0
     last (rightmost): string position p (0-indexed from the left) addresses
-    qubit (n - 1 - p). To make variable `index` address qubit `(n - 1 - index)`
-    -- i.e. variable 0 is the *most* significant qubit, matching the natural
-    left-to-right reading of a `bits` tuple as a binary string -- the 'Z'
-    belongs at string position `index` itself, not `n - 1 - index`. Using
-    `n - 1 - index` here would silently address qubit `index` instead, which
-    is exactly the kind of qubit-permutation bug
-    `test_sparse_pauli_op_diagonal_matches_qubo` exists to catch.
+    qubit (n - 1 - p). To put variable `index` on qubit `index`, the 'Z'
+    belongs at string position `n - 1 - index`, not `index`. Getting this
+    backwards silently swaps the qubit each variable lives on, which is exactly
+    the kind of permutation `test_sparse_pauli_op_diagonal_matches_qubo` and
+    `test_diagonal_matches_on_an_asymmetric_three_variable_problem` exist to
+    catch -- a symmetric fixture can pass under either mapping, so both tests
+    use asymmetric coefficients.
     """
     from qiskit.quantum_info import SparsePauliOp
 
@@ -78,13 +84,13 @@ def to_sparse_pauli_op(problem: QuboProblem):
     for index, value in h.items():
         if value:
             pauli = ["I"] * n
-            pauli[index] = "Z"
+            pauli[n - 1 - index] = "Z"
             labels.append(("".join(pauli), value))
     for (a, b), value in coupling.items():
         if value:
             pauli = ["I"] * n
-            pauli[a] = "Z"
-            pauli[b] = "Z"
+            pauli[n - 1 - a] = "Z"
+            pauli[n - 1 - b] = "Z"
             labels.append(("".join(pauli), value))
 
     if not labels:
