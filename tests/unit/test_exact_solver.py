@@ -77,17 +77,18 @@ def test_brute_force_counts_degeneracy_exactly():
         sequence=DEMO,
         metadata={},
     )
-    _, energy, degeneracy, method = ExactSolver()._brute_force(problem)
+    _, energy, degeneracy, method, degeneracy_is_exact = ExactSolver()._brute_force(problem)
     assert energy == pytest.approx(-1.0)
     assert degeneracy == 2
     assert method == "brute_force"
+    assert degeneracy_is_exact is True
 
 
 def test_both_exact_methods_agree_on_the_ground_energy():
     """Tree decomposition and brute force must never disagree; the gates depend on it."""
     problem = _toy()
-    tree_bits, tree_energy, _, _ = ExactSolver()._tree_decomposition(problem)
-    brute_bits, brute_energy, _, _ = ExactSolver()._brute_force(problem)
+    tree_bits, tree_energy, _, _, _ = ExactSolver()._tree_decomposition(problem)
+    brute_bits, brute_energy, _, _, _ = ExactSolver()._brute_force(problem)
     assert tree_energy == pytest.approx(brute_energy)
     assert problem.energy(tree_bits) == pytest.approx(problem.energy(brute_bits))
 
@@ -144,3 +145,38 @@ def test_exact_solver_records_runtime_and_name():
     result = ExactSolver().solve(_toy(), SolverConfig())
     assert result.solver_name == "exact"
     assert result.runtime_seconds >= 0.0
+
+
+def test_tree_path_counts_degeneracy_beyond_two():
+    """Regression guard: the probe budget used to be hardcoded at 2.
+
+    A three-fold degenerate ground state was reported as degeneracy 2, silently,
+    while the brute-force path reported it exactly. TreeDecompositionSolver
+    returns distinct solutions capped at min(num_reads, 2**n), so the count is
+    only as good as the probe budget.
+    """
+    import dimod
+
+    bqm = dimod.BinaryQuadraticModel(
+        {0: -1.0, 1: -1.0, 2: -1.0},
+        {(0, 1): 2.0, (0, 2): 2.0, (1, 2): 2.0},
+        0.0,
+        dimod.BINARY,
+    )
+    problem = QuboProblem(
+        linear=dict(bqm.linear),
+        quadratic={(0, 1): 2.0, (0, 2): 2.0, (1, 2): 2.0},
+        offset=0.0,
+        variable_map=(Stem(0, 9, 2), Stem(0, 9, 3), Stem(0, 10, 2)),
+        sequence=DEMO,
+        metadata={},
+    )
+    _, _, degeneracy, _, _ = ExactSolver()._tree_decomposition(problem)
+    assert degeneracy == 3, f"expected 3 ground states, got {degeneracy}"
+
+
+def test_metadata_flags_whether_degeneracy_is_exact():
+    """A bounded count must announce itself rather than looking authoritative."""
+    result = ExactSolver().solve(_toy(), SolverConfig())
+    assert "degeneracy_is_exact" in result.metadata
+    assert isinstance(result.metadata["degeneracy_is_exact"], bool)
