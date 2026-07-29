@@ -99,22 +99,39 @@ def test_exact_solver_records_which_method_it_used():
 
 
 def test_tree_decomposition_is_fast_at_the_variable_cap():
-    """Regression guard: brute force at 22 variables would take minutes."""
+    """Regression guard: brute force at this size would take minutes.
+
+    Verified fixture: 26 nt -> 20 variables, solved by tree decomposition in
+    ~0.009s with a non-trivial optimum (E = -1.3, i.e. the ground state actually
+    selects stems rather than the empty structure).
+
+    The bounds assertion is deliberate. The previous version of this test used a
+    sequence that produced 40 variables, so the solver refused it outright and
+    the test never exercised the path it claims to guard. Asserting the variable
+    count turns fixture drift into a loud failure instead of a vacuous pass.
+    """
     import time
 
     from foldq.biology.stems import generate_maximal_stems
     from foldq.classical.vienna import ViennaBackend
     from foldq.encodings.stem_encoding import build_stem_qubo
 
-    backend = ViennaBackend()
-    seq = "GGGCAUAAAAGCUUUUGCCCAAAGCAUUUGC"
-    problem = build_stem_qubo(seq, generate_maximal_stems(seq, min_stem_length=2), backend)
-    if problem.num_variables < 15:
-        pytest.skip("sequence produced too few variables to be a meaningful timing test")
+    backend = ViennaBackend(dangles=0)
+    sequence = "CACGUUUGCACACCUGGCGGUUCCAA"
+    problem = build_stem_qubo(
+        sequence, generate_maximal_stems(sequence, min_stem_length=2), backend
+    )
+    assert 15 <= problem.num_variables <= 24, (
+        f"fixture drifted: {problem.num_variables} variables, expected 15-24"
+    )
 
     start = time.perf_counter()
-    ExactSolver(max_variables=24).solve(problem, SolverConfig())
-    assert time.perf_counter() - start < 10.0
+    result = ExactSolver(max_variables=24).solve(problem, SolverConfig())
+    elapsed = time.perf_counter() - start
+
+    assert result.metadata["method"] == "tree_decomposition"
+    assert result.best.energy < 0.0, "fixture should have a non-trivial optimum"
+    assert elapsed < 10.0, f"took {elapsed:.2f}s; likely fell back to brute force"
 
 
 def test_exact_solver_is_deterministic():
