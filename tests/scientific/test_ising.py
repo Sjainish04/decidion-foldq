@@ -30,7 +30,7 @@ def _toy() -> QuboProblem:
 
 
 def test_bit_spin_conversion_roundtrips():
-    assert bits_to_spins((0, 1)) == (1, -1)   # x=0 -> z=+1
+    assert bits_to_spins((0, 1)) == (1, -1)  # x=0 -> z=+1
     assert spins_to_bits((1, -1)) == (0, 1)
 
 
