@@ -9,7 +9,10 @@ construction here recovers it in two representable layers:
 
 Known approximation: when several helices nest inside one, the refund applies more
 than once. `NestingPolicy` controls how aggressively that is mitigated, and the
-residual error is measured in experiment E1 rather than hidden.
+residual error is measured in experiment E1 rather than hidden. The default policy,
+`immediate_only`, drops transitive refund edges and so already mitigates most of
+this: each stem is refunded only by its immediate enclosing stem, not by every
+ancestor in its nesting chain.
 """
 
 from __future__ import annotations
@@ -39,13 +42,21 @@ def refund_pair_energy(
 
 
 def nestable_pairs(
-    stems: list[Stem], policy: NestingPolicy = "all_nestable"
+    stems: list[Stem], policy: NestingPolicy = "immediate_only"
 ) -> list[tuple[int, int]]:
     """Indices (outer, inner) where `inner` sits strictly inside `outer`.
 
     `all_nestable` returns every nesting relationship, including transitive ones.
     `immediate_only` drops pair (a, c) when some b satisfies a > b > c, which
     reduces double-refunding at the cost of ignoring selections that skip a level.
+
+    Defaults to `immediate_only`. Under `all_nestable`, a stem nested inside a
+    deep chain accrues a refund from every ancestor; ancestors are mutually
+    conflict-free, so those refunds stack without bound and can exceed the
+    hard-constraint penalty, making an overlapping selection profitable. That
+    was measured to produce structurally invalid optima in 8 of 8 instances at
+    70-150 nt. `immediate_only` caps accumulation at one refund per stem and
+    restores validity with no penalty inflation and no loss of Gate B fidelity.
     """
     pairs = [
         (outer_idx, inner_idx)

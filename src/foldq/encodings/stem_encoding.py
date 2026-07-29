@@ -23,7 +23,7 @@ def build_stem_qubo(
     *,
     penalties: PenaltyConfig | None = None,
     energy_model: EnergyModel = "charge_refund",
-    nesting_policy: NestingPolicy = "all_nestable",
+    nesting_policy: NestingPolicy = "immediate_only",
 ) -> QuboProblem:
     """Assemble the stem QUBO from energy terms and hard-constraint penalties."""
     penalties = penalties or PenaltyConfig()

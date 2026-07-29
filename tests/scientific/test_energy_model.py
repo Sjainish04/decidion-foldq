@@ -6,6 +6,7 @@ from foldq.encodings.energy import (
     refund_pair_energy,
     stem_linear_energy,
 )
+from foldq.encodings.stem_encoding import build_stem_qubo
 from foldq.schemas.structure import Stem
 
 DEMO = "GGGAAAUCCCU"
@@ -81,6 +82,47 @@ def test_immediate_only_policy_drops_transitive_nesting():
     stems = [Stem(0, 40, 2), Stem(5, 35, 2), Stem(12, 25, 2)]
     assert len(nestable_pairs(stems, policy="all_nestable")) == 3
     assert len(nestable_pairs(stems, policy="immediate_only")) == 2
+
+
+def test_default_nesting_policy_yields_structurally_valid_optima():
+    """Guard against unbounded refund accumulation making violations profitable.
+
+    Under `all_nestable`, a stem inside a deep nesting chain accrues one refund
+    per ancestor. Ancestors nest, so they are mutually conflict-free and their
+    refunds stack past the hard-constraint penalty, making an overlapping
+    selection profitable. Measured: 8 of 8 instances at 70-150 nt had invalid
+    optima, with energies to -2689 kcal/mol. `immediate_only` caps accumulation
+    at one refund per stem and restores validity.
+    """
+    import itertools
+    import random
+
+    from dwave.samplers import SimulatedAnnealingSampler
+
+    from foldq.biology.conflicts import stems_overlap
+    from foldq.biology.stems import generate_maximal_stems
+
+    backend = ViennaBackend(dangles=0)
+    rng = random.Random(31)
+    sequence = "".join(rng.choice("AUCG") for _ in range(90))
+    stems = generate_maximal_stems(sequence, min_stem_length=2)
+    assert len(stems) > 20, "fixture must be large enough to exercise deep nesting"
+
+    problem = build_stem_qubo(sequence, stems, backend)  # default policy
+    sampleset = SimulatedAnnealingSampler().sample(
+        problem.to_bqm(), num_reads=50, num_sweeps=1000, seed=7
+    )
+    bits = tuple(
+        int(sampleset.first.sample[i]) for i in range(problem.num_variables)
+    )
+    chosen = [problem.variable_map[i] for i, bit in enumerate(bits) if bit]
+    overlaps = [
+        (a, b) for a, b in itertools.combinations(chosen, 2) if stems_overlap(a, b)
+    ]
+    assert not overlaps, (
+        f"{len(overlaps)} overlapping stem pairs in the best-found solution; "
+        "refund accumulation has outgrown the hard-constraint penalty"
+    )
 
 
 def test_stacking_only_correlates_with_vienna_on_real_folds():
