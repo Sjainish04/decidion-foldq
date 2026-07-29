@@ -25,6 +25,8 @@ def pairs_to_dotbracket(pairs: Iterable[tuple[int, int]], length: int) -> str:
     chars = ["."] * length
     claimed: set[int] = set()
     for i, j in pairs:
+        if i < 0 or j < 0:
+            raise ValueError(f"pair ({i}, {j}) has a negative index")
         if i >= length or j >= length:
             raise ValueError(f"pair ({i}, {j}) exceeds sequence length {length}")
         if i in claimed or j in claimed:
@@ -52,6 +54,12 @@ def pairs_to_stems(pairs: Iterable[tuple[int, int]]) -> list[Stem]:
     ordered = sorted(pairs)
     if not ordered:
         return []
+
+    claimed: set[int] = set()
+    for i, j in ordered:
+        if i in claimed or j in claimed:
+            raise ValueError(f"nucleotide in pair ({i}, {j}) is paired more than once")
+        claimed.update((i, j))
 
     stems: list[Stem] = []
     start = ordered[0]

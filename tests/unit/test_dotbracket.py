@@ -49,3 +49,15 @@ def test_rejects_pair_beyond_sequence_length():
 def test_rejects_nucleotide_paired_twice():
     with pytest.raises(ValueError, match="paired more than once"):
         pairs_to_dotbracket({(0, 9), (0, 8)}, 11)
+
+
+def test_rejects_negative_index():
+    """Negative indices must raise, not silently wrap to a different pair."""
+    with pytest.raises(ValueError, match="negative index"):
+        pairs_to_dotbracket({(-8, 5)}, 10)
+
+
+def test_pairs_to_stems_rejects_nucleotide_paired_twice():
+    """Solver output can be arbitrary; a shared nucleotide must fail loudly."""
+    with pytest.raises(ValueError, match="paired more than once"):
+        pairs_to_stems({(0, 9), (0, 8)})
