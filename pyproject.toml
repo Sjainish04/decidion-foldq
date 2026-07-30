@@ -46,3 +46,17 @@ ignore_missing_imports = true
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+filterwarnings = [
+    # QAOAAnsatz internally uses NLocal/BlueprintCircuit, deprecated in Qiskit 2.1
+    # and slated for removal in Qiskit 3.0. Emitted by Qiskit, not by this project.
+    # Our QAOA results reproduce only against the pinned Qiskit 2.5.x.
+    "ignore:The class ``qiskit.circuit.library.n_local.*:DeprecationWarning",
+    "ignore:The class ``qiskit.circuit.library.blueprintcircuit.*:DeprecationWarning",
+    # qiskit_ibm_runtime.fake_provider.FakeProviderForBackendV2.__init__ eagerly
+    # constructs all ~60 registered fake backends (its only lookup-by-name path),
+    # including FakeNighthawk, whose constructor emits this UserWarning exactly
+    # once per process via a module-level guard. It fires the first time any test
+    # asks for a fake backend by name -- including fake_hanoi, which is the only
+    # one this project actually uses -- and is unrelated to our noise model.
+    "ignore:Properties of fake_nighthawk are not intended to represent typical nighthawk error values.:UserWarning",
+]

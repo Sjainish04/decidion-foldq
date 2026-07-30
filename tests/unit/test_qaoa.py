@@ -72,6 +72,35 @@ def test_warm_start_accepts_a_classical_seed_solution(problem):
     assert result.metadata["warm_started"] is True
 
 
+def test_warm_start_from_greedy_reports_consistent_energies(problem):
+    """Warm start seeds the ansatz from a classical solution."""
+    from foldq.solvers.baselines import GreedySolver
+
+    greedy_bits = GreedySolver().solve(problem, SolverConfig()).best.bits
+    result = QAOASolver(reps=1, maxiter=25, shots=256, warm_start_bits=greedy_bits).solve(
+        problem, SolverConfig(num_reads=256, seed=13)
+    )
+    assert result.metadata["warm_started"] is True
+    for sample in result.samples:
+        assert sample.energy == pytest.approx(problem.energy(sample.bits), abs=1e-6)
+
+
+def test_cvar_objective_runs_and_reports_energies_consistently(problem):
+    """CVaR optimises the low-energy tail rather than the mean.
+
+    Task 16 shipped this path with no automated coverage. The energy-consistency
+    assertion is the qubit-ordering guard: if the operator and the decoder ever
+    disagree, QAOA converges normally while optimising a permuted problem.
+    """
+    solver = QAOASolver(reps=1, maxiter=25, shots=256, objective="cvar", cvar_alpha=0.25)
+    result = solver.solve(problem, SolverConfig(num_reads=256, seed=11))
+    assert result.solver_name == "cvar_qaoa"
+    assert result.metadata["objective"] == "cvar"
+    assert result.metadata["cvar_alpha"] == 0.25
+    for sample in result.samples:
+        assert sample.energy == pytest.approx(problem.energy(sample.bits), abs=1e-6)
+
+
 def test_resource_report_counts_qubits_and_terms(problem):
     report = estimate_resources(problem, reps=1)
     assert isinstance(report, ResourceReport)
