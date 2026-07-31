@@ -1,7 +1,9 @@
 """E3: solver comparison on identical QUBOs.
 
 Answers RQ3. Every solver receives the same problem and the same decode path,
-so differences are attributable to the optimizer alone.
+so differences are attributable to the optimizer alone. E3 compares solvers,
+which does not require exact ground truth: `qubo_energy`, `vienna_energy`,
+and `base_pair_f1` are all measurable without it.
 
 NaN posture (MANDATORY ADDITION 4): `vienna_energy`/`energy_gap` come from
 `best_candidate`, which is decoded with `repair=config.repair_invalid` and
@@ -11,14 +13,25 @@ stay at their `FoldQConfig` defaults (`repair_invalid=True`,
 a NaN `vienna_energy`: `repair_stems` loops until `validate_stems` reports a
 crossing-free, non-overlapping selection (or the empty selection), so the
 post-repair `has_crossing` recheck in `decode_sample` is always False -- see
-`src/foldq/decoding/decode.py`. `is_qubo_ground_state` /
-`solver_found_ground_state` are `None`, not NaN, when the instance exceeds
-`exact_max_variables`; this runner's `max_variables=22` generation cap keeps
-every instance at or under the default `exact_max_variables=22`, so that also
-should not fire. If a future variant of this runner sets `forbid_crossing`
-or `repair_invalid` differently, any aggregate over `vienna_energy` /
-`energy_gap` must switch to NaN-skipping (e.g. pandas' default `skipna=True`
-mean, or `numpy.nanmean`) rather than a raw Python `sum(...) / len(...)`.
+`src/foldq/decoding/decode.py`.
+
+TASK-22 FIX -- this runner used to pass `max_variables=22` to
+`generate_benchmark_set`, matched to the default `exact_max_variables`.
+Measured stem counts at lengths 40 and 50 are 43-120, always above that cap,
+so the full (non-quick) sweep silently accepted zero sequences at those two
+lengths and produced zero rows for them -- length coverage quietly stopped at
+30 with no error raised. The cap is now removed: lengths 40 and 50 produce
+rows again. `is_qubo_ground_state` / `solver_found_ground_state` are `None`,
+not NaN, whenever an instance's variable count exceeds `exact_max_variables`:
+`ExactSolver` raises `ExactSolverTooLarge`, this pipeline catches it, and
+`exact_result` stays `None`, which `evaluate_gates` reports as `None` for
+both gates rather than guessing. That is expected and correct at lengths 40
+and 50 now, not a defect -- `found_ground_state` is a three-valued column
+(`True`/`False`/`None`) and callers must not treat `None` as falsy. If a
+future variant of this runner sets `forbid_crossing` or `repair_invalid`
+differently, any aggregate over `vienna_energy` / `energy_gap` must switch to
+NaN-skipping (e.g. pandas' default `skipna=True` mean, or `numpy.nanmean`)
+rather than a raw Python `sum(...) / len(...)`.
 """
 
 from __future__ import annotations
@@ -42,9 +55,7 @@ def run(output_dir: Path, *, seed: int = 42, quick: bool = False) -> pd.DataFram
     per_length = 1 if quick else 5
     seeds = [seed] if quick else [seed, seed + 1, seed + 2]
 
-    records = generate_benchmark_set(
-        lengths, per_length, seed=seed, backend=backend, max_variables=22
-    )
+    records = generate_benchmark_set(lengths, per_length, seed=seed, backend=backend)
     solvers = [name for name in CLASSICAL if name in SOLVER_REGISTRY]
 
     rows = []
