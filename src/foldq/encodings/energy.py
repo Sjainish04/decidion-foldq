@@ -17,6 +17,7 @@ ancestor in its nesting chain.
 
 from __future__ import annotations
 
+from collections import defaultdict
 from typing import Literal
 
 from foldq.biology.conflicts import is_nested
@@ -68,10 +69,17 @@ def nestable_pairs(
         return sorted(pairs)
 
     direct = set(pairs)
+    successors: dict[int, list[int]] = defaultdict(list)
+    for outer_idx, inner_idx in pairs:
+        successors[outer_idx].append(inner_idx)
+
+    # (a, c) is transitive when some b satisfies a > b > c. Indexing successors
+    # once turns this from a nested rescan of `pairs` (O(n^2)) into a single pass
+    # over pairs times each node's out-degree.
     transitive = {
-        (a, c)
-        for (a, b) in pairs
-        for (b2, c) in pairs
-        if b == b2 and (a, c) in direct
+        (outer_idx, grandchild)
+        for outer_idx, child in pairs
+        for grandchild in successors[child]
+        if (outer_idx, grandchild) in direct
     }
     return sorted(direct - transitive)

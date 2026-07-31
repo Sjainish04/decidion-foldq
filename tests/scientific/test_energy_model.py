@@ -84,6 +84,42 @@ def test_immediate_only_policy_drops_transitive_nesting():
     assert len(nestable_pairs(stems, policy="immediate_only")) == 2
 
 
+def test_immediate_only_reduction_is_not_quadratic():
+    """Guard the transitive reduction's complexity.
+
+    `immediate_only` is the default nesting policy, so this runs on every
+    prediction. A nested rescan of the pair list is O(pairs^2): at 100 nt it took
+    2.9 s, and on a 2907-stem instance it ran for minutes without finishing.
+    Indexing successors makes it linear in pairs times out-degree.
+
+    This asserts a wall-clock bound rather than a shape, because the defect was a
+    complexity regression, not a wrong answer. The bound is deliberately loose so
+    it fails only on a genuine algorithmic regression.
+    """
+    import random
+    import time
+
+    from foldq.biology.stems import generate_maximal_stems
+
+    rng = random.Random(1)
+    sequence = "".join(rng.choice("AUCG") for _ in range(100))
+    stems = generate_maximal_stems(sequence, min_stem_length=2)
+    assert len(stems) > 200, f"fixture drifted: only {len(stems)} stems"
+
+    start = time.perf_counter()
+    immediate = nestable_pairs(stems, policy="immediate_only")
+    elapsed = time.perf_counter() - start
+
+    assert elapsed < 1.0, (
+        f"transitive reduction took {elapsed:.2f}s on {len(stems)} stems; "
+        "the quadratic rescan has likely returned"
+    )
+    # the reduction must still be a strict subset of the full relation
+    everything = nestable_pairs(stems, policy="all_nestable")
+    assert set(immediate) <= set(everything)
+    assert len(immediate) < len(everything)
+
+
 def test_default_nesting_policy_yields_structurally_valid_optima():
     """Guard against unbounded refund accumulation making violations profitable.
 
