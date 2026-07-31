@@ -134,3 +134,78 @@ def test_cli_predict_writes_expected_artifacts(tmp_path):
     assert result.exit_code == 0
     for name in ("manifest.json", "summary.md"):
         assert (tmp_path / name).exists()
+
+
+def test_config_defaults_match_the_library_defaults_they_override():
+    """Guard against a config default silently overriding a safer library default.
+
+    `FoldQConfig.nesting_policy` is passed straight into `build_stem_qubo`, so a
+    divergence here silently defeats the library default. That exact divergence
+    shipped once: the library defaulted to `immediate_only` (which bounds refund
+    accumulation and keeps QUBO optima structurally valid) while the config still
+    said `all_nestable`, so every pipeline run used the broken policy and produced
+    invalid structures with impossible energies.
+    """
+    import inspect
+
+    from foldq.encodings.stem_encoding import build_stem_qubo
+
+    library_default = inspect.signature(build_stem_qubo).parameters[
+        "nesting_policy"
+    ].default
+    assert FoldQConfig().nesting_policy == library_default, (
+        f"FoldQConfig defaults to {FoldQConfig().nesting_policy!r} but "
+        f"build_stem_qubo defaults to {library_default!r}; the config silently wins"
+    )
+
+
+def test_shipped_base_config_matches_the_dataclass_defaults():
+    """configs/base.yaml must not contradict FoldQConfig's own defaults."""
+    from pathlib import Path
+
+    shipped = FoldQConfig.from_yaml(Path("configs/base.yaml"))
+    defaults = FoldQConfig()
+    assert shipped.nesting_policy == defaults.nesting_policy
+    assert shipped.energy_model == defaults.energy_model
+    assert shipped.dangles == defaults.dangles
+    assert shipped.energy_dangles == defaults.energy_dangles
+    assert shipped.min_stem_length == defaults.min_stem_length
+    assert shipped.min_hairpin == defaults.min_hairpin
+
+
+def test_pipeline_default_config_yields_structurally_valid_optima():
+    """The shipped default must not produce overlapping stems at Tier S scale.
+
+    This is the end-to-end version of the nesting-policy guard: it exercises the
+    real pipeline rather than build_stem_qubo directly, which is where the
+    config-override defect hid.
+    """
+    import itertools
+    import random
+
+    from foldq.biology.conflicts import stems_cross, stems_overlap
+    from foldq.solvers.annealing import SimulatedAnnealingSolver
+    from foldq.solvers.base import SolverConfig
+
+    rng = random.Random(99)
+    sequence = "".join(rng.choice("AUCG") for _ in range(90))
+    problem = FoldQPipeline(FoldQConfig()).build_problem(sequence)
+    assert problem.num_variables > 100, "fixture too small to exercise deep nesting"
+
+    result = SimulatedAnnealingSolver().solve(
+        problem, SolverConfig(num_reads=40, seed=3)
+    )
+    chosen = [
+        problem.variable_map[index]
+        for index, bit in enumerate(result.best.bits)
+        if bit
+    ]
+    violations = [
+        (a, b)
+        for a, b in itertools.combinations(chosen, 2)
+        if stems_overlap(a, b) or stems_cross(a, b)
+    ]
+    assert not violations, (
+        f"{len(violations)} conflicting stem pairs under the default config; "
+        "refund accumulation has outgrown the hard-constraint penalty"
+    )

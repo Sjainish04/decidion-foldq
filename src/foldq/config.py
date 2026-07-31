@@ -27,7 +27,13 @@ class FoldQConfig:
     min_stem_length: int = DEFAULT_MIN_STEM_LENGTH
     expand_substems: bool = False
     energy_model: EnergyModel = "charge_refund"
-    nesting_policy: NestingPolicy = "all_nestable"
+    # immediate_only, not all_nestable: under all_nestable a stem inside a deep
+    # nesting chain accrues one refund per ancestor. Ancestors nest, so they are
+    # mutually conflict-free and their refunds stack past the hard-constraint
+    # penalty, making an overlapping selection profitable. Measured: 14 of 18
+    # instances at 70-150 nt had structurally invalid optima. This default must
+    # stay in sync with build_stem_qubo's.
+    nesting_policy: NestingPolicy = "immediate_only"
     forbid_crossing: bool = True
     overlap_penalty: float | None = None
     crossing_penalty: float | None = None

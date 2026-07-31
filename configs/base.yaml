@@ -5,7 +5,11 @@ min_hairpin: 3
 min_stem_length: 2
 expand_substems: false
 energy_model: charge_refund
-nesting_policy: all_nestable
+# immediate_only, not all_nestable: all_nestable lets refunds stack past the
+# hard-constraint penalty across a nesting chain, producing structurally
+# invalid optima. See foldq.config.FoldQConfig.nesting_policy for the full
+# rationale. Must stay in sync with the dataclass default.
+nesting_policy: immediate_only
 forbid_crossing: true
 num_reads: 200
 repair_invalid: true
