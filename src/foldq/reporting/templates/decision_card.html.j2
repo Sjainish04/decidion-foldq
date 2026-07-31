@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>FoldQ decision card: {{ sequence_id }}</title>
+<style>
+  body { font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+         max-width: 60rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { text-align: left; padding: 0.4rem 0.6rem; border-bottom: 1px solid #ddd; }
+  .seq { letter-spacing: 0.15em; overflow-x: auto; white-space: pre; }
+  .pass { color: #0a7d28; font-weight: bold; }
+  .fail { color: #b3261e; font-weight: bold; }
+  .na   { color: #777; }
+  footer { margin-top: 2rem; font-size: 0.85rem; color: #555; }
+</style>
+</head>
+<body>
+<h1>FoldQ decision card</h1>
+<h2>{{ sequence_id }}</h2>
+
+<h3>Structures</h3>
+<div class="seq">sequence   {{ sequence }}
+ViennaRNA  {{ reference_structure }}   {{ "%.2f"|format(reference_energy) }} kcal/mol
+FoldQ      {{ predicted_structure }}   {{ predicted_energy }}</div>
+
+<p><strong>Pseudoknotted:</strong>
+{% if is_pseudoknotted %}
+yes -- the selected helices cross, so this structure has no legal single-bracket
+dot-bracket notation. ViennaRNA cannot score a crossing structure at all (its
+energy function requires legal dot-bracket input), so the FoldQ energy above is
+reported as not scorable rather than a number. That is the expected, correct
+behaviour for a crossing candidate, not a missing value or a bug.
+{% else %}
+no -- this structure is pseudoknot-free and was scored by ViennaRNA normally.
+{% endif %}
+</p>
+
+<h3>Diagnostic ladder</h3>
+<table>
+  <tr><th>Gate</th><th>Question</th><th>Result</th></tr>
+  <tr><td>A</td><td>Is the reference structure representable?</td>
+      <td class="{{ 'pass' if representable else 'fail' }}">
+      {{ "yes" if representable else "no" }} ({{ "%.0f"|format(representable_fraction * 100) }}% of pairs)</td></tr>
+  <tr><td>B</td><td>Is it the QUBO ground state?</td>
+      <td class="{{ gate_b_class }}">{{ gate_b_text }}</td></tr>
+  <tr><td>C</td><td>Did the solver find the ground state?</td>
+      <td class="{{ gate_c_class }}">{{ gate_c_text }}</td></tr>
+  <tr><td>D</td><td>Physical quality</td>
+      <td>F1 {{ "%.3f"|format(base_pair_f1) }}, gap {{ "%.2f"|format(energy_gap) }} kcal/mol</td></tr>
+</table>
+<p><strong>Attribution:</strong> {{ attribution }}</p>
+
+<h3>Selected helices</h3>
+<table>
+  <tr><th>#</th><th>5' start</th><th>3' end</th><th>pairs</th></tr>
+  {% for stem in stems %}
+  <tr><td>{{ loop.index }}</td><td>{{ stem.i }}</td><td>{{ stem.j }}</td><td>{{ stem.k }}</td></tr>
+  {% endfor %}
+</table>
+
+<h3>Run</h3>
+<table>
+  <tr><td>Solver</td><td>{{ solver }}</td></tr>
+  <tr><td>Logical variables</td><td>{{ num_variables }}</td></tr>
+  <tr><td>QUBO density</td><td>{{ "%.3f"|format(qubo_density) }}</td></tr>
+  <tr><td>Repairs applied</td><td>{{ repair_count }}</td></tr>
+  <tr><td>Runtime</td><td>{{ "%.3f"|format(runtime_seconds) }} s</td></tr>
+  <tr><td>Seed</td><td>{{ seed }}</td></tr>
+</table>
+
+<h3>Limitations</h3>
+<ul>
+  <li>The QUBO is a degree-2 surrogate for the Turner model; loop terms that depend
+      on which other helices are selected are approximated, not exact.</li>
+  <li>Gates B and C require exact enumeration and are indeterminate above
+      {{ exact_max_variables }} variables.</li>
+  <li>Candidate generation can exclude the true structure, which caps accuracy
+      before any solver runs. Gate A reports that ceiling.</li>
+  <li>A stem-indexed QUBO cannot represent dangling-end terms at any penalty
+      setting, since they attach to unpaired context rather than to any stem.</li>
+  <li>Crossing (pseudoknotted) structures cannot be scored by ViennaRNA; their
+      FoldQ energy is reported as not scorable rather than a number.</li>
+  <li>This is a research prototype, not a clinical or therapeutic-design tool.</li>
+  <li>No quantum-advantage claim is made or implied.</li>
+</ul>
+
+<footer>Decidion FoldQ &middot; WISER Summer Program 2026 Moderna Challenge</footer>
+</body>
+</html>

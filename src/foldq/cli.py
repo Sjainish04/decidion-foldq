@@ -182,5 +182,20 @@ def benchmark(
     typer.echo(f"wrote {len(rows)} rows to {target}")
 
 
+@app.command()
+def report(
+    sequence: str = typer.Option(..., "--sequence"),
+    solver: str = typer.Option("simulated_annealing", "--solver"),
+    output: Path = typer.Option(Path("results/demo/decision-card.html"), "--output"),
+) -> None:
+    """Render an explainable decision card for one prediction."""
+    from foldq.reporting.decision_card import render_decision_card
+
+    record = SequenceRecord(sequence_id="cli", sequence=sequence, source_type="user")
+    result = FoldQPipeline(FoldQConfig()).predict(record, solver=solver)
+    path = render_decision_card(result, output)
+    typer.echo(f"wrote decision card to {path}")
+
+
 if __name__ == "__main__":
     sys.exit(app())
