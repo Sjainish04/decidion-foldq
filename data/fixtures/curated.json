@@ -34,7 +34,7 @@
       "has_pseudoknot": true,
       "source": "CONSTRUCTED for this project - NOT literature-derived, no citation claimed",
       "license": "CC0",
-      "notes": "Larger H-type pseudoknot. 10 base pairs, 25 crossing pair-combinations. ViennaRNA recovers only 5 of 10 pairs. Substitute a cited literature pseudoknot before publication."
+      "notes": "Larger H-type pseudoknot. 10 base pairs, 25 crossing pair-combinations. ViennaRNA shares 0 of 10 pairs under the default dangles=2 model (it finds an entirely different fold) and 5 of 10 under dangles=0; in neither case can it express the crossing. Substitute a cited literature pseudoknot before publication."
     }
   ]
 }

@@ -16,11 +16,27 @@ def backend():
 
 
 def test_planted_hairpin_is_self_complementary():
-    seq = plant_hairpin(length=20, stem_length=5, loop_length=4, rng=random.Random(1))
-    assert len(seq) == 20
+    """The planted 5' and 3' stems must be reverse complements.
+
+    The 3' stem begins after the 5' stem and the loop, so position `offset`
+    pairs with `2*stem_length + loop_length - 1 - offset`. Deriving that index
+    from the parameters rather than hardcoding it keeps the test correct if the
+    fixture parameters ever change.
+    """
+    stem_length, loop_length, length = 5, 4, 20
+    seq = plant_hairpin(
+        length=length,
+        stem_length=stem_length,
+        loop_length=loop_length,
+        rng=random.Random(1),
+    )
+    assert len(seq) == length
     complement = {"A": "U", "U": "A", "G": "C", "C": "G"}
-    for offset in range(5):
-        assert seq[offset] == complement[seq[9 - offset]]
+    partner_of_first = 2 * stem_length + loop_length - 1
+    for offset in range(stem_length):
+        assert seq[offset] == complement[seq[partner_of_first - offset]], (
+            f"offset {offset} does not pair with {partner_of_first - offset}"
+        )
 
 
 def test_planted_hairpin_actually_folds(backend):
