@@ -1,7 +1,14 @@
+# pnpm blocks dependency build scripts by default as a supply-chain precaution.
+# These three are explicitly allowed because each genuinely needs one, and each is
+# a transitive dependency of the scaffold rather than something this project chose:
+#
+#   sharp          native image codecs, used by Next.js image optimization
+#   unrs-resolver  native module resolver, pulled in by eslint-config-next
+#   msw            writes the mock service worker used by the frontend test suite
+#
+# Nothing else is allowed to run a build script. Leaving these unapproved makes
+# `pnpm install` halt and prompt, which would break a clean-checkout reproduction.
 allowBuilds:
   msw: true
   sharp: true
   unrs-resolver: true
-ignoredBuiltDependencies:
-  - sharp
-  - unrs-resolver
