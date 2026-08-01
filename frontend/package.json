@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "node scripts/bundle-results.mjs",
     "dev": "next dev --webpack",
+    "prebuild": "node scripts/bundle-results.mjs",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "pretest": "node scripts/bundle-results.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.5.7",
