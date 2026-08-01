@@ -43,9 +43,9 @@ def test_min_stem_length_filters_short_helices():
 
 def test_substem_expansion_produces_all_contiguous_subhelices():
     subs = expand_substems([Stem(i=0, j=10, k=3)], min_stem_length=2)
-    assert Stem(0, 10, 3) in subs   # the whole helix
-    assert Stem(0, 10, 2) in subs   # truncated from the inside
-    assert Stem(1, 9, 2) in subs    # shifted inward
+    assert Stem(0, 10, 3) in subs  # the whole helix
+    assert Stem(0, 10, 2) in subs  # truncated from the inside
+    assert Stem(1, 9, 2) in subs  # shifted inward
     assert Stem(0, 10, 1) not in subs  # below min_stem_length
 
 

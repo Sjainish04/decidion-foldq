@@ -138,9 +138,7 @@ def test_gate_counts_do_not_silently_drop_unrecognised_gates(problem):
         for gate, count in decomposed.count_ops().items()
         if gate not in {"barrier", "measure", "delay", "snapshot"}
     )
-    counted_total = (
-        report.one_qubit_gates + report.two_qubit_gates + report.multi_qubit_gates
-    )
+    counted_total = report.one_qubit_gates + report.two_qubit_gates + report.multi_qubit_gates
     assert counted_total == real_total, (
         f"counted {counted_total} gates but the circuit contains {real_total}; "
         "some gate type is being silently dropped"

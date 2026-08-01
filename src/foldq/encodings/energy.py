@@ -33,13 +33,9 @@ def stem_linear_energy(backend: ViennaBackend, sequence: str, stem: Stem) -> flo
     return backend.stack_energy(sequence, stem) + backend.hairpin_energy(sequence, stem)
 
 
-def refund_pair_energy(
-    backend: ViennaBackend, sequence: str, outer: Stem, inner: Stem
-) -> float:
+def refund_pair_energy(backend: ViennaBackend, sequence: str, outer: Stem, inner: Stem) -> float:
     """Quadratic coefficient: undo the hairpin assumption, charge the real loop."""
-    return backend.interior_energy(sequence, outer, inner) - backend.hairpin_energy(
-        sequence, outer
-    )
+    return backend.interior_energy(sequence, outer, inner) - backend.hairpin_energy(sequence, outer)
 
 
 def nestable_pairs(

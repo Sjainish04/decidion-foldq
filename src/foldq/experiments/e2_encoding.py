@@ -103,7 +103,7 @@ def run(output_dir: Path, *, seed: int = 42, quick: bool = False) -> pd.DataFram
         )
 
         for stem_mode in ("maximal", "substems"):
-            for min_stem_length in ((1, 2) if quick else (1, 2, 3)):
+            for min_stem_length in (1, 2) if quick else (1, 2, 3):
                 config = FoldQConfig(
                     seed=seed,
                     min_stem_length=min_stem_length,

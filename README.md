@@ -605,9 +605,9 @@ Stated plainly rather than left to be discovered missing. Deferred, and why:
   3.11 interpreter with no OS-level RNA-folding dependency beyond the `viennarna` wheel; a
   container was judged to add packaging overhead without adding reproducibility for a
   submission of this size.
-- **Most CI workflows.** Only what was needed to keep the test suite green locally during
-  development was set up; a full lint/test/integration/reproduce/docker workflow matrix was not
-  built out, and `make lint`/`make typecheck` are not currently green — see
+- **Most CI workflows.** Only what was needed to keep the test suite, `make lint`, and
+  `make typecheck` green locally during development was set up; a full
+  test/integration/reproduce/docker CI workflow matrix was not built out — see
   [Testing](#testing).
 - **Notebooks.** All exploratory work lives in `scripts/probes/` as plain scripts, not notebooks
   — easier to diff, easier to run headless, and this project had no need for inline
@@ -766,18 +766,29 @@ E3, E5) do not depend on it.
 
 ```bash
 .venv/bin/pytest tests -q                # make test      -- passes, 267/267
-.venv/bin/ruff check src tests           # make lint (1/2) -- currently fails, 22 errors
-.venv/bin/ruff format --check src tests  # make lint (2/2) -- currently fails, 24 files
-.venv/bin/mypy src/foldq                 # make typecheck  -- currently fails, 7 errors
+.venv/bin/ruff check src tests           # make lint (1/2) -- passes, 0 errors
+.venv/bin/ruff format --check src tests  # make lint (2/2) -- passes, all files formatted
+.venv/bin/mypy src/foldq                 # make typecheck  -- passes, 0 errors
 ```
 
-**`make lint` and `make typecheck` do not currently pass.** Stated plainly rather than implied:
-`ruff check` reports 22 errors across 12 files, 17 of them in `src/foldq/` (mostly `zip()`
-missing `strict=` and `typer.Option()` called directly in CLI argument defaults) and 5 in
-`tests/`; `ruff format --check` separately reports 24 files that would be reformatted; `mypy
-src/foldq` reports 7 errors, all in `src/foldq/experiments/e4_qaoa.py`, from `argparse` values
-typed `str | int | None` flowing into functions that expect concrete `int`/`str` types. The test
-suite above is green; lint and typecheck debt is real and unresolved as of this commit.
+**`make lint` and `make typecheck` pass.** Two findings are scoped suppressions rather than
+fixes, both narrowed to a single site so the rule still applies everywhere else:
+
+- `B008` (function call in an argument default) is ignored only for `src/foldq/cli.py` via a
+  `per-file-ignores` entry in `pyproject.toml`. `typer.Option(...)`/`typer.Argument(...)` calls
+  as parameter defaults are the required Typer idiom, not an oversight.
+- `B019` (`lru_cache` on a method, which can leak instances) is suppressed inline with a comment
+  on `ViennaBackend._compound`. Keying the cache on instance identity is load-bearing: it is what
+  keeps the `dangles=0` backend (energy coefficients) and the `dangles=2` backend (reference
+  folding and rescoring) from sharing cached compounds and cross-contaminating.
+
+Everything else was fixed outright: five bare `zip()` calls now carry an explicit `strict=`
+(`True` where lengths are guaranteed equal, `False` for the deliberately-offset
+`zip(xs, xs[1:])` adjacent-pair pattern), five over-length lines were wrapped, an unused loop
+variable and an unused import were removed, an import block was reordered, a deprecated
+`typing.Callable` import moved to `collections.abc`, a nested `if` was collapsed, and E4's QAOA
+variant sweep was retyped from untyped dicts to a `NamedTuple` to resolve all 7 mypy errors.
+Behaviour is unchanged; the test suite above stayed at 267/267 throughout.
 
 ---
 

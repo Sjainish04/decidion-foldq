@@ -37,16 +37,21 @@ def test_qubo_rejects_bitstring_of_wrong_length():
 
 def test_num_variables_and_density():
     problem = QuboProblem(
-        {0: 1.0, 1: 1.0, 2: 1.0}, {(0, 1): 1.0}, 0.0,
-        (Stem(0, 9, 2), Stem(0, 9, 3), Stem(0, 10, 2)), DEMO, {},
+        {0: 1.0, 1: 1.0, 2: 1.0},
+        {(0, 1): 1.0},
+        0.0,
+        (Stem(0, 9, 2), Stem(0, 9, 3), Stem(0, 10, 2)),
+        DEMO,
+        {},
     )
     assert problem.num_variables == 3
     assert problem.density == pytest.approx(1 / 3)  # 1 edge of 3 possible
 
 
 def test_bqm_roundtrip_preserves_energy():
-    problem = QuboProblem({0: -2.0, 1: -1.0}, {(0, 1): 5.0}, 0.0,
-                          (Stem(0, 9, 2), Stem(0, 9, 3)), DEMO, {})
+    problem = QuboProblem(
+        {0: -2.0, 1: -1.0}, {(0, 1): 5.0}, 0.0, (Stem(0, 9, 2), Stem(0, 9, 3)), DEMO, {}
+    )
     bqm = problem.to_bqm()
     for bits in [(0, 0), (0, 1), (1, 0), (1, 1)]:
         assert bqm.energy({0: bits[0], 1: bits[1]}) == pytest.approx(problem.energy(bits))

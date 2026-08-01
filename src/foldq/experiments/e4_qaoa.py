@@ -43,6 +43,7 @@ inside this runner regardless, matching E1-E3 and E5.
 from __future__ import annotations
 
 from pathlib import Path
+from typing import NamedTuple
 
 import pandas as pd
 
@@ -59,6 +60,15 @@ from foldq.solvers.qaoa import QAOASolver
 
 NAME = "e4_qaoa"
 NOISE_BACKEND = "fake_hanoi"
+
+
+class _QAOAVariant(NamedTuple):
+    """One QAOA configuration in the E4 sweep."""
+
+    reps: int
+    objective: str
+    shots: int
+    noise: str | None
 
 
 def run(output_dir: Path, *, seed: int = 42, quick: bool = False) -> pd.DataFrame:
@@ -86,38 +96,38 @@ def run(output_dir: Path, *, seed: int = 42, quick: bool = False) -> pd.DataFram
             exact = None
 
         variants = [
-            {"reps": reps, "objective": "expectation", "shots": shots, "noise": None}
+            _QAOAVariant(reps=reps, objective="expectation", shots=shots, noise=None)
             for reps in depths
             for shots in shot_counts
         ]
         variants += [
-            {"reps": depths[-1], "objective": "cvar", "shots": shot_counts[0], "noise": None}
+            _QAOAVariant(reps=depths[-1], objective="cvar", shots=shot_counts[0], noise=None)
         ]
         variants += [
-            {
-                "reps": depths[0],
-                "objective": "expectation",
-                "shots": shot_counts[0],
-                "noise": NOISE_BACKEND,
-            }
+            _QAOAVariant(
+                reps=depths[0],
+                objective="expectation",
+                shots=shot_counts[0],
+                noise=NOISE_BACKEND,
+            )
         ]
 
         for variant in variants:
             solver = QAOASolver(
-                reps=variant["reps"],
+                reps=variant.reps,
                 maxiter=maxiter,
-                shots=variant["shots"],
-                objective=variant["objective"],
-                noise_backend=variant["noise"],
+                shots=variant.shots,
+                objective=variant.objective,
+                noise_backend=variant.noise,
             )
             result = solver.solve(problem, solver_config)
             candidate = decode_sample(result.best, problem, backend)
             gates = evaluate_gates(problem, reference, result, candidate, exact)
             resources = estimate_resources(
                 problem,
-                reps=variant["reps"],
-                backend_name=variant["noise"],
-                shots=variant["shots"],
+                reps=variant.reps,
+                backend_name=variant.noise,
+                shots=variant.shots,
                 optimizer_iterations=result.metadata["optimizer_iterations"],
                 circuit_evaluations=result.metadata["circuit_evaluations"],
             )
@@ -126,10 +136,10 @@ def run(output_dir: Path, *, seed: int = 42, quick: bool = False) -> pd.DataFram
                 {
                     "sequence_id": record.sequence_id,
                     "length": record.length,
-                    "reps": variant["reps"],
-                    "objective": variant["objective"],
-                    "shots": variant["shots"],
-                    "noise_backend": variant["noise"] or "none",
+                    "reps": variant.reps,
+                    "objective": variant.objective,
+                    "shots": variant.shots,
+                    "noise_backend": variant.noise or "none",
                     "logical_qubits": resources.logical_qubits,
                     "hamiltonian_terms": resources.hamiltonian_terms,
                     "qubo_density": resources.qubo_density,

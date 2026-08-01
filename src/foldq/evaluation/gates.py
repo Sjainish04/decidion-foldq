@@ -38,18 +38,14 @@ def gate_b_faithful(
     return ground_pairs == reference_pairs
 
 
-def gate_c_solved(
-    solver_result: SolverResult, exact_result: SolverResult | None
-) -> bool | None:
+def gate_c_solved(solver_result: SolverResult, exact_result: SolverResult | None) -> bool | None:
     """Gate C: did this solver actually reach the QUBO ground state?"""
     if exact_result is None:
         return None
     return solver_result.best.energy <= exact_result.best.energy + TOLERANCE
 
 
-def gate_d_physical(
-    candidate: FoldCandidate, reference: ViennaReference
-) -> tuple[float, float]:
+def gate_d_physical(candidate: FoldCandidate, reference: ViennaReference) -> tuple[float, float]:
     """Gate D: how good is the decoded structure thermodynamically and structurally?
 
     A pseudoknotted candidate carries an all-dots placeholder dot-bracket, because
@@ -83,9 +79,7 @@ def evaluate_gates(
     exact_result: SolverResult | None = None,
 ) -> GateReport:
     """Run the full ladder and package the attribution."""
-    representable, fraction = gate_a_representable(
-        reference.base_pairs, list(problem.variable_map)
-    )
+    representable, fraction = gate_a_representable(reference.base_pairs, list(problem.variable_map))
     gap, f1 = gate_d_physical(candidate, reference)
 
     notes: list[str] = []

@@ -29,9 +29,7 @@ def validate_stems(stems: list[Stem], *, forbid_crossing: bool = True) -> Valida
                 overlaps.append((a, b))
             elif forbid_crossing and stems_cross(stems[a], stems[b]):
                 crossings.append((a, b))
-    return ValidationReport(
-        overlapping_pairs=tuple(overlaps), crossing_pairs=tuple(crossings)
-    )
+    return ValidationReport(overlapping_pairs=tuple(overlaps), crossing_pairs=tuple(crossings))
 
 
 def decode_sample(
@@ -60,10 +58,7 @@ def decode_sample(
     # anyway silently re-brackets the crossing into different pairs. In
     # pseudoknot mode `validate_stems` does not populate `crossing_pairs`
     # (crossings are legal there), so this must be checked directly.
-    has_crossing = any(
-        stems_cross(left, right)
-        for left, right in itertools.combinations(stems, 2)
-    )
+    has_crossing = any(stems_cross(left, right) for left, right in itertools.combinations(stems, 2))
 
     if has_crossing or not report.is_valid:
         dot_bracket = "." * len(problem.sequence)
@@ -73,8 +68,7 @@ def decode_sample(
         vienna_energy = backend.eval_structure(problem.sequence, dot_bracket)
 
     bits = tuple(
-        1 if problem.variable_map[i] in set(stems) else 0
-        for i in range(problem.num_variables)
+        1 if problem.variable_map[i] in set(stems) else 0 for i in range(problem.num_variables)
     )
 
     return FoldCandidate(

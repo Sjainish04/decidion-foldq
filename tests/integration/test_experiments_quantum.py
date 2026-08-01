@@ -55,7 +55,7 @@ def test_e4_noise_row_actually_transpiles_onto_the_target_backend(tmp_path):
     routing-overhead claim would not be backed by this table's own data.
     """
     frame = e4_qaoa.run(tmp_path, seed=1, quick=True)
-    for sequence_id, group in frame.groupby("sequence_id"):
+    for _sequence_id, group in frame.groupby("sequence_id"):
         noisy = group[group["noise_backend"] == e4_qaoa.NOISE_BACKEND]
         assert len(noisy) == 1
         matched_ideal = group[

@@ -77,29 +77,53 @@ def test_full_ladder_on_the_demo_sequence(backend):
 
 
 def test_attribution_names_the_first_failing_gate():
-    assert "candidate generation" in GateReport(
-        representable=False, representable_fraction=0.5,
-        is_qubo_ground_state=None, solver_found_ground_state=None,
-        energy_gap=1.0, base_pair_f1=0.0,
-    ).attribution
+    assert (
+        "candidate generation"
+        in GateReport(
+            representable=False,
+            representable_fraction=0.5,
+            is_qubo_ground_state=None,
+            solver_found_ground_state=None,
+            energy_gap=1.0,
+            base_pair_f1=0.0,
+        ).attribution
+    )
 
-    assert "energy model" in GateReport(
-        representable=True, representable_fraction=1.0,
-        is_qubo_ground_state=False, solver_found_ground_state=True,
-        energy_gap=1.0, base_pair_f1=0.5,
-    ).attribution
+    assert (
+        "energy model"
+        in GateReport(
+            representable=True,
+            representable_fraction=1.0,
+            is_qubo_ground_state=False,
+            solver_found_ground_state=True,
+            energy_gap=1.0,
+            base_pair_f1=0.5,
+        ).attribution
+    )
 
-    assert "optimizer" in GateReport(
-        representable=True, representable_fraction=1.0,
-        is_qubo_ground_state=True, solver_found_ground_state=False,
-        energy_gap=1.0, base_pair_f1=0.5,
-    ).attribution
+    assert (
+        "optimizer"
+        in GateReport(
+            representable=True,
+            representable_fraction=1.0,
+            is_qubo_ground_state=True,
+            solver_found_ground_state=False,
+            energy_gap=1.0,
+            base_pair_f1=0.5,
+        ).attribution
+    )
 
-    assert "no failure" in GateReport(
-        representable=True, representable_fraction=1.0,
-        is_qubo_ground_state=True, solver_found_ground_state=True,
-        energy_gap=0.0, base_pair_f1=1.0,
-    ).attribution
+    assert (
+        "no failure"
+        in GateReport(
+            representable=True,
+            representable_fraction=1.0,
+            is_qubo_ground_state=True,
+            solver_found_ground_state=True,
+            energy_gap=0.0,
+            base_pair_f1=1.0,
+        ).attribution
+    )
 
 
 def test_gate_d_scores_a_pseudoknotted_candidate_from_its_stems():

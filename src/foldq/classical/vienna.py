@@ -26,7 +26,7 @@ from functools import lru_cache
 
 import RNA
 
-from foldq.constants import DEKACAL_PER_KCAL, DEFAULT_TEMPERATURE_C
+from foldq.constants import DEFAULT_TEMPERATURE_C, DEKACAL_PER_KCAL
 from foldq.schemas.structure import Stem
 
 
@@ -77,7 +77,12 @@ class ViennaBackend:
             model.noLP = 1
         return model
 
-    @lru_cache(maxsize=512)
+    # Keying on instance identity (not just `sequence`) is deliberate: it is what
+    # isolates the dangles=0 backend (energy coefficients) from the dangles=2
+    # backend (reference folding and rescoring) so they cannot cross-contaminate
+    # through a shared cache. The retained-instance cost is bounded by maxsize
+    # and acceptable at this project's scale.
+    @lru_cache(maxsize=512)  # noqa: B019 - see note above; instance-keying is required, not incidental
     def _compound(self, sequence: str) -> RNA.fold_compound:
         return RNA.fold_compound(sequence, self._model())
 
@@ -107,10 +112,8 @@ class ViennaBackend:
         compound = self._compound(sequence)
         pairs = stem.pairs()
         total = 0.0
-        for outer, inner in zip(pairs, pairs[1:]):
-            total += compound.eval_int_loop(
-                outer[0] + 1, outer[1] + 1, inner[0] + 1, inner[1] + 1
-            )
+        for outer, inner in zip(pairs, pairs[1:], strict=False):
+            total += compound.eval_int_loop(outer[0] + 1, outer[1] + 1, inner[0] + 1, inner[1] + 1)
         return total / DEKACAL_PER_KCAL
 
     def hairpin_energy(self, sequence: str, stem: Stem) -> float:

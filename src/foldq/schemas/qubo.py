@@ -48,9 +48,7 @@ class QuboProblem:
             raise ValueError(f"expected {self.num_variables} bits, got {len(bits)}")
         total = self.offset
         total += sum(coeff for idx, coeff in self.linear.items() if bits[idx])
-        total += sum(
-            coeff for (a, b), coeff in self.quadratic.items() if bits[a] and bits[b]
-        )
+        total += sum(coeff for (a, b), coeff in self.quadratic.items() if bits[a] and bits[b])
         return total
 
     def to_bqm(self) -> dimod.BinaryQuadraticModel:

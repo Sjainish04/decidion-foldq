@@ -21,7 +21,9 @@ def test_fold_matches_known_reference(backend):
 
 def test_eval_structure_agrees_with_fold_energy(backend):
     ref = backend.fold(DEMO)
-    assert backend.eval_structure(DEMO, ref.mfe_structure) == pytest.approx(ref.mfe_energy, abs=0.01)
+    assert backend.eval_structure(DEMO, ref.mfe_structure) == pytest.approx(
+        ref.mfe_energy, abs=0.01
+    )
 
 
 def test_stack_energy_is_in_kcal_not_dekacal(backend):
@@ -71,7 +73,8 @@ def test_dangles_gap_is_measured_not_hidden():
 
     exact = ViennaBackend(dangles=0)
     assert (
-        exact.stack_energy(DEMO, stem) + exact.hairpin_energy(DEMO, stem)
+        exact.stack_energy(DEMO, stem)
+        + exact.hairpin_energy(DEMO, stem)
         - exact.fold(DEMO).mfe_energy
     ) == pytest.approx(0.0, abs=0.01)
 

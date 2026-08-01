@@ -27,7 +27,9 @@ class Stem:
             raise ValueError(f"stem start {self.i} must precede end {self.j}")
         inner_i, inner_j = self.i + self.k - 1, self.j - self.k + 1
         if inner_i >= inner_j:
-            raise ValueError(f"stem strands overlap: k={self.k} too large for span {self.j - self.i}")
+            raise ValueError(
+                f"stem strands overlap: k={self.k} too large for span {self.j - self.i}"
+            )
         if inner_j - inner_i - 1 < DEFAULT_MIN_HAIRPIN:
             raise ValueError(
                 f"stem leaves only {inner_j - inner_i - 1} unpaired bases; "

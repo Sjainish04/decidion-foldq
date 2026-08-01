@@ -64,7 +64,7 @@ def pairs_to_stems(pairs: Iterable[tuple[int, int]]) -> list[Stem]:
     stems: list[Stem] = []
     start = ordered[0]
     run = 1
-    for previous, current in zip(ordered, ordered[1:]):
+    for previous, current in zip(ordered, ordered[1:], strict=False):
         if current[0] == previous[0] + 1 and current[1] == previous[1] - 1:
             run += 1
         else:

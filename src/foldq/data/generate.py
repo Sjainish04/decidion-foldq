@@ -76,9 +76,11 @@ def generate_benchmark_set(
         while accepted < count_per_length and attempts < count_per_length * 200:
             attempts += 1
             record = generate_folding_sequence(length, rng=rng, backend=backend)
-            if max_variables is not None:
-                if len(generate_maximal_stems(record.sequence)) > max_variables:
-                    continue
+            if (
+                max_variables is not None
+                and len(generate_maximal_stems(record.sequence)) > max_variables
+            ):
+                continue
             records.append(
                 SequenceRecord(
                     sequence_id=f"syn_{length}_{accepted:03d}",

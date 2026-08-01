@@ -1,5 +1,3 @@
-import pytest
-
 from foldq.classical.vienna import ViennaBackend
 from foldq.io.fixtures import load_curated
 

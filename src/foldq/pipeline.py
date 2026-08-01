@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import time
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, Callable
+from typing import Any
 
 from foldq.biology.stems import expand_substems, generate_maximal_stems
 from foldq.classical.vienna import ViennaBackend, ViennaReference
@@ -115,9 +116,7 @@ class FoldQPipeline:
         if encoding != "stem":
             raise ValueError(f"unsupported encoding {encoding!r}; only 'stem' is implemented")
         if solver not in SOLVER_REGISTRY:
-            raise ValueError(
-                f"unknown solver {solver!r}; available: {sorted(SOLVER_REGISTRY)}"
-            )
+            raise ValueError(f"unknown solver {solver!r}; available: {sorted(SOLVER_REGISTRY)}")
 
         start = time.perf_counter()
         reference = self.backend.fold(record.sequence)
@@ -129,9 +128,9 @@ class FoldQPipeline:
         # Exact ground truth for Gates B and C, when the instance is small enough.
         exact_result: SolverResult | None
         try:
-            exact_result = ExactSolver(
-                max_variables=self.config.exact_max_variables
-            ).solve(problem, solver_config)
+            exact_result = ExactSolver(max_variables=self.config.exact_max_variables).solve(
+                problem, solver_config
+            )
         except ExactSolverTooLarge:
             exact_result = None
 

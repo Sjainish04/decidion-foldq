@@ -19,8 +19,13 @@ def record():
 
 def test_registry_exposes_every_planned_solver():
     for name in (
-        "exact", "random", "greedy", "local_search",
-        "simulated_annealing", "tabu", "path_integral_sqa",
+        "exact",
+        "random",
+        "greedy",
+        "local_search",
+        "simulated_annealing",
+        "tabu",
+        "path_integral_sqa",
     ):
         assert name in SOLVER_REGISTRY
 
@@ -47,8 +52,13 @@ def test_classical_solvers_present_even_if_quantum_extra_is_unimportable(monkeyp
     try:
         pipeline_module._register_quantum_solvers()
         for name in (
-            "exact", "random", "greedy", "local_search",
-            "simulated_annealing", "tabu", "path_integral_sqa",
+            "exact",
+            "random",
+            "greedy",
+            "local_search",
+            "simulated_annealing",
+            "tabu",
+            "path_integral_sqa",
         ):
             assert name in pipeline_module.SOLVER_REGISTRY
         assert "qaoa" not in pipeline_module.SOLVER_REGISTRY
@@ -150,9 +160,7 @@ def test_config_defaults_match_the_library_defaults_they_override():
 
     from foldq.encodings.stem_encoding import build_stem_qubo
 
-    library_default = inspect.signature(build_stem_qubo).parameters[
-        "nesting_policy"
-    ].default
+    library_default = inspect.signature(build_stem_qubo).parameters["nesting_policy"].default
     assert FoldQConfig().nesting_policy == library_default, (
         f"FoldQConfig defaults to {FoldQConfig().nesting_policy!r} but "
         f"build_stem_qubo defaults to {library_default!r}; the config silently wins"
@@ -192,14 +200,8 @@ def test_pipeline_default_config_yields_structurally_valid_optima():
     problem = FoldQPipeline(FoldQConfig()).build_problem(sequence)
     assert problem.num_variables > 100, "fixture too small to exercise deep nesting"
 
-    result = SimulatedAnnealingSolver().solve(
-        problem, SolverConfig(num_reads=40, seed=3)
-    )
-    chosen = [
-        problem.variable_map[index]
-        for index, bit in enumerate(result.best.bits)
-        if bit
-    ]
+    result = SimulatedAnnealingSolver().solve(problem, SolverConfig(num_reads=40, seed=3))
+    chosen = [problem.variable_map[index] for index, bit in enumerate(result.best.bits) if bit]
     violations = [
         (a, b)
         for a, b in itertools.combinations(chosen, 2)

@@ -81,9 +81,7 @@ def _abs_coefficients(problem: QuboProblem) -> list[float]:
     a constant energy shift changes no optimum, so it carries no
     conditioning information.
     """
-    return [abs(v) for v in problem.linear.values()] + [
-        abs(v) for v in problem.quadratic.values()
-    ]
+    return [abs(v) for v in problem.linear.values()] + [abs(v) for v in problem.quadratic.values()]
 
 
 def coefficient_range(problem: QuboProblem) -> float:

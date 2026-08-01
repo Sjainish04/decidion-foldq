@@ -58,9 +58,7 @@ def predict(
 ) -> None:
     """Predict a structure and write the run artifacts."""
     config = FoldQConfig.from_yaml(config_path) if config_path else FoldQConfig()
-    config = config.merged_with(
-        seed=seed, forbid_crossing=False if pseudoknots else None
-    )
+    config = config.merged_with(seed=seed, forbid_crossing=False if pseudoknots else None)
 
     record = SequenceRecord(sequence_id="cli", sequence=sequence, source_type="user")
     result = FoldQPipeline(config).predict(record, solver=solver)
@@ -97,8 +95,10 @@ def predict(
             f"# FoldQ prediction: {record.sequence_id}",
             "",
             f"Sequence      {record.sequence}",
-            f"ViennaRNA MFE {result.reference.mfe_structure}  {result.reference.mfe_energy:.2f} kcal/mol",
-            f"FoldQ         {result.best_candidate.dot_bracket}  {result.best_candidate.vienna_energy:.2f} kcal/mol",
+            f"ViennaRNA MFE {result.reference.mfe_structure}  "
+            f"{result.reference.mfe_energy:.2f} kcal/mol",
+            f"FoldQ         {result.best_candidate.dot_bracket}  "
+            f"{result.best_candidate.vienna_energy:.2f} kcal/mol",
             "",
             f"Solver        {solver} ({result.problem.num_variables} variables, "
             f"density {result.problem.density:.2f})",

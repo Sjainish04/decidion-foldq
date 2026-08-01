@@ -58,7 +58,9 @@ class ExactSolver:
         # design probing, where brute force needs 4.2M enumerations. It raises on graphs
         # whose treewidth is too large, so brute force stays as a bounded fallback.
         if n > self.brute_force_limit:
-            bits, energy, degeneracy, method, degeneracy_is_exact = self._tree_decomposition(problem)
+            bits, energy, degeneracy, method, degeneracy_is_exact = self._tree_decomposition(
+                problem
+            )
         else:
             try:
                 bits, energy, degeneracy, method, degeneracy_is_exact = self._tree_decomposition(
@@ -107,9 +109,7 @@ class ExactSolver:
         # number of reads requested. Probe with a bounded budget rather than 2.
         probe_reads = min(self.degeneracy_probe_reads, 2**problem.num_variables)
         try:
-            sampleset = TreeDecompositionSolver().sample(
-                problem.to_bqm(), num_reads=probe_reads
-            )
+            sampleset = TreeDecompositionSolver().sample(problem.to_bqm(), num_reads=probe_reads)
         except Exception as error:
             raise ExactSolverTooLarge(
                 f"tree decomposition failed on {problem.num_variables} variables "
@@ -127,9 +127,7 @@ class ExactSolver:
         degeneracy_is_exact = not (exhausted and degeneracy == len(sampleset))
         return bits, float(best.energy), degeneracy, "tree_decomposition", degeneracy_is_exact
 
-    def _brute_force(
-        self, problem: QuboProblem
-    ) -> tuple[tuple[int, ...], float, int, str, bool]:
+    def _brute_force(self, problem: QuboProblem) -> tuple[tuple[int, ...], float, int, str, bool]:
         """Enumerate every assignment. Only used below `brute_force_limit`."""
         n = problem.num_variables
         best_energy = float("inf")

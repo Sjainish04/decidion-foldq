@@ -36,11 +36,7 @@ def base_pair_metrics(
 
     precision = true_positives / len(predicted) if predicted else 0.0
     recall = true_positives / len(reference) if reference else 0.0
-    f1 = (
-        2 * precision * recall / (precision + recall)
-        if (precision + recall) > 0
-        else 0.0
-    )
+    f1 = 2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0.0
     return PairMetrics(
         precision=precision,
         recall=recall,

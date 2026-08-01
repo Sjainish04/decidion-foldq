@@ -64,9 +64,7 @@ class FoldQConfig:
                 "candidate generation instead"
             )
         if self.min_stem_length < 1:
-            raise ValueError(
-                f"min_stem_length must be at least 1 (got {self.min_stem_length})"
-            )
+            raise ValueError(f"min_stem_length must be at least 1 (got {self.min_stem_length})")
         if self.dangles not in (0, 1, 2, 3):
             raise ValueError(f"dangles must be 0-3 (got {self.dangles})")
         if self.energy_dangles not in (0, 1, 2, 3):

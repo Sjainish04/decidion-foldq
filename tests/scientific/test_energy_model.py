@@ -148,13 +148,9 @@ def test_default_nesting_policy_yields_structurally_valid_optima():
     sampleset = SimulatedAnnealingSampler().sample(
         problem.to_bqm(), num_reads=50, num_sweeps=1000, seed=7
     )
-    bits = tuple(
-        int(sampleset.first.sample[i]) for i in range(problem.num_variables)
-    )
+    bits = tuple(int(sampleset.first.sample[i]) for i in range(problem.num_variables))
     chosen = [problem.variable_map[i] for i, bit in enumerate(bits) if bit]
-    overlaps = [
-        (a, b) for a, b in itertools.combinations(chosen, 2) if stems_overlap(a, b)
-    ]
+    overlaps = [(a, b) for a, b in itertools.combinations(chosen, 2) if stems_overlap(a, b)]
     assert not overlaps, (
         f"{len(overlaps)} overlapping stem pairs in the best-found solution; "
         "refund accumulation has outgrown the hard-constraint penalty"
@@ -202,7 +198,5 @@ def test_stacking_only_correlates_with_vienna_on_real_folds():
     mean_m = sum(modelled) / len(modelled)
     mean_a = sum(actual) / len(actual)
     cov = sum((m - mean_m) * (a - mean_a) for m, a in zip(modelled, actual, strict=True))
-    var = (
-        sum((m - mean_m) ** 2 for m in modelled) * sum((a - mean_a) ** 2 for a in actual)
-    ) ** 0.5
+    var = (sum((m - mean_m) ** 2 for m in modelled) * sum((a - mean_a) ** 2 for a in actual)) ** 0.5
     assert cov / var > 0.85, "stacking surrogate fidelity regressed below the spec baseline"

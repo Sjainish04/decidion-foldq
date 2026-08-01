@@ -31,17 +31,12 @@ def generate_maximal_stems(
             if not can_pair(sequence[i], sequence[j], allow_wobble):
                 continue
             # Skip non-maximal seeds: this helix extends outward, so a longer one exists.
-            if (
-                i > 0
-                and j < n - 1
-                and can_pair(sequence[i - 1], sequence[j + 1], allow_wobble)
-            ):
+            if i > 0 and j < n - 1 and can_pair(sequence[i - 1], sequence[j + 1], allow_wobble):
                 continue
             k = 0
             # Extend inward while the next pair is legal and leaves a valid hairpin.
-            while (
-                j - i - 2 * k >= min_hairpin + 1
-                and can_pair(sequence[i + k], sequence[j - k], allow_wobble)
+            while j - i - 2 * k >= min_hairpin + 1 and can_pair(
+                sequence[i + k], sequence[j - k], allow_wobble
             ):
                 k += 1
             if k >= min_stem_length:

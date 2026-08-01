@@ -36,9 +36,7 @@ def build_stem_qubo(
     overlap_penalty = (
         penalties.overlap if penalties.overlap is not None else calibrate_penalty(linear)
     )
-    crossing_penalty = (
-        penalties.crossing if penalties.crossing is not None else overlap_penalty
-    )
+    crossing_penalty = penalties.crossing if penalties.crossing is not None else overlap_penalty
 
     quadratic: dict[tuple[int, int], float] = {}
 

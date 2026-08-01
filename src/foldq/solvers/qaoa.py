@@ -140,7 +140,7 @@ class QAOASolver:
         _, weights, bitstrings = sample_energies(optimization.x)
         samples = tuple(
             Sample(bits=bits, energy=problem.energy(bits), num_occurrences=int(weight))
-            for bits, weight in zip(bitstrings, weights)
+            for bits, weight in zip(bitstrings, weights, strict=True)
         )
 
         return SolverResult(

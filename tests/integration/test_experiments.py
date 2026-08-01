@@ -110,7 +110,7 @@ def test_e2_lower_min_stem_length_never_reduces_representable_fraction(tmp_path)
     stem_rows = frame[frame["encoding"] == "stem"]
     for _key, group in stem_rows.groupby(["sequence_id", "stem_mode"]):
         ordered = group.sort_values("min_stem_length")["representable_fraction"].tolist()
-        assert all(a >= b - 1e-9 for a, b in zip(ordered, ordered[1:]))
+        assert all(a >= b - 1e-9 for a, b in zip(ordered, ordered[1:], strict=False))
 
 
 def test_e2_lower_min_stem_length_costs_variables(tmp_path):
@@ -121,4 +121,4 @@ def test_e2_lower_min_stem_length_costs_variables(tmp_path):
     stem_rows = frame[frame["encoding"] == "stem"]
     for _key, group in stem_rows.groupby(["sequence_id", "stem_mode"]):
         ordered = group.sort_values("min_stem_length")["num_variables"].tolist()
-        assert all(a >= b for a, b in zip(ordered, ordered[1:]))
+        assert all(a >= b for a, b in zip(ordered, ordered[1:], strict=False))

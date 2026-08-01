@@ -46,7 +46,7 @@ def test_conflict_graph_has_node_per_stem_and_edge_per_conflict():
     stems = [Stem(0, 20, 2), Stem(10, 30, 2), Stem(40, 49, 2)]
     graph = build_conflict_graph(stems, forbid_crossing=True)
     assert graph.number_of_nodes() == 3
-    assert graph.has_edge(0, 1)      # crossing
+    assert graph.has_edge(0, 1)  # crossing
     assert not graph.has_edge(0, 2)  # disjoint
 
 
