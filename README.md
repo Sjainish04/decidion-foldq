@@ -18,7 +18,7 @@ draft of the project (the original design spec) made a claim that later measurem
 or overturned, that correction is stated explicitly in this document rather than silently
 dropped — see [Results](#results) and [Known Limitations](#known-limitations).
 
-**Implemented and tested (262 passing tests):**
+**Implemented and tested (267 passing tests):**
 
 - Sequence validation and a ViennaRNA reference backend (MFE structure/energy/base pairs,
   configurable `dangles`, temperature, and lonely-pair suppression).
@@ -100,7 +100,7 @@ Challenge page: https://www.thewiser.org/summer-program-2026/modernachallenge
 | Candidate comparison | `foldq.evaluation.gates`, `foldq.evaluation.metrics` |
 | Scaling analysis | `foldq.experiments.e2_encoding` |
 | Resource analysis | `foldq.evaluation.resources` |
-| Reproducible implementation | pinned dependency ranges, 262 tests, `make reproduce`, run manifests |
+| Reproducible implementation | pinned dependency ranges, 267 tests, `make reproduce`, run manifests |
 | Communication | `foldq.reporting` decision cards and figures |
 
 ---
@@ -133,25 +133,37 @@ generation: ..."`, `"energy model: ..."`, `"optimizer: ..."`, `"indeterminate: i
 large for exact ground truth"`, or `"no failure: all gates passed"`. This string is what a
 decision card's **Attribution** line and every experiment table's `attribution` column report.
 
-### Measured at scale (n = 40)
+### Measured at scale (n = 19, default configuration)
+
+At the default configuration (`charge_refund` energy model, `immediate_only` nesting policy,
+adaptive overlap penalty):
 
 | Gate | Result |
 |---|---|
-| A — reference structure representable | 37/40 = 92% |
-| B — reference is the QUBO ground state | 36/40 = 90% |
-| **B conditional on A (formulation fidelity)** | **36/37 = 97%** |
-| C — solver reached the QUBO ground state | 40/40 = 100% |
-| D — mean base-pair F1 | 0.992 |
-| D — mean energy gap | +0.05 kcal/mol |
+| A — reference structure representable | 19/19 = 100% |
+| B — reference is the QUBO ground state | 17/19 = 89% |
+| **B conditional on A (formulation fidelity)** | **17/19 = 89%** |
+| D — mean base-pair F1 | 0.977 |
+| D — mean energy gap | +0.02 kcal/mol |
 
-Attribution of the four failures: 3 candidate generation, 1 energy model. Gate B should be
-reported as **~91–97% depending on the sample** (raw 90% unconditional, 97% conditional on
-representability), not by citing only the higher figure — the two numbers answer different
-questions and both are correct for what they measure.
+**Gate C is not measured by E1** — its table has no Gate-C column. Solver optimality is measured
+separately, at scale, by E3; see
+[Solver comparison](#solver-comparison-and-the-no-quantum-advantage-finding-rq3) below, where
+every heuristic solver except `greedy` and `random` passes Gate C on 100% of the runs where it
+is determinate.
+
+Attribution across the 19 instances: 17 no failure, 2 energy model, 0 candidate generation.
+
+Gate A reads 100% here specifically because this default-configuration sweep caps instances at
+`max_variables=18`. That is not representative of larger instances: the RQ2 encoding sweep in
+[Results](#results) below measures Gate A on the same kind of candidates at `min_stem_length=2`
+and finds it at 75%, not 100% — candidate-generation failures are real and grow with instance
+size, they are simply outside what this particular n=19 sample reaches.
 
 This table is a full-sweep result (`make reproduce`, not the `--quick` smoke test — see
-[Reproducibility](#reproducibility)). The mechanism is exercised directly by
-`foldq.evaluation.gates` and at scale by `foldq.experiments.e1_formulation`.
+[Reproducibility](#reproducibility)), reproduced at `results/full/e1_formulation.csv`. The
+mechanism is exercised directly by `foldq.evaluation.gates` and at scale by
+`foldq.experiments.e1_formulation`.
 
 ---
 
@@ -176,8 +188,9 @@ Verified against Python 3.11 with the project installed in `.venv` (`uv sync --e
 # Fast smoke test of every experiment (~10 seconds, reduced sample counts)
 .venv/bin/python -m foldq.experiments.run_all --quick --output results/quick
 
-# Full reproduction (minutes, not seconds — this is what the tables in this
-# README were measured from)
+# Full reproduction — ~2h47m on an M-series Mac, not minutes; this is what the
+# tables in this README were measured from. Run --quick first (~10s) as a smoke
+# test before committing to the full run.
 make reproduce
 ```
 
@@ -194,24 +207,46 @@ smoke test exercises the same code paths at drastically reduced sample counts fo
 checks and will not reproduce these exact figures — that is expected, not a discrepancy to
 chase.
 
-### Representability and the lone-pair ceiling (RQ2, n = 60)
+### Representability and the lone-pair ceiling (RQ2, n = 40)
 
 `foldq.experiments.e2_encoding` sweeps `min_stem_length` because Gate A's failures at the
 default setting (`min_stem_length=2`) were found to be dominated by lone base pairs — isolated,
 single-pair helices that `min_stem_length=2` structurally excludes from the candidate set
-before the QUBO is even built.
+before the QUBO is even built. Stem encoding, maximal mode, from
+`results/full/e2_encoding.csv`:
 
 | `min_stem_length` | Gate A pass | mean coverage | mean variables |
 |---|---|---|---|
-| 1 | 60/60 (100%) | 1.000 | 58.3 |
-| 2 | 56/60 (93%) | 0.991 | 19.2 |
-| 3 | 48/60 (80%) | 0.947 | 7.2 |
+| 1 | 40/40 (100%) | 1.000 | 551.4 |
+| 2 | 30/40 (75%) | 0.983 | 195.1 |
+| 3 | 16/40 (40%) | 0.905 | 72.7 |
 
 Every instance that fails Gate A at `min_stem_length=2` is rescued at `min_stem_length=1` — a
-**100% rescue rate** — at a **3.17× variable-count cost**. Lone base pairs are therefore the
-*sole* cause of the Gate A ceiling at the default setting. This answers RQ2 with a measured
-exchange curve rather than an assumption: perfect representability is achievable, and it costs
-roughly 3× the logical qubits.
+**100% rescue rate**, guaranteed structurally rather than merely observed (for a fixed sequence
+and stem mode, the `min_stem_length=1` candidate set is always a superset of the
+`min_stem_length=2` one — see the module docstring) — at a **2.83× variable-count cost**.
+Sub-stems mode shows the identical Gate A and coverage pattern at higher absolute variable
+counts: 1337.5 / 479.2 / 172.2 mean variables at `min_stem_length` 1 / 2 / 3 respectively. Lone
+base pairs are therefore the *sole* cause of the Gate A ceiling at the default setting. This
+answers RQ2 with a measured exchange curve rather than an assumption: perfect representability
+is achievable, and it costs roughly 2.8× the logical qubits.
+
+**Stem compression at matched representability.** The pair-based encoding baseline
+(`foldq.encodings.pair_encoding`, described in
+[Architecture and Repository Layout](#architecture-and-repository-layout)) gives every base
+pair its own variable, so it is 100% representable by construction — there is no lone-pair
+ceiling to close. Comparing at the only point where stem encoding matches that same 100%
+representability, `min_stem_length=1`:
+
+| encoding | mean variables | Gate A |
+|---|---|---|
+| pair | 858.4 | 100% |
+| **stem (maximal, `min_stem_length=1`)** | **551.4** | **100%** |
+
+Stem encoding reaches identical representability with **36% fewer variables**. This comparison
+is deliberately restricted to `min_stem_length=1` on both sides — the stem average pooled
+across all three `min_stem_length` values (273.1) is a smaller number but mixes configurations
+that are not representationally comparable, since only `min_stem_length=1` reaches 100% Gate A.
 
 ### Solver comparison and the no-quantum-advantage finding (RQ3)
 
@@ -225,9 +260,25 @@ and a strictly worse energy on the 5th. `ExactSolver` was changed to use
 `TreeDecompositionSolver` instead, which runs the same tree decomposition as a **deterministic**
 dynamic program over the elimination order and returns the true minimum on every call.
 
-Re-measured against the deterministic solver, **simulated annealing found the exact QUBO
-optimum in 8/8 verified instances up to 36 variables**, and **Gate C passed 40/40** in the
-full four-gate ladder run reported above.
+`foldq.experiments.e3_solvers` re-measures all eight solvers against the deterministic exact
+solver across 25 sequences, 20–50 nt (450 rows, `results/full/e3_solvers.csv`):
+
+| solver | mean F1 | mean energy gap | found optimum | mean runtime |
+|---|---|---|---|---|
+| tabu | 0.873 | 0.248 | 100% | 10.5 s |
+| local_search | 0.861 | 0.253 | 100% | 33.1 s |
+| path_integral_sqa | 0.849 | 0.259 | 100% | 19.8 s |
+| simulated_annealing | 0.837 | 0.264 | 100% | 0.19 s |
+| greedy | 0.572 | 1.860 | 60% | 0.006 s |
+| random | 0.213 | 5.405 | 13% | 0.03 s |
+
+"Found optimum" is determinate on only **30 of the 75 runs per solver** — the rest exceed
+`ExactSolver`'s ~22-variable ceiling (see [Known Limitations](#known-limitations)) and are
+excluded from that column rather than guessed at. Among the determinate runs, every solver
+except `greedy` and `random` finds the exact QUBO optimum 100% of the time, and Gate C passes
+accordingly. **Simulated annealing is ~55× faster than tabu (0.19 s vs. 10.5 s) for mean F1 and
+energy gap within 0.04 and 0.016 of it** — the runtime-versus-quality tradeoff a
+resource-constrained reproduction should actually care about.
 
 The corrected statement: **at sizes where exact verification is possible, these QUBO instances
 are easy for classical heuristics.** This is reported as a finding that strengthens the
@@ -236,17 +287,64 @@ in this problem, if any, has not been demonstrated to live in the optimization s
 verifiable sizes. It says nothing about instances beyond exact-verification reach (~22
 variables); see [Known Limitations](#known-limitations).
 
+### QAOA solution quality — the project's central negative result
+
+The classical comparison above only tells half the story. `foldq.experiments.e4_qaoa` asks the
+same question of the gate-based method: does QAOA actually reach the ground states classical
+heuristics reach 100% of the time? Noiseless expectation objective, by `reps` (99 rows,
+`results/full/e4_qaoa.csv`):
+
+| reps | logical qubits | circuit depth | 2-qubit gates | mean F1 | found optimum |
+|---|---|---|---|---|---|
+| 1 | 11.8 | 69 | 123.6 | 0.519 | 29.6% |
+| 2 | 11.8 | 123 | 247.1 | 0.405 | 40.7% |
+| 3 | 11.8 | 177 | 370.7 | 0.534 | 44.4% |
+
+Neither the objective nor noise closes the gap: CVaR scores mean F1 0.456, ground state found
+22.2% of the time; the plain expectation objective (all `reps` pooled) scores 0.486 and 38.3%;
+the same expectation objective transpiled onto `fake_hanoi` noise data scores 0.493 and 22.2%.
+**CVaR does not outperform the plain expectation objective at matched conditions** — it was
+tried specifically because it is the variant more commonly reported to help, and here it does
+not.
+
+**This is reported prominently, as the project's central negative result, because it is the
+evidence behind this project's no-quantum-advantage position.** QAOA reaches the exact QUBO
+ground state on 30–44% of instances depending on `reps`; every classical heuristic in the
+solver-comparison table above except `greedy` and `random` reaches it 100% of the time on the
+same class of instances. A gate-based method that cannot reliably match simple classical
+heuristics on instances small enough to verify exactly is itself evidence against near-term
+quantum advantage for this formulation — not merely an absence of evidence for one — and that
+is stated directly here rather than minimized.
+
 ### Surrogate fidelity (RQ4)
 
-The stem-additive QUBO objective correlates with true ViennaRNA thermodynamic energy at
-**r ≈ 0.958**, measured over sequences **30–100 nt** under the **default `dangles=2`** folding
-model (`scripts/probes/03_exact_reach.py`).
+The stem-additive QUBO objective, under the **default `charge_refund` energy model**, correlates
+with true ViennaRNA thermodynamic energy at **r = 0.9935** (MAE 1.24 kcal/mol), measured over
+sequences **30–100 nt** under the default `dangles=2` folding model
+(`scripts/probes/02_surrogate_fidelity.py`). Restricted to **30–60 nt** — the narrower range
+this project's benchmark generator actually produces sequences in most often — the same
+default-model surrogate scores **r = 0.9804** (MAE 0.95 kcal/mol).
 
-That figure is frequently quoted alone, and doing so is misleading: restricted to **30–60 nt** —
-the narrower range this project's benchmark generator actually produces sequences in most
-often — the same surrogate scores **r ≈ 0.85**, and varies **0.77–0.89 across random seeds** at
-that range. Both numbers are reported here; citing only 0.958 overstates the surrogate's
-fidelity at the sizes most of this project's other experiments actually run at.
+| length range | `stacking_only` r | `charge_refund` (default) r | `charge_refund` MAE |
+|---|---|---|---|
+| 30–100 nt | 0.9584 | **0.9935** | 1.24 kcal/mol |
+| 30–60 nt | 0.8943 | **0.9804** | 0.95 kcal/mol |
+
+The `stacking_only` column is kept as the ablation contrast, not the headline: it is the energy
+model without the charge-and-refund hairpin/interior-loop construction, and E1 shows exactly
+what dropping that construction costs at the level of Gate B, not just correlation —
+`stacking_only` reaches Gate B on only **50.9%** of instances (pooled across nesting policy and
+overlap-penalty settings) versus charge-and-refund's **89.5%**
+(`results/full/e1_formulation.csv`). A weaker surrogate does not just correlate worse, it
+changes the QUBO's actual ground state more often.
+
+The caveat that a surrogate correlation "drops on short sequences" applies to `stacking_only`,
+not to the default model: `stacking_only` varies **0.690–0.934 across random seeds** (mean
+0.846) at 30–60 nt, a real and fairly wide spread, while the default `charge_refund` model holds
+**0.9804** at the same range. Citing only the 30–100 nt headline number for either model would
+overstate its fidelity at the shorter lengths most of this project's other experiments actually
+run at, which is why both ranges are reported for both models here rather than only the wider,
+better-looking one.
 
 ### Quantum resource scaling (RQ5)
 
@@ -280,22 +378,72 @@ routing actually happened.
 Disabling the crossing-pair penalty (`forbid_crossing=False`, or `foldq predict
 --pseudoknots`) lets this formulation express structures that ViennaRNA's classical dynamic
 program cannot represent **at all**, because ViennaRNA's dot-bracket notation only nests, never
-crosses.
+crosses. Measured by `foldq.experiments.e5_pseudoknot` under the default `dangles=2` folding
+model (`results/full/e5_pseudoknot.csv`):
 
 | | 28 nt (8 true bp) | 33 nt (10 true bp) |
 |---|---|---|
-| ViennaRNA | F1 0.667, recall 0.500 | F1 0.667, recall 0.500 |
+| ViennaRNA | F1 0.667, recall 0.500 | **F1 0.000, recall 0.000** |
 | FoldQ strict mode | F1 0.667, recall 0.500 | F1 0.667, recall 0.500 |
 | **FoldQ pseudoknot mode** | **F1 1.000, recall 1.000** | **F1 1.000, recall 1.000** |
 
-Disabling the crossing penalty takes base-pair recovery from 50% to 100% on structures
-ViennaRNA is structurally incapable of expressing. Because ViennaRNA cannot score a crossing
-structure at all (its energy evaluator requires legal, non-crossing dot-bracket input), this
+The 33 nt fixture's ViennaRNA row is not a typo. Under the default `dangles=2` model, ViennaRNA's
+MFE fold shares **zero** of the reference's 10 base pairs — it is an entirely different fold, not
+a partially-overlapping one. (Under the non-default `dangles=0` model the same fixture's
+ViennaRNA fold shares 5 of 10 pairs, F1 0.667 — see
+[Thermodynamic Model and Its Limits](#thermodynamic-model-and-its-limits) and that record's
+`notes` field in `data/fixtures/curated.json`. `dangles=2` is reported here because it is what
+this pipeline and ordinary ViennaRNA/RNAfold both use by default.) Disabling the crossing
+penalty takes FoldQ's own base-pair recovery from 50% to 100% on both fixtures — structures
+ViennaRNA is structurally incapable of expressing at all. Because ViennaRNA cannot score a
+crossing structure (its energy evaluator requires legal, non-crossing dot-bracket input), this
 comparison is made through base-pair precision/recall/F1 against each fixture's known
 structure, never through an energy gap — a pseudoknotted `FoldCandidate` correctly reports
 `is_pseudoknotted=True` and a NaN `vienna_energy` by construction
 (`src/foldq/decoding/decode.py`), and the decision card explains that NaN rather than presenting
 it as missing data.
+
+**The honest result at real-structure scale.** Both fixtures above are small and constructed
+specifically to be representable. On a real, larger structure — the yeast tRNA-Phe cloverleaf
+(76 nt, a public-domain sequence, no pseudoknot, 229 variables) — the same pipeline scores
+**F1 0.326, recall 0.333**, identically in strict and pseudoknot mode (there is no crossing pair
+for the penalty toggle to affect). This is reported here deliberately rather than only citing
+the two small pseudoknot fixtures: the method performs well on small and specifically-designed
+structures, and recovers roughly a third of base pairs on a real 76 nt structure — a materially
+harder and more representative regime than either pseudoknot fixture.
+
+**The CLI reports a different, also-correct number for the 28 nt fixture.** `foldq predict
+--pseudoknots` does not reproduce the pseudoknot-mode 1.000 above; it prints 0.667, and that is
+correct, not a bug. Actual output:
+
+```text
+$ .venv/bin/foldq predict --sequence GGGGAAAAGCGCAAAACCCCAAAAGCGC --pseudoknots --seed 42
+
+# FoldQ prediction: cli
+
+Sequence      GGGGAAAAGCGCAAAACCCCAAAAGCGC
+ViennaRNA MFE ((((............))))........  -6.00 kcal/mol
+FoldQ         ............................  nan kcal/mol
+
+Solver        simulated_annealing (8 variables, density 0.39)
+Base-pair F1  0.667
+Energy gap    nan kcal/mol
+Attribution   pseudoknotted candidate: the selected structure contains crossing pairs, which
+              ViennaRNA cannot represent or score. The reference fold can hold at most one of
+              any two crossing helices, so precision against it is capped even when the
+              structure is correct. Divergence from the nested reference is expected here, not
+              a failure
+```
+
+Both 1.000 and 0.667 are correct measurements of different things, against different
+references. E5's 1.000 scores the candidate against the curated fixture's own annotated *known*
+structure — a ground truth that exists only for curated records. The CLI has no such ground
+truth for an arbitrary sequence, so `gate_d_physical` falls back to the only reference an
+arbitrary sequence has: ViennaRNA's own MFE fold, which — being ordinary dot-bracket notation —
+can hold at most one of any two crossing helices. A candidate that correctly recovers both
+helices of a crossing pair therefore gets full recall but only ~0.5 precision against the one
+helix that reference can see, capping F1 at 0.667 even when the structure is exactly right. Do
+not expect the CLI to print 1.000 on this fixture; 0.667 is the ceiling, not a defect.
 
 **Fixture provenance.** The two pseudoknot fixtures used above
 (`pk_htype_constructed_28`, `pk_htype_constructed_33` in `data/fixtures/curated.json`) were
@@ -451,9 +599,10 @@ Stated plainly rather than left to be discovered missing. Deferred, and why:
   3.11 interpreter with no OS-level RNA-folding dependency beyond the `viennarna` wheel; a
   container was judged to add packaging overhead without adding reproducibility for a
   submission of this size.
-- **Most CI workflows.** Only what was needed to keep the test suite and lint green locally
-  during development was set up; a full lint/test/integration/reproduce/docker workflow matrix
-  was not built out.
+- **Most CI workflows.** Only what was needed to keep the test suite green locally during
+  development was set up; a full lint/test/integration/reproduce/docker workflow matrix was not
+  built out, and `make lint`/`make typecheck` are not currently green — see
+  [Testing](#testing).
 - **Notebooks.** All exploratory work lives in `scripts/probes/` as plain scripts, not notebooks
   — easier to diff, easier to run headless, and this project had no need for inline
   visualization during development.
@@ -485,7 +634,7 @@ If a reader is looking for any of the above and does not find it, this is why.
 
 2. **Lone base pairs are the dominant Gate A ceiling.** At the default `min_stem_length=2`,
    isolated single-pair helices account for the entire measured Gate A gap (100% rescue rate at
-   `min_stem_length=1`, at 3.17× the variable count). See [Results](#results).
+   `min_stem_length=1`, at 2.83× the variable count). See [Results](#results).
 
 3. **The hard-constraint penalty bound is not provably sufficient above brute-force-verifiable
    sizes.** `calibrate_penalty` sets the overlap/crossing penalty to `2 * max|E_s| + 1`, which
@@ -493,20 +642,23 @@ If a reader is looking for any of the above and does not find it, this is why.
    outbids *accumulated* refund terms from deep nesting chains. It is empirically valid at
    every size E1 can check exactly (up to `ExactSolver`'s ~22-variable ceiling) and unproven
    above that. Under the non-default `all_nestable` nesting policy, this bound demonstrably
-   failed in practice: **14 of 18 instances at 70–150 nt produced structurally invalid QUBO
-   optima**, with energies as low as −2689 kcal/mol from unbounded refund accumulation. This is
-   why `immediate_only` — which caps refund accumulation at one level and was independently
-   re-verified to restore validity in 8/8 follow-up instances at the same length range — is the
-   default nesting policy, and why `all_nestable` remains selectable only for the E1 ablation
-   that measures this failure mode directly (`src/foldq/encodings/energy.py`,
-   `tests/scientific/test_energy_model.py`).
+   failed in practice: **14 of 18 instances at 70–200 nt produced structurally invalid QUBO
+   optima** (the defect rate), with energies as low as −2689 kcal/mol from unbounded refund
+   accumulation. This is why `immediate_only` — which caps refund accumulation at one level — is
+   the default nesting policy. A separate, smaller follow-up check independently re-verified
+   that `immediate_only` restores validity in **8 of 8** instances at 70–150 nt (the *fix*
+   verification, not the defect rate above — two different numbers answering two different
+   questions). That 8/8 figure is also the one cited in `src/foldq/encodings/energy.py` and
+   `tests/scientific/test_energy_model.py`'s docstrings, where its phrasing reads as if it were
+   the defect count; it is not. `all_nestable` remains selectable only for the E1 ablation that
+   measures the original failure mode directly.
 
 4. **Exact ground-truth verification caps near 22 variables.** Gates B and C, and every
    solver-optimality claim in this document, are meaningful only up to `ExactSolver`'s reach.
    Above that, Gates B and C report `None` (indeterminate), not a pass or a fail — this is
-   visible directly in E3's full-length sweep, where lengths 40 and 50 (measured stem counts
-   43–120) never produce exact ground truth and are reported that way rather than silently
-   dropped (see the E3 module docstring for the specific bug this was fixed from).
+   visible directly in E3's full-length sweep, where lengths 30, 40, and 50 (measured stem
+   counts 23–106) never produce exact ground truth and are reported that way rather than
+   silently dropped (see the E3 module docstring for the specific bug this was fixed from).
 
 5. **The QUBO is a degree-2 approximation of the Turner nearest-neighbor model,** not a
    complete thermodynamic representation of every RNA loop type; see
@@ -576,10 +728,15 @@ it is stated here explicitly rather than left for a future reproducer to debug f
 ### Reproduce
 
 ```bash
-.venv/bin/pytest tests -q                                          # 262 tests
+.venv/bin/pytest tests -q                                          # 267 tests
 .venv/bin/python -m foldq.experiments.run_all --output results/    # full sweep (make reproduce)
 .venv/bin/python -m foldq.experiments.run_all --quick --output results/quick   # ~10s smoke test
 ```
+
+**`make reproduce` (the full, non-`--quick` sweep) takes approximately 2 hours 47 minutes on an
+M-series Mac.** Read that before starting it, not after. `--quick` (~10 seconds) exercises every
+code path at drastically reduced sample counts as a smoke test and is what CI runs; it does not
+reproduce the exact figures in this README, which are all full-sweep results.
 
 `foldq.experiments.run_all` skips E4 (QAOA) with a printed message, rather than failing, when
 the optional `quantum` extra is not installed — the classical/quantum-inspired results (E1, E2,
@@ -589,7 +746,7 @@ E3, E5) do not depend on it.
 
 ## Testing
 
-262 tests across four categories, all passing:
+267 tests across four categories, all passing:
 
 - **`tests/unit/`** — sequence validation, base-pair compatibility, stem extraction, conflict
   detection, dot-bracket conversion, QUBO coefficient construction, decoding, repair,
@@ -602,9 +759,19 @@ E3, E5) do not depend on it.
   repair → rescore → gates path, and every experiment runner (E1–E5, including the noise study).
 
 ```bash
-.venv/bin/pytest tests -q
-.venv/bin/ruff check src tests
+.venv/bin/pytest tests -q                # make test      -- passes, 267/267
+.venv/bin/ruff check src tests           # make lint (1/2) -- currently fails, 22 errors
+.venv/bin/ruff format --check src tests  # make lint (2/2) -- currently fails, 24 files
+.venv/bin/mypy src/foldq                 # make typecheck  -- currently fails, 7 errors
 ```
+
+**`make lint` and `make typecheck` do not currently pass.** Stated plainly rather than implied:
+`ruff check` reports 22 errors across 12 files, 17 of them in `src/foldq/` (mostly `zip()`
+missing `strict=` and `typer.Option()` called directly in CLI argument defaults) and 5 in
+`tests/`; `ruff format --check` separately reports 24 files that would be reformatted; `mypy
+src/foldq` reports 7 errors, all in `src/foldq/experiments/e4_qaoa.py`, from `argparse` values
+typed `str | int | None` flowing into functions that expect concrete `int`/`str` types. The test
+suite above is green; lint and typecheck debt is real and unresolved as of this commit.
 
 ---
 

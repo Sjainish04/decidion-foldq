@@ -15,7 +15,15 @@ DEFAULT_FIXTURE_PATH = Path("data/fixtures/curated.json")
 
 @dataclass(frozen=True)
 class CuratedRecord:
-    """A published RNA with a structure established independently of our pipeline."""
+    """A benchmark RNA record, curated with a known structure and tracked provenance.
+
+    Not every record is a published, literature-derived structure: three of the four
+    curated records (the GC-hairpin control and the two H-type pseudoknots) were
+    constructed for this project specifically to exercise a property (a clean control
+    fold, a representable crossing structure) and carry no external citation. Only the
+    yeast tRNA-Phe cloverleaf is a published structure. Each record's `source` field
+    states which case applies; do not assume "curated" implies "literature-derived".
+    """
 
     sequence_id: str
     sequence: str

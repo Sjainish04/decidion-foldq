@@ -4,11 +4,15 @@ Answers RQ2 and RQ5. Re-measures the length-to-variable mapping at the resolved
 default of min_stem_length=2, which the spec flags as differing from its own
 tables (measured at 3).
 
-MANDATORY ADDITION 3 -- the lone-pair hypothesis. The four-gate ladder
-measured Gate A at 92% (n=40), and 3 of its 4 failures were lone base pairs:
-isolated k=1 helices that `min_stem_length=2` structurally excludes before
-the QUBO is even built (`biology/stems.py:generate_maximal_stems` drops any
-seed whose helix length falls below `min_stem_length`). The `min_stem_length`
+MANDATORY ADDITION 3 -- the lone-pair hypothesis. At the default `min_stem_length=2`,
+isolated k=1 helices are structurally excluded from the candidate set before the QUBO
+is even built (`biology/stems.py:generate_maximal_stems` drops any seed whose helix
+length falls below `min_stem_length`). E1's own default-configuration sweep sees 100%
+Gate A, but only because it caps instances at 18 variables; the hypothesis this module
+tests is that lone base pairs are the dominant Gate A failure mode once instances grow
+past that cap, and this sweep measures it directly rather than assuming it: at
+`min_stem_length=2` (maximal mode) Gate A is 75% (n=40), not 100%, and every one of
+those failures is rescued at `min_stem_length=1`. The `min_stem_length`
 sweep below now includes 1, not just (2, 3), so `representable_fraction` at
 1 vs. 2 is an actual measurement of whether that ceiling closes, and
 `num_variables` at 1 vs. 2 measures what it costs to close it. This is a
