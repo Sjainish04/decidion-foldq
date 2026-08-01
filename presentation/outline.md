@@ -127,7 +127,15 @@ Every instance failing at `msl=2` is rescued at `msl=1` — a **100% rescue rate
 | 3 | 177 | 371 | **44.4%** |
 
 Against classical: **100%** for tabu, local search, SQA and simulated annealing.
-CVaR does not beat the expectation objective (0.456 vs 0.486 F1).
+
+**The shot budget matters more than the circuit depth.** Pooling `reps` and splitting
+by shots instead: **14.8% → 44.4% → 55.6%** across 256 / 1024 / 4096. `reps=3` at 256
+shots reaches the optimum 22.2% of the time; `reps=1` at 4096 shots reaches it 33.3%.
+
+Even at the best setting measured — `reps=3`, 4096 shots — QAOA reaches **66.7%** where
+classical heuristics reach 100%. CVaR was run at one configuration only, so it is
+**indistinguishable from expectation where both were measured** (n=9, 22.2% each) — no
+claim either way.
 
 **Simulated annealing reaches the optimum 100% of the time in 0.19 s** — 55× faster
 than tabu for comparable quality.

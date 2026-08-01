@@ -1617,8 +1617,12 @@ import {
   attributionBreakdown,
   encodingSummary,
   noiseComparison,
+  objectiveComparison,
   pseudoknotComparison,
+  qaoaByLength,
   qaoaByReps,
+  qaoaByShots,
+  qaoaGrid,
   scalingByLength,
   solverSummary,
 } from "@/lib/charts/transforms";
@@ -1722,6 +1726,68 @@ describe("qaoaByReps", () => {
   });
 });
 
+describe("qaoaByShots", () => {
+  it("shows the sampling budget moving the result further than circuit depth", () => {
+    const shots = qaoaByShots();
+    expect(shots.map((r) => r.shots)).toEqual([256, 1024, 4096]);
+    expect(shots.map((r) => Number(r.groundStateRate.toFixed(3)))).toEqual([
+      0.148, 0.444, 0.556,
+    ]);
+    // 14.8 -> 55.6 across shots against 29.6 -> 44.4 across reps. The reps table
+    // alone frames circuit depth as the driver, and it is not the larger effect.
+    const reps = qaoaByReps();
+    const spread = (values: number[]) => Math.max(...values) - Math.min(...values);
+    expect(spread(shots.map((r) => r.groundStateRate))).toBeGreaterThan(
+      spread(reps.map((r) => r.groundStateRate)),
+    );
+  });
+});
+
+describe("qaoaGrid", () => {
+  it("shows depth failing to compensate for a thin sample", () => {
+    const grid = qaoaGrid();
+    const at = (reps: number, shots: number) =>
+      grid.find((c) => c.reps === reps && c.shots === shots)!.groundStateRate;
+    expect(grid).toHaveLength(9);
+    expect(at(3, 256)).toBeCloseTo(0.222, 3);
+    expect(at(1, 4096)).toBeCloseTo(0.333, 3);
+    // The deepest circuit on the smallest budget loses to the shallowest circuit
+    // on the largest one.
+    expect(at(3, 256)).toBeLessThan(at(1, 4096));
+  });
+
+  it("covers every cell with the same number of circuits", () => {
+    for (const cell of qaoaGrid()) expect(cell.circuits).toBe(9);
+  });
+});
+
+describe("objectiveComparison", () => {
+  it("compares CVaR only against expectation at the setting both were run", () => {
+    const { setting, arms } = objectiveComparison();
+    // CVaR exists at exactly one configuration. Comparing it against expectation
+    // pooled over three shot budgets it never received would attribute the shot
+    // budget to the objective.
+    expect(setting).toEqual({ reps: 3, shots: 256, noiseBackend: "none" });
+    expect(arms.map((a) => a.objective).sort()).toEqual(["cvar", "expectation"]);
+    for (const arm of arms) expect(arm.circuits).toBe(9);
+  });
+
+  it("finds the two indistinguishable on ground-state rate", () => {
+    const { arms } = objectiveComparison();
+    const [a, b] = arms;
+    expect(a.groundStateRate).toBe(b.groundStateRate);
+  });
+});
+
+describe("qaoaByLength", () => {
+  it("shows the ground-state rate falling as the instance grows", () => {
+    const rows = qaoaByLength();
+    expect(rows.map((r) => r.length)).toEqual([20, 25, 30]);
+    expect(rows[0].groundStateRate).toBeGreaterThan(rows.at(-1)!.groundStateRate);
+    expect(rows[0].meanQubits).toBeLessThan(rows.at(-1)!.meanQubits);
+  });
+});
+
 describe("noiseComparison", () => {
   it("shows the transpilation overhead of targeting a real device", () => {
     const { noiseless, noisy } = noiseComparison();
@@ -1730,6 +1796,8 @@ describe("noiseComparison", () => {
     expect(noisy.meanTwoQubitGates).toBeGreaterThan(noiseless.meanTwoQubitGates);
     expect(noisy.meanTranspiledDepth).toBeGreaterThan(noiseless.meanTranspiledDepth);
     expect(noisy.backend).toBe("fake_hanoi");
+    expect(noiseless.circuits).toBe(9);
+    expect(noisy.circuits).toBe(9);
   });
 });
 
@@ -1891,26 +1959,33 @@ export interface QaoaRow {
   meanRuntimeSeconds: number;
 }
 
+const NOISELESS_EXPECTATION = (r: Row) =>
+  r.objective === "expectation" && r.noise_backend === "none";
+
+/** Ground-state rate over rows where Gate C is determinate. Shared by every QAOA
+ *  transform so a null is never counted as a failure in one view and excluded in
+ *  another. */
+function groundStateRate(rows: Row[]): number {
+  const determinate = rows.filter((r) => r.found_ground_state !== null);
+  return determinate.length === 0
+    ? 0
+    : determinate.filter((r) => r.found_ground_state === true).length /
+        determinate.length;
+}
+
 /** The README's QAOA table is the **noiseless expectation** subset: 27 rows per
  *  `reps` (3 shot settings x 9 sequences). e4 also contains 9 `fake_hanoi` rows at
  *  reps=1 and 9 CVaR rows at reps=3. Pooling them changes every published figure —
  *  reps=1 becomes 27.8% instead of 29.6% — so both filters are required, not
  *  cosmetic. `noiseComparison` covers the device-target rows separately. */
 export function qaoaByReps(): QaoaRow[] {
-  const rows = loadExperiment("e4_qaoa").filter(
-    (r) => r.objective === "expectation" && r.noise_backend === "none",
-  );
+  const rows = loadExperiment("e4_qaoa").filter(NOISELESS_EXPECTATION);
   return [...groupBy(rows, (r) => Number(r.reps))]
     .map(([reps, group]) => {
-      const determinate = group.filter((r) => r.found_ground_state !== null);
       return {
         reps,
         circuits: group.length,
-        groundStateRate:
-          determinate.length === 0
-            ? 0
-            : determinate.filter((r) => r.found_ground_state === true).length /
-              determinate.length,
+        groundStateRate: groundStateRate(group),
         meanF1: mean(group.map((r) => num(r, "base_pair_f1"))),
         meanCircuitDepth: mean(group.map((r) => num(r, "circuit_depth"))),
         meanTranspiledDepth: mean(group.map((r) => num(r, "transpiled_depth"))),
@@ -1920,6 +1995,110 @@ export function qaoaByReps(): QaoaRow[] {
       };
     })
     .sort((a, b) => a.reps - b.reps);
+}
+
+export interface QaoaShotsRow {
+  shots: number;
+  circuits: number;
+  groundStateRate: number;
+  meanF1: number;
+}
+
+/** The `reps` view is the conventional presentation and it buries the larger
+ *  effect. Across shot budgets the ground-state rate moves 14.8% to 55.6%; across
+ *  `reps` it moves 29.6% to 44.4%. At these sizes the binding constraint was the
+ *  sampling budget, not circuit expressivity. */
+export function qaoaByShots(): QaoaShotsRow[] {
+  const rows = loadExperiment("e4_qaoa").filter(NOISELESS_EXPECTATION);
+  return [...groupBy(rows, (r) => Number(r.shots))]
+    .map(([shots, group]) => ({
+      shots,
+      circuits: group.length,
+      groundStateRate: groundStateRate(group),
+      meanF1: mean(group.map((r) => num(r, "base_pair_f1"))),
+    }))
+    .sort((a, b) => a.shots - b.shots);
+}
+
+export interface QaoaGridCell {
+  reps: number;
+  shots: number;
+  circuits: number;
+  groundStateRate: number;
+  meanF1: number;
+}
+
+/** The full reps x shots grid, which shows the trade the marginal views cannot:
+ *  `reps=3` at 256 shots (22.2%) loses to `reps=1` at 4096 shots (33.3%). A deeper
+ *  circuit on a thinner sample is the worse configuration. */
+export function qaoaGrid(): QaoaGridCell[] {
+  const rows = loadExperiment("e4_qaoa").filter(NOISELESS_EXPECTATION);
+  return [...groupBy(rows, (r) => `${r.reps}|${r.shots}`)]
+    .map(([, group]) => ({
+      reps: Number(group[0].reps),
+      shots: Number(group[0].shots),
+      circuits: group.length,
+      groundStateRate: groundStateRate(group),
+      meanF1: mean(group.map((r) => num(r, "base_pair_f1"))),
+    }))
+    .sort((a, b) => a.reps - b.reps || a.shots - b.shots);
+}
+
+export interface ObjectiveArm {
+  objective: string;
+  circuits: number;
+  groundStateRate: number;
+  meanF1: number;
+}
+
+/** CVaR was run at exactly one configuration — reps=3, 256 shots, noiseless — so it
+ *  can only be compared against the expectation rows at that same setting. Comparing
+ *  it against expectation pooled over every shot count would attribute the sampling
+ *  budget to the objective and manufacture a difference that is not there. The
+ *  setting is returned alongside the arms so the UI must state it. */
+export function objectiveComparison(): {
+  setting: { reps: number; shots: number; noiseBackend: string };
+  arms: ObjectiveArm[];
+} {
+  const setting = { reps: 3, shots: 256, noiseBackend: "none" };
+  const rows = loadExperiment("e4_qaoa").filter(
+    (r) =>
+      Number(r.reps) === setting.reps &&
+      Number(r.shots) === setting.shots &&
+      r.noise_backend === setting.noiseBackend,
+  );
+  const arms = [...groupBy(rows, (r) => String(r.objective))]
+    .map(([objective, group]) => ({
+      objective,
+      circuits: group.length,
+      groundStateRate: groundStateRate(group),
+      meanF1: mean(group.map((r) => num(r, "base_pair_f1"))),
+    }))
+    .sort((a, b) => a.objective.localeCompare(b.objective));
+  return { setting, arms };
+}
+
+export interface QaoaLengthRow {
+  length: number;
+  circuits: number;
+  groundStateRate: number;
+  meanF1: number;
+  meanQubits: number;
+}
+
+/** Sequence length is encoded in the identifier (`syn_30_001`), not carried as its
+ *  own column in e4. */
+export function qaoaByLength(): QaoaLengthRow[] {
+  const rows = loadExperiment("e4_qaoa").filter(NOISELESS_EXPECTATION);
+  return [...groupBy(rows, (r) => Number(String(r.sequence_id).split("_")[1]))]
+    .map(([length, group]) => ({
+      length,
+      circuits: group.length,
+      groundStateRate: groundStateRate(group),
+      meanF1: mean(group.map((r) => num(r, "base_pair_f1"))),
+      meanQubits: mean(group.map((r) => num(r, "logical_qubits"))),
+    }))
+    .sort((a, b) => a.length - b.length);
 }
 
 export interface NoiseArm {
@@ -1941,15 +2120,10 @@ export function noiseComparison(): { noiseless: NoiseArm; noisy: NoiseArm } {
   );
   const arm = (backend: string): NoiseArm => {
     const group = rows.filter((r) => r.noise_backend === backend);
-    const determinate = group.filter((r) => r.found_ground_state !== null);
     return {
       backend,
       circuits: group.length,
-      groundStateRate:
-        determinate.length === 0
-          ? 0
-          : determinate.filter((r) => r.found_ground_state === true).length /
-            determinate.length,
+      groundStateRate: groundStateRate(group),
       meanF1: mean(group.map((r) => num(r, "base_pair_f1"))),
       meanTranspiledDepth: mean(group.map((r) => num(r, "transpiled_depth"))),
       meanTwoQubitGates: mean(group.map((r) => num(r, "two_qubit_gates"))),
@@ -2014,7 +2188,7 @@ export function scalingByLength(): ScalingRow[] {
 - [ ] **Step 4: Run the tests**
 
 Run: `cd frontend && pnpm vitest run tests/unit/transforms.test.ts`
-Expected: PASS (11 tests)
+Expected: PASS (19 tests)
 
 If any expectation fails, **do not adjust the assertion to match the output.** Print the
 transform's result, compare it against the CSV with `pandas`, and fix whichever side is
@@ -2787,6 +2961,20 @@ describe("resources page", () => {
     expect(screen.getByText(/no live hardware|local simulator/i)).toBeInTheDocument();
     expect(screen.getAllByText(/fake_hanoi/).length).toBeGreaterThan(0);
   });
+
+  it("shows the shot budget as an axis, not only circuit depth", () => {
+    render(<ResourcesPage />);
+    expect(screen.getAllByText(/shots/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/sampling budget/i)).toBeInTheDocument();
+  });
+
+  it("states the configuration CVaR was compared at", () => {
+    render(<ResourcesPage />);
+    // Naming the setting is the guard against the pooled comparison that made
+    // CVaR look worse for a reason that was the shot budget.
+    expect(screen.getByText(/reps=3.*256 shots|256 shots.*reps=3/i)).toBeInTheDocument();
+    expect(screen.getByText(/indistinguishable/i)).toBeInTheDocument();
+  });
 });
 
 describe("pseudoknots page", () => {
@@ -2924,14 +3112,29 @@ export default function ScalingPage() {
 import { BarChart } from "@/components/analytics/BarChart";
 import { ChartCard } from "@/components/analytics/ChartCard";
 import { DataTable } from "@/components/analytics/DataTable";
-import { noiseComparison, qaoaByReps, solverSummary } from "@/lib/charts/transforms";
+import { LineChart } from "@/components/analytics/LineChart";
+import {
+  noiseComparison,
+  objectiveComparison,
+  qaoaByLength,
+  qaoaByReps,
+  qaoaByShots,
+  qaoaGrid,
+  solverSummary,
+} from "@/lib/charts/transforms";
 
 const pct = (value: number) => `${(value * 100).toFixed(1)}%`;
 const fixed1 = (value: number) => value.toFixed(1);
 const fixed3 = (value: number) => value.toFixed(3);
 
+const SHOT_LEVELS = [256, 1024, 4096];
+
 export default function ResourcesPage() {
   const qaoa = qaoaByReps();
+  const shots = qaoaByShots();
+  const grid = qaoaGrid();
+  const objective = objectiveComparison();
+  const byLength = qaoaByLength();
   const { noiseless, noisy } = noiseComparison();
   const classical = solverSummary();
 
@@ -2940,17 +3143,19 @@ export default function ResourcesPage() {
       <header>
         <h1 className="text-2xl font-semibold">Quantum resource accounting</h1>
         <p className="mt-1 max-w-3xl text-sm text-[var(--text-secondary)]">
-          QAOA <strong>does not beat classical heuristics</strong> on these instances. It
-          reaches the QUBO ground state on 30–44% of runs depending on circuit depth,
-          while tabu, local search, simulated annealing and path-integral SQA reach it on
-          every determinate run. Reporting that plainly, with the circuit cost that bought
-          it, is the point of this page.
+          QAOA <strong>does not beat classical heuristics</strong> on these instances.
+          At the most favourable setting measured it reaches the QUBO ground state on
+          two thirds of runs, while tabu, local search, simulated annealing and
+          path-integral SQA reach it on every determinate run. Reporting that plainly,
+          with the circuit cost that bought it, is the point of this page — and the{" "}
+          <strong>sampling budget turns out to move the result further than circuit
+          depth does</strong>, which the conventional depth-only table hides.
         </p>
       </header>
 
       <ChartCard
         title="Ground-state rate against circuit cost"
-        description="Noiseless expectation objective, pooled across shot settings, by QAOA repetition count."
+        description="Noiseless expectation objective, pooled across shot budgets, by QAOA repetition count. The shot budget is broken out separately below."
         source="results/full/e4_qaoa.csv"
         table={{
           caption: "QAOA resource and outcome by reps",
@@ -2973,6 +3178,112 @@ export default function ResourcesPage() {
             { name: "Circuit depth", data: qaoa.map((r) => r.meanCircuitDepth) },
           ]}
           yLabel="count"
+        />
+      </ChartCard>
+
+      <ChartCard
+        title="The sampling budget moves the result further than circuit depth"
+        description="The same 81 noiseless circuits split by shot count rather than by reps."
+        source="results/full/e4_qaoa.csv"
+        table={{
+          caption: "QAOA outcome by shot budget",
+          columns: [
+            { key: "shots", label: "Shots" },
+            { key: "circuits", label: "Circuits" },
+            { key: "meanF1", label: "Mean F1", format: fixed3 },
+            { key: "groundStateRate", label: "Reached ground state", format: pct },
+          ],
+          rows: shots,
+        }}
+      >
+        <BarChart
+          categories={shots.map((r) => `${r.shots} shots`)}
+          series={[
+            { name: "Reached ground state", data: shots.map((r) => r.groundStateRate) },
+          ]}
+          yLabel="rate"
+          yMax={1}
+        />
+      </ChartCard>
+
+      <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
+        <h2 className="text-base font-semibold">Depth does not compensate for a thin sample</h2>
+        <p className="mb-3 mt-1 text-sm text-[var(--text-secondary)]">
+          The full grid. The deepest circuit on the smallest budget —{" "}
+          <code>reps=3</code> at 256 shots — reaches the ground state less often than
+          the shallowest circuit on the largest budget. At these sizes the binding
+          constraint was measurement, not circuit expressivity.
+        </p>
+        <DataTable
+          caption="Ground-state rate by reps and shot count"
+          columns={[
+            { key: "reps", label: "reps" },
+            ...SHOT_LEVELS.map((s) => ({
+              key: `s${s}`,
+              label: `${s} shots`,
+              format: pct,
+            })),
+          ]}
+          rows={[1, 2, 3].map((reps) => ({
+            reps,
+            ...Object.fromEntries(
+              SHOT_LEVELS.map((s) => [
+                `s${s}`,
+                grid.find((c) => c.reps === reps && c.shots === s)?.groundStateRate ?? null,
+              ]),
+            ),
+          }))}
+        />
+      </section>
+
+      <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
+        <h2 className="text-base font-semibold">CVaR against the expectation objective</h2>
+        <p className="mb-3 mt-1 text-sm text-[var(--text-secondary)]">
+          CVaR was run at one configuration only —{" "}
+          <strong>
+            reps={objective.setting.reps}, {objective.setting.shots} shots, noiseless
+          </strong>{" "}
+          — so it is compared here against the expectation circuits at that same
+          setting. At it the two are <strong>indistinguishable</strong>: identical
+          ground-state rate on 9 circuits each. Comparing CVaR against expectation
+          pooled over every shot budget would show a gap, but the gap would be the
+          sampling budget rather than the objective. No claim is made either way.
+        </p>
+        <DataTable
+          caption="CVaR and expectation at the one matched configuration"
+          columns={[
+            { key: "objective", label: "Objective" },
+            { key: "circuits", label: "Circuits" },
+            { key: "meanF1", label: "Mean F1", format: fixed3 },
+            { key: "groundStateRate", label: "Reached ground state", format: pct },
+          ]}
+          rows={objective.arms}
+        />
+      </section>
+
+      <ChartCard
+        title="Ground-state rate against instance size"
+        description="Noiseless expectation circuits grouped by sequence length."
+        source="results/full/e4_qaoa.csv"
+        table={{
+          caption: "QAOA outcome by sequence length",
+          columns: [
+            { key: "length", label: "Length (nt)" },
+            { key: "meanQubits", label: "Logical qubits", format: fixed1 },
+            { key: "circuits", label: "Circuits" },
+            { key: "meanF1", label: "Mean F1", format: fixed3 },
+            { key: "groundStateRate", label: "Reached ground state", format: pct },
+          ],
+          rows: byLength,
+        }}
+      >
+        <LineChart
+          categories={byLength.map((r) => `${r.length} nt`)}
+          series={[
+            { name: "Reached ground state", data: byLength.map((r) => r.groundStateRate) },
+          ]}
+          xLabel="sequence length"
+          yLabel="rate"
         />
       </ChartCard>
 
@@ -3138,7 +3449,7 @@ export default function PseudoknotsPage() {
 - [ ] **Step 6: Run the tests**
 
 Run: `cd frontend && pnpm vitest run tests/component/analytics-pages-2.test.tsx`
-Expected: PASS (9 tests)
+Expected: PASS (11 tests)
 
 - [ ] **Step 7: Commit**
 
@@ -5441,7 +5752,7 @@ export function headlineStats(): HeadlineStat[] {
       label: "QAOA reaches the ground state",
       value: `${Math.min(...rates)}–${Math.max(...rates)}%`,
       caption:
-        "Depending on circuit depth, on the noiseless expectation objective. Reported as measured.",
+        "Across circuit depth, on the noiseless expectation objective. The shot budget spans a wider range still — see Quantum resources.",
       source: "results/full/e4_qaoa.csv",
     },
     {

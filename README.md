@@ -300,12 +300,44 @@ heuristics reach 100% of the time? Noiseless expectation objective, by `reps` (9
 | 2 | 11.8 | 123 | 247.1 | 0.405 | 40.7% |
 | 3 | 11.8 | 177 | 370.7 | 0.534 | 44.4% |
 
-Neither the objective nor noise closes the gap: CVaR scores mean F1 0.456, ground state found
-22.2% of the time; the plain expectation objective (all `reps` pooled) scores 0.486 and 38.3%;
-the same expectation objective transpiled onto `fake_hanoi` noise data scores 0.493 and 22.2%.
-**CVaR does not outperform the plain expectation objective at matched conditions** — it was
-tried specifically because it is the variant more commonly reported to help, and here it does
-not.
+**The `reps` table above pools three shot budgets, and that hides the larger effect.** Split
+the same 81 noiseless rows by shot count instead:
+
+| shots | mean F1 | found optimum |
+|---|---|---|
+| 256 | 0.322 | 14.8% |
+| 1024 | 0.531 | 44.4% |
+| 4096 | 0.606 | 55.6% |
+
+Sampling budget moves the result further than circuit depth does — 14.8% to 55.6% across
+shots, against 29.6% to 44.4% across `reps`. The full grid shows depth does not compensate for
+a thin sample: `reps=3` at 256 shots reaches the optimum 22.2% of the time, while `reps=1` at
+4096 shots reaches it 33.3%. A deeper circuit with a smaller budget is the worse trade here.
+
+| found optimum | 256 shots | 1024 shots | 4096 shots |
+|---|---|---|---|
+| `reps=1` | 11.1% | 44.4% | 33.3% |
+| `reps=2` | 11.1% | 44.4% | 66.7% |
+| `reps=3` | 22.2% | 44.4% | 66.7% |
+
+**On CVaR, the honest comparison is narrower than a pooled one suggests.** CVaR was run at a
+single configuration — `reps=3`, 256 shots, noiseless — so it can only be compared against the
+9 expectation rows at that same setting. Matched, CVaR scores mean F1 0.456 and reaches the
+ground state 22.2% of the time; expectation scores 0.432 and 22.2%. **The two are
+indistinguishable at the one setting where they were both measured** (n=9, identical
+ground-state rate, an F1 difference well inside the spread). Comparing CVaR against expectation
+pooled across every `reps` and shot count — 0.486 and 38.3% — would make CVaR look worse, but
+that pool contains 1024- and 4096-shot runs CVaR never received, so the difference would be the
+shot budget rather than the objective. No claim is made in either direction.
+
+Noise costs what the transpilation section below measures: the same expectation objective on
+`fake_hanoi` calibration data scores mean F1 0.493 and reaches the ground state 22.2% of the
+time, against 0.333 and 11.1% for the matched noiseless rows (`reps=1`, 256 shots).
+
+None of this changes the headline. At the most favourable setting measured — `reps=3`, 4096
+shots, noiseless — QAOA reaches the ground state 66.7% of the time, and every classical
+heuristic except `greedy` and `random` reaches it 100% of the time on the same instances.
+Ground-state rate also falls with problem size, from 66.7% at 20 nt to 22.2% at 30 nt.
 
 **This is reported prominently, as the project's central negative result, because it is the
 evidence behind this project's no-quantum-advantage position.** QAOA reaches the exact QUBO
