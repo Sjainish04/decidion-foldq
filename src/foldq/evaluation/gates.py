@@ -50,8 +50,27 @@ def gate_c_solved(
 def gate_d_physical(
     candidate: FoldCandidate, reference: ViennaReference
 ) -> tuple[float, float]:
-    """Gate D: how good is the decoded structure thermodynamically and structurally?"""
-    predicted = dotbracket_to_pairs(candidate.dot_bracket) if candidate.dot_bracket else frozenset()
+    """Gate D: how good is the decoded structure thermodynamically and structurally?
+
+    A pseudoknotted candidate carries an all-dots placeholder dot-bracket, because
+    single-bracket notation cannot express a crossing. Parsing that placeholder
+    would score every pseudoknot as F1 0.0 while the structure it stands for may
+    be entirely correct, so the pair set is taken from the selected stems instead.
+
+    `reference` is ViennaRNA's own nested MFE fold, which can hold at most one of
+    any two crossing helices -- a provably incomplete ground truth for a
+    pseudoknot. F1 against it is therefore bounded above even for a fully correct
+    candidate: recovering both helices of a two-helix pseudoknot gets full recall
+    but only ~0.5 precision against the one helix `reference` can see, for an F1
+    around 0.667, not 1.0. That ceiling is the honest measurement of a correct
+    structure against an incomplete reference, not underperformance to chase away.
+    """
+    if candidate.is_pseudoknotted:
+        predicted = stems_to_pairs(candidate.stems)
+    elif candidate.dot_bracket:
+        predicted = dotbracket_to_pairs(candidate.dot_bracket)
+    else:
+        predicted = frozenset()
     metrics = base_pair_metrics(predicted, reference.base_pairs)
     return energy_gap(candidate.vienna_energy, reference.mfe_energy), metrics.f1
 
@@ -85,5 +104,6 @@ def evaluate_gates(
         solver_found_ground_state=gate_c_solved(solver_result, exact_result),
         energy_gap=gap,
         base_pair_f1=f1,
+        is_pseudoknotted=candidate.is_pseudoknotted,
         notes=tuple(notes),
     )

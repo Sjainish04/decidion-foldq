@@ -48,6 +48,20 @@ must skip NaN rather than propagate it (pandas' default `skipna=True`
 mean, or `numpy.nanmean`): the pseudoknot-mode rows on the two constructed
 records genuinely produce NaN here, and a naive `sum(...) / len(...)` would
 turn one legitimate NaN into a NaN for the whole column.
+
+ViennaRNA comparison columns -- `vienna_f1_vs_reference` / `vienna_recall`
+score ViennaRNA's own fold (`vienna`, already computed above for
+`vienna_recovers_crossing_pairs`) against each record's known pairs, via the
+same `base_pair_metrics` used for the FoldQ columns. This is computed under
+whichever `dangles` model `backend` (a plain `ViennaBackend()`, default
+`dangles=2`) is configured with, and the value is model-dependent: on the 33
+nt fixture `pk_htype_constructed_33`, ViennaRNA's `dangles=2` fold shares 0
+of the reference's 10 pairs (F1 0.000, recall 0.000) but its `dangles=0` fold
+shares 5 of 10 (F1 0.667, recall 0.500) -- see that record's `notes` field in
+`data/fixtures/curated.json`. `dangles=2` is what this runner reports because
+it is what `FoldQPipeline` and standard ViennaRNA/RNAfold both use by
+default; a table built from a different `dangles` setting is not comparable
+to it.
 """
 
 from __future__ import annotations
@@ -111,6 +125,7 @@ def run(output_dir: Path, *, seed: int = 42, quick: bool = False) -> pd.DataFram
         )
         crossing_pairs = known_pairs - nested_layer_pairs
         vienna_recovers = bool(crossing_pairs & vienna.base_pairs)
+        vienna_metrics = base_pair_metrics(vienna.base_pairs, known_pairs)
 
         for forbid_crossing in (True, False):
             config = FoldQConfig(
@@ -143,6 +158,8 @@ def run(output_dir: Path, *, seed: int = 42, quick: bool = False) -> pd.DataFram
                     "candidate_vienna_energy": result.best_candidate.vienna_energy,
                     "vienna_structure": vienna.mfe_structure,
                     "vienna_energy": vienna.mfe_energy,
+                    "vienna_f1_vs_reference": vienna_metrics.f1,
+                    "vienna_recall": vienna_metrics.recall,
                     "vienna_recovers_crossing_pairs": vienna_recovers,
                     "num_crossing_pairs_in_reference": len(crossing_pairs),
                 }

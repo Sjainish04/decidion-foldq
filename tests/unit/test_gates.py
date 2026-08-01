@@ -8,6 +8,7 @@ from foldq.evaluation.gates import (
     evaluate_gates,
     gate_a_representable,
     gate_c_solved,
+    gate_d_physical,
 )
 from foldq.schemas.gates import GateReport
 from foldq.schemas.result import Sample, SolverResult
@@ -99,3 +100,52 @@ def test_attribution_names_the_first_failing_gate():
         is_qubo_ground_state=True, solver_found_ground_state=True,
         energy_gap=0.0, base_pair_f1=1.0,
     ).attribution
+
+
+def test_gate_d_scores_a_pseudoknotted_candidate_from_its_stems():
+    """A pseudoknot's placeholder dot-bracket must not score it as F1 0.
+
+    decode_sample masks crossing structures to all dots because single-bracket
+    notation cannot express them. Parsing that placeholder scored every
+    pseudoknot as 0.0 while the structure it stands for was fully correct — the
+    documented --pseudoknots command reported F1 0.000 where the experiment
+    reported 1.000.
+    """
+    from foldq.classical.vienna import ViennaReference
+    from foldq.schemas.result import FoldCandidate
+    from foldq.schemas.structure import ValidationReport
+
+    stems = (Stem(0, 10, 1), Stem(5, 15, 1))
+    reference = ViennaReference(
+        sequence="G" * 16,
+        mfe_structure="." * 16,
+        mfe_energy=0.0,
+        base_pairs=frozenset({(0, 10), (5, 15)}),
+    )
+    candidate = FoldCandidate(
+        stems=stems,
+        dot_bracket="." * 16,
+        qubo_energy=-1.0,
+        vienna_energy=float("nan"),
+        validation=ValidationReport(),
+        is_pseudoknotted=True,
+    )
+    _, f1 = gate_d_physical(candidate, reference)
+    assert f1 == pytest.approx(1.0), (
+        "pseudoknotted candidate scored from its placeholder dot-bracket"
+    )
+
+
+def test_attribution_does_not_blame_the_energy_model_for_a_pseudoknot():
+    """In pseudoknot mode, diverging from the nested reference is intended."""
+    report = GateReport(
+        representable=True,
+        representable_fraction=1.0,
+        is_qubo_ground_state=False,
+        solver_found_ground_state=True,
+        energy_gap=float("nan"),
+        base_pair_f1=1.0,
+        is_pseudoknotted=True,
+    )
+    assert "pseudoknot" in report.attribution.lower()
+    assert "energy model" not in report.attribution.lower()

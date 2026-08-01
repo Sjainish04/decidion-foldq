@@ -30,7 +30,12 @@ yes -- the selected helices cross, so this structure has no legal single-bracket
 dot-bracket notation. ViennaRNA cannot score a crossing structure at all (its
 energy function requires legal dot-bracket input), so the FoldQ energy above is
 reported as not scorable rather than a number. That is the expected, correct
-behaviour for a crossing candidate, not a missing value or a bug.
+behaviour for a crossing candidate, not a missing value or a bug. The FoldQ
+structure shown above (all dots) is likewise a placeholder, not a folded
+result -- single-bracket notation cannot express the crossing either, so it
+cannot be rendered. The Base-pair F1 in the diagnostic ladder below is not
+computed from that placeholder; it is computed directly from the
+{{ stems|length }} selected helices against the reference pairs.
 {% else %}
 no -- this structure is pseudoknot-free and was scored by ViennaRNA normally.
 {% endif %}

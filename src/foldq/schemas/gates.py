@@ -10,7 +10,10 @@ class GateReport:
     """Attributes a result to candidate generation, the energy model, or the solver.
 
     Gates B and C need exact ground truth and are `None` when the instance is too
-    large to enumerate.
+    large to enumerate. `is_pseudoknotted` marks a candidate whose selected stems
+    cross, so it carries a placeholder all-dots dot-bracket and NaN energy by
+    construction (see `decode_sample`); `attribution` treats divergence from the
+    nested reference as expected there, not a failure of an earlier gate.
     """
 
     representable: bool
@@ -19,11 +22,21 @@ class GateReport:
     solver_found_ground_state: bool | None
     energy_gap: float
     base_pair_f1: float
+    is_pseudoknotted: bool = False
     notes: tuple[str, ...] = field(default_factory=tuple)
 
     @property
     def attribution(self) -> str:
         """Name the earliest gate that failed; later gates cannot be blamed for it."""
+        if self.is_pseudoknotted:
+            return (
+                "pseudoknotted candidate: the selected structure contains crossing "
+                "pairs, which ViennaRNA cannot represent or score. The reference "
+                "fold can hold at most one of any two crossing helices, so "
+                "precision against it is capped even when the structure is "
+                "correct. Divergence from the nested reference is expected here, "
+                "not a failure"
+            )
         if not self.representable:
             return (
                 "candidate generation: the reference structure is not in the candidate "
