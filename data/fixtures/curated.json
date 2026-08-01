@@ -1,0 +1,40 @@
+{
+  "records": [
+    {
+      "sequence_id": "hairpin_gc_synthetic",
+      "sequence": "GGGCGCAAAAGCGCCC",
+      "known_structure": "((((((....))))))",
+      "has_pseudoknot": false,
+      "source": "Constructed control (perfect GC hairpin)",
+      "license": "CC0",
+      "notes": "Trivially foldable control; every gate should pass on this."
+    },
+    {
+      "sequence_id": "trna_phe_yeast_acceptor",
+      "sequence": "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUCUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCACCA",
+      "known_structure": "(((((((..((((........)))).(((((.......))))).....(((((.......))))))))))))....",
+      "has_pseudoknot": false,
+      "source": "Yeast tRNA-Phe canonical cloverleaf; sequence is public domain",
+      "license": "Public domain sequence data",
+      "notes": "Classic 76-nt benchmark. Tier S; too large for the exact gates. Structure is the textbook cloverleaf, not re-derived here."
+    },
+    {
+      "sequence_id": "pk_htype_constructed_28",
+      "sequence": "GGGGAAAAGCGCAAAACCCCAAAAGCGC",
+      "known_structure": "((((....[[[[....))))....]]]]",
+      "has_pseudoknot": true,
+      "source": "CONSTRUCTED for this project - NOT literature-derived, no citation claimed",
+      "license": "CC0",
+      "notes": "H-type pseudoknot built so two helices provably interleave. 8 base pairs, 16 crossing pair-combinations. ViennaRNA recovers only 4 of 8 pairs because single-bracket notation cannot express the crossing. Tier P mechanism demonstration; substitute a cited literature pseudoknot before publication."
+    },
+    {
+      "sequence_id": "pk_htype_constructed_33",
+      "sequence": "GGCGCAAAAGCCGCAAAAAGCGCCAAAAGCGGC",
+      "known_structure": "(((((....[[[[[.....)))))....]]]]]",
+      "has_pseudoknot": true,
+      "source": "CONSTRUCTED for this project - NOT literature-derived, no citation claimed",
+      "license": "CC0",
+      "notes": "Larger H-type pseudoknot. 10 base pairs, 25 crossing pair-combinations. ViennaRNA shares 0 of 10 pairs under the default dangles=2 model (it finds an entirely different fold) and 5 of 10 under dangles=0; in neither case can it express the crossing. Substitute a cited literature pseudoknot before publication."
+    }
+  ]
+}

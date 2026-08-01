@@ -1,0 +1,23 @@
+seed: 42
+temperature_celsius: 37.0
+allow_wobble: true
+min_hairpin: 3
+min_stem_length: 2
+expand_substems: false
+energy_model: charge_refund
+# immediate_only, not all_nestable: all_nestable lets refunds stack past the
+# hard-constraint penalty across a nesting chain, producing structurally
+# invalid optima. See foldq.config.FoldQConfig.nesting_policy for the full
+# rationale. Must stay in sync with the dataclass default.
+nesting_policy: immediate_only
+forbid_crossing: true
+num_reads: 200
+repair_invalid: true
+exact_max_variables: 22
+no_lonely_pairs: false
+# See foldq.config.FoldQConfig for the full rationale: dangles=2 keeps reference
+# folding and final rescoring on standard ViennaRNA behaviour (a fair benchmark
+# comparison); energy_dangles=0 keeps the QUBO's energy coefficients exactly
+# additive over loops, which the charge-and-refund construction assumes.
+dangles: 2
+energy_dangles: 0

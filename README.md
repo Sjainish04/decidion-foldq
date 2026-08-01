@@ -2,93 +2,81 @@
 
 ## Explainable Hybrid Quantum-Classical Optimization for mRNA Secondary-Structure Prediction
 
-> A reproducible research platform for formulating RNA secondary-structure prediction as a binary optimization problem, solving reduced instances with classical, quantum-inspired, and gate-based quantum methods, and validating every candidate against ViennaRNA.
+> A reproducible research platform that formulates RNA secondary-structure prediction as a
+> binary optimization problem, solves reduced instances with classical, quantum-inspired, and
+> gate-based quantum methods, and validates every candidate against ViennaRNA — with a
+> four-gate diagnostic ladder that attributes any failure to candidate generation, the energy
+> model, or the solver, instead of reporting a single pass/fail number.
 
 ---
 
-## Project Status
+## Status
 
-**Status:** Research and implementation phase  
-**Challenge:** WISER Summer Program 2026 — Moderna Challenge  
-**Submission deadline:** August 7, 2026  
-**Team:** Decidion AI  
-**Primary objective:** Build and rigorously evaluate a hybrid quantum-classical approach for minimum-free-energy RNA secondary-structure prediction.
+This README describes a completed submission, not an aspirational plan. Every claim below is
+backed by code in this repository and by the exact command used to check it. Where an earlier
+draft of the project (the original design spec) made a claim that later measurement corrected
+or overturned, that correction is stated explicitly in this document rather than silently
+dropped — see [Results](#results) and [Known Limitations](#known-limitations).
 
-This repository is being developed as a research prototype. Features marked **Implemented** are expected to have working code, tests, and reproducible examples. Features marked **Planned** describe the intended submission architecture and should not be interpreted as completed experimental results until corresponding result files and release tags are published.
+**Implemented and tested (267 passing tests):**
+
+- Sequence validation and a ViennaRNA reference backend (MFE structure/energy/base pairs,
+  configurable `dangles`, temperature, and lonely-pair suppression).
+- Candidate stem generation (maximal helices, with an optional sub-stem expansion mode) and
+  conflict detection (nucleotide overlap and pseudoknot crossing).
+- Two energy models (`stacking_only`, and the default `charge_refund` charge-and-refund
+  construction) and two nesting policies (`all_nestable`, and the default `immediate_only`).
+- A stem-based QUBO builder — the only encoding wired into the pipeline and CLI — plus a
+  pair-based QUBO used strictly as a comparison baseline inside experiment E2.
+- QUBO → Ising mapping to a Qiskit `SparsePauliOp`.
+- Eight solvers behind one `FoldSolver` protocol: exact (tree decomposition with a brute-force
+  fallback), random, greedy, local search, simulated annealing, tabu, path-integral simulated
+  quantum annealing, and QAOA (with a CVaR objective variant).
+- Deterministic decoding and structural repair, including honest pseudoknot handling
+  (`FoldCandidate.is_pseudoknotted`, NaN energy when a structure cannot be scored).
+- Structural and energy metrics (base-pair precision/recall/F1, energy gap).
+- The four-gate diagnostic ladder with automatic failure attribution.
+- QAOA resource accounting — logical qubits, gate counts classified by arity, and transpiled
+  depth/gate counts against real IBM device calibration data shipped locally by
+  `qiskit-ibm-runtime`'s fake-backend registry (no hardware account, no queue).
+- A benchmark-sequence generator that rejection-samples until a sequence actually folds, plus
+  four curated fixtures (a control hairpin, a textbook tRNA cloverleaf, and two constructed
+  pseudoknots).
+- Pipeline orchestration, YAML configuration, and a CLI (`doctor`, `validate`, `predict`,
+  `generate`, `benchmark`, `report`).
+- Five experiment runners (E1–E5) and a `run_all` entry point (`make reproduce`).
+- Self-contained HTML decision cards and three Matplotlib figure types.
+
+**Deferred, and stated explicitly rather than left to be discovered missing:** see
+[Scope and Deferred Work](#scope-and-deferred-work).
 
 ---
 
 ## Table of Contents
 
-1. [Overview](#overview)
-2. [Challenge Context](#challenge-context)
-3. [Why Decidion FoldQ](#why-decidion-foldq)
-4. [Research Questions](#research-questions)
-5. [Project Scope](#project-scope)
-6. [System Architecture](#system-architecture)
-7. [End-to-End Workflow](#end-to-end-workflow)
-8. [Mathematical Formulation](#mathematical-formulation)
-9. [RNA Encodings](#rna-encodings)
-10. [Optimization Methods](#optimization-methods)
-11. [Thermodynamic Validation](#thermodynamic-validation)
-12. [Benchmarking and Evaluation](#benchmarking-and-evaluation)
-13. [Technology Stack](#technology-stack)
-14. [Repository Structure](#repository-structure)
-15. [Installation](#installation)
-16. [Quick Start](#quick-start)
-17. [Command-Line Interface](#command-line-interface)
-18. [Python API](#python-api)
-19. [Configuration](#configuration)
-20. [Outputs](#outputs)
-21. [Testing](#testing)
-22. [Reproducibility](#reproducibility)
-23. [Continuous Integration](#continuous-integration)
-24. [Data and Privacy](#data-and-privacy)
-25. [Experiment Plan](#experiment-plan)
-26. [Research Paper Plan](#research-paper-plan)
-27. [Development Roadmap](#development-roadmap)
-28. [Known Limitations](#known-limitations)
-29. [Future Work](#future-work)
-30. [Team](#team)
-31. [Contributing](#contributing)
-32. [Citation](#citation)
-33. [License](#license)
-34. [References](#references)
-
----
-
-## Overview
-
-RNA molecules fold through intramolecular base pairing into secondary structures that can affect molecular stability, translation, degradation, accessibility, and manufacturability. Predicting the lowest-free-energy structure is a combinatorial optimization problem because the number of possible pairing arrangements grows rapidly with sequence length.
-
-Decidion FoldQ investigates whether quantum or quantum-inspired optimization can contribute meaningfully to this problem without replacing the biological and thermodynamic strengths of established classical tools.
-
-The platform follows a hybrid design:
-
-1. Validate the RNA sequence.
-2. Generate the ViennaRNA classical reference.
-3. construct biologically plausible base-pair and stem candidates.
-4. Convert the candidate-selection problem into a Quadratic Unconstrained Binary Optimization model.
-5. Solve the same model with exact, classical, quantum-inspired, and quantum methods.
-6. Decode sampled bit strings into RNA structures.
-7. Repair and validate structural constraints.
-8. Rescore candidates using ViennaRNA.
-9. Compare structural accuracy, thermodynamic energy, runtime, and quantum-resource requirements.
-10. Generate a transparent folding decision report.
-
-The project is designed to answer not only whether a solver finds a low QUBO energy, but also whether:
-
-- the biological candidate representation is sufficiently expressive;
-- the QUBO objective is a credible surrogate for RNA thermodynamics;
-- the optimizer reliably solves the encoded problem;
-- the decoded structure competes with the classical benchmark;
-- any observed benefit justifies the computational resources required.
+1. [Challenge Context](#challenge-context)
+2. [The Four-Gate Diagnostic Ladder](#the-four-gate-diagnostic-ladder)
+3. [Quick Start](#quick-start)
+4. [Results](#results)
+5. [Pseudoknots](#pseudoknots)
+6. [Thermodynamic Model and Its Limits](#thermodynamic-model-and-its-limits)
+7. [Architecture and Repository Layout](#architecture-and-repository-layout)
+8. [Command-Line Interface](#command-line-interface)
+9. [Scope and Deferred Work](#scope-and-deferred-work)
+10. [Known Limitations](#known-limitations)
+11. [Reproducibility](#reproducibility)
+12. [Testing](#testing)
+13. [Team](#team)
+14. [Citation](#citation)
+15. [License](#license)
+16. [References](#references)
 
 ---
 
 ## Challenge Context
 
-The WISER Moderna Challenge asks teams to develop a quantum or quantum-inspired approach for predicting mRNA secondary structure, with emphasis on minimum-free-energy folding.
+The WISER Moderna Challenge asks teams to develop a quantum or quantum-inspired approach for
+predicting mRNA secondary structure, with emphasis on minimum-free-energy folding.
 
 The required project components include:
 
@@ -101,2216 +89,695 @@ The required project components include:
 - quantum-resource analysis;
 - a short presentation explaining the approach, findings, and future directions.
 
-Challenge page:
-
-- https://www.thewiser.org/summer-program-2026/modernachallenge
-
-Decidion FoldQ is structured so each requirement maps to a specific repository module, experiment, output, and documentation section.
+Challenge page: https://www.thewiser.org/summer-program-2026/modernachallenge
 
 | Challenge requirement | FoldQ component |
 |---|---|
-| Classical MFE benchmark | `foldq.classical.vienna_backend` |
-| Optimization formulation | `foldq.encodings` and `foldq.qubo` |
-| Quantum-inspired method | Simulated annealing through D-Wave Ocean |
-| Gate-based quantum method | QAOA and optional CVaR variants through Qiskit |
-| Candidate comparison | `foldq.evaluation` |
-| Scaling analysis | `foldq.experiments.scaling` |
-| Resource analysis | `foldq.evaluation.quantum_resources` |
-| Reproducible implementation | locked environment, Docker, tests, manifests |
-| Communication | decision cards, report, figures, and presentation |
+| Classical MFE benchmark | `foldq.classical.vienna` |
+| Optimization formulation | `foldq.encodings`, `foldq.qubo` |
+| Quantum-inspired method | Simulated annealing, tabu search, and path-integral SQA through D-Wave Ocean's local samplers |
+| Gate-based quantum method | QAOA and a CVaR-objective variant through Qiskit and Qiskit Aer |
+| Candidate comparison | `foldq.evaluation.gates`, `foldq.evaluation.metrics` |
+| Scaling analysis | `foldq.experiments.e2_encoding` |
+| Resource analysis | `foldq.evaluation.resources` |
+| Reproducible implementation | pinned dependency ranges, 267 tests, `make reproduce`, run manifests |
+| Communication | `foldq.reporting` decision cards and figures |
 
 ---
 
-## Why Decidion FoldQ
+## The Four-Gate Diagnostic Ladder
 
-Many quantum optimization demonstrations stop after mapping a problem to a Hamiltonian and reporting the lowest sampled objective value. That is not sufficient for RNA folding.
+This is the project's central contribution. A sampled binary solution can fail for several
+independent reasons — the candidate generator may have excluded the correct stem, the QUBO may
+reward an unphysical structure, the solver may fail to find the QUBO optimum, or a low QUBO
+energy may simply not correspond to a low thermodynamic energy. Reporting a single accuracy
+number conflates all of these. The ladder (`foldq.evaluation.gates.evaluate_gates`) separates
+them into four questions, asked in order, so that a failure is attributed to the earliest gate
+that could have caused it:
 
-A sampled binary solution can fail for several reasons:
+| Gate | Question | What it needs |
+|---|---|---|
+| **A** | Can the candidate stem set express the ViennaRNA reference structure at all? | Nothing — always computable |
+| **B** | Is the reference structure the QUBO's actual ground state? | Exact enumeration (`ExactSolver`) |
+| **C** | Did the solver in question reach the QUBO ground state? | Exact enumeration |
+| **D** | How good is the decoded, repaired, rescored structure — base-pair F1 and energy gap versus the ViennaRNA MFE? | Nothing — always computable |
 
-- the candidate generator may have excluded the correct stem;
-- the QUBO may reward an unphysical structure;
-- penalties may be too weak or too strong;
-- the solver may fail to locate the QUBO optimum;
-- the decoded structure may violate RNA constraints;
-- a low QUBO energy may not correspond to a low thermodynamic energy.
+Gates B and C require an exact ground-state solve. `ExactSolver` runs an exact dynamic program
+over a tree decomposition of the conflict graph for instances up to `max_variables` (default
+22; brute-force enumeration is used as a fallback below 18 variables) and raises
+`ExactSolverTooLarge` above that. When it raises, Gates B and C are reported as `None` —
+genuinely indeterminate, not `False` — and this is visible in every table that includes them.
 
-FoldQ separates these failure modes.
+`GateReport.attribution` names the earliest failing gate in one sentence: `"candidate
+generation: ..."`, `"energy model: ..."`, `"optimizer: ..."`, `"indeterminate: instance too
+large for exact ground truth"`, or `"no failure: all gates passed"`. This string is what a
+decision card's **Attribution** line and every experiment table's `attribution` column report.
 
-### What makes the project distinct
+### Measured at scale (n = 19, default configuration)
 
-1. **Biologically informed compression**
+At the default configuration (`charge_refund` energy model, `immediate_only` nesting policy,
+adaptive overlap penalty):
 
-   The platform compares base-pair variables with stem-level variables. Stem compression can reduce logical-variable count while retaining meaningful structural units.
-
-2. **Common solver interface**
-
-   Exact, greedy, annealing, and QAOA solvers receive the same QUBO and use the same decoding and evaluation pipeline.
-
-3. **Dual-energy reporting**
-
-   Every candidate receives both a QUBO objective value and a ViennaRNA thermodynamic energy.
-
-4. **Raw and repaired evaluation**
-
-   Solver outputs are evaluated before and after deterministic repair so post-processing does not conceal constraint violations.
-
-5. **Formulation-versus-solver diagnosis**
-
-   Exact small-instance experiments determine whether an incorrect result is caused by the mathematical formulation or the optimizer.
-
-6. **Explainable folding decision cards**
-
-   Each result records selected stems, rejected conflicts, constraint violations, repair operations, structural metrics, thermodynamic energy, runtime, and quantum-resource estimates.
-
-7. **No unsupported quantum-advantage claim**
-
-   The project measures usefulness, approximation quality, and scaling limitations. It does not assume that quantum methods outperform ViennaRNA.
-
----
-
-## Research Questions
-
-The initial study is organized around the following questions.
-
-### RQ1: Representation
-
-Can an RNA secondary-structure problem be encoded as a QUBO while preserving sufficient structural and energetic information to reproduce or approximate ViennaRNA MFE structures?
-
-### RQ2: Compression
-
-Does stem-based encoding reduce variables, interactions, and circuit resources relative to pair-based encoding without unacceptable loss of structural accuracy?
-
-### RQ3: Optimization
-
-Can simulated annealing or QAOA recover the exact QUBO ground state and low-energy RNA candidates more reliably than random, greedy, and local-search baselines?
-
-### RQ4: Surrogate fidelity
-
-How strongly does the simplified QUBO energy correlate with ViennaRNA thermodynamic energy?
-
-### RQ5: Quantum resources
-
-How do logical qubits, Hamiltonian terms, circuit depth, two-qubit gates, shot count, and optimizer evaluations scale with sequence and encoding size?
-
-### RQ6: Noise and robustness
-
-How do shot noise and hardware-inspired gate and readout errors affect valid-sample rate, energy quality, and base-pair recovery?
-
-### RQ7: Hybrid value
-
-Which parts of the workflow should remain classical, and where could quantum sampling contribute useful candidate diversity or difficult combinatorial search?
-
----
-
-## Project Scope
-
-### In scope for the challenge submission
-
-- Single-stranded RNA sequences containing A, U, C, and G.
-- Canonical Watson-Crick pairs and optional G-U wobble pairs.
-- Pseudoknot-free structures in the primary model.
-- ViennaRNA MFE and candidate-energy evaluation.
-- Pair-based and stem-based binary encodings.
-- Exact enumeration for small problems.
-- Random, greedy, local-search, and simulated-annealing baselines.
-- QAOA simulation for reduced instances.
-- Optional CVaR objective and warm-start experiments.
-- Structural, energy, runtime, and quantum-resource benchmarking.
-- Synthetic and public non-confidential sequences.
-- Reproducible command-line workflows.
-- Public documentation, source code, and result manifests.
-
-### Out of scope for the initial release
-
-- Clinical decision making.
-- Patient-specific sequence analysis.
-- Proprietary Moderna sequences or confidential industrial data.
-- Full tertiary-structure prediction.
-- Production-grade therapeutic design.
-- Complete thermodynamic representation of all RNA motifs within one compact QUBO.
-- Claims of practical quantum speedup or quantum advantage.
-- General pseudoknot support in the primary benchmark.
-- Modified nucleotides such as pseudouridine.
-- Experimental wet-lab validation during the challenge timeline.
-
----
-
-## System Architecture
-
-```mermaid
-flowchart TD
-    A[RNA sequence input] --> B[Validation and metadata]
-    B --> C[ViennaRNA reference]
-    B --> D[Candidate pair generation]
-    D --> E[Candidate stem generation]
-    E --> F[Conflict graph]
-    F --> G{Encoding}
-    G --> H[Pair-based QUBO]
-    G --> I[Stem-based QUBO]
-    H --> J[QUBO / Ising problem]
-    I --> J
-
-    J --> K1[Exact solver]
-    J --> K2[Greedy and local search]
-    J --> K3[Simulated annealing]
-    J --> K4[QAOA / CVaR-QAOA]
-
-    K1 --> L[Sample decoding]
-    K2 --> L
-    K3 --> L
-    K4 --> L
-
-    L --> M[Structural validation]
-    M --> N[Deterministic repair]
-    N --> O[ViennaRNA rescoring]
-    C --> P[Benchmark comparison]
-    O --> P
-    P --> Q[Metrics and resource analysis]
-    Q --> R[Decision card and research report]
-```
-
-### Architectural layers
-
-| Layer | Responsibility |
+| Gate | Result |
 |---|---|
-| Input and configuration | Sequence ingestion, validation, experiment settings, seeds |
-| Biological representation | Pair generation, stem generation, loop constraints, conflict graph |
-| Optimization formulation | Pair/stem encoding, QUBO terms, penalties, Ising mapping |
-| Solver adapters | Exact, classical, annealing, QAOA, optional hardware |
-| Decoding and repair | Bit-string mapping, structural validation, deterministic repair |
-| Classical validation | ViennaRNA MFE, energy evaluation, ensemble references |
-| Evaluation | Structural, energetic, optimization, runtime, and resource metrics |
-| Reporting | Figures, tables, manifests, decision cards, manuscript outputs |
-
-### Design principle
-
-All solvers operate behind one interface:
-
-```python
-class FoldSolver(Protocol):
-    def solve(
-        self,
-        problem: QuboProblem,
-        config: SolverConfig,
-    ) -> SolverResult:
-        ...
-```
-
-This prevents solver-specific preprocessing from creating an unfair comparison.
-
----
-
-## End-to-End Workflow
-
-### 1. Sequence ingestion
-
-The system accepts:
-
-- direct RNA strings;
-- FASTA files;
-- CSV benchmark files;
-- YAML experiment manifests;
-- Python API objects.
-
-Each sequence becomes a `SequenceRecord` containing:
-
-- unique identifier;
-- normalized sequence;
-- length;
-- GC content;
-- data source;
-- generation parameters;
-- checksum;
-- random seed;
-- optional tags.
-
-### 2. Sequence validation
-
-Validation checks include:
-
-- only A, U, C, and G are present;
-- sequence is not empty;
-- minimum and maximum lengths are respected;
-- identifiers are unique;
-- whitespace and line breaks are normalized;
-- data provenance is recorded.
-
-### 3. ViennaRNA reference generation
-
-For every sequence, the classical layer can generate:
-
-- MFE dot-bracket structure;
-- MFE energy;
-- base-pair list;
-- partition function;
-- base-pair probabilities;
-- centroid structure;
-- maximum expected accuracy structure;
-- suboptimal structures within an energy band;
-- thermodynamic energy of any submitted dot-bracket structure.
-
-### 4. Candidate-pair generation
-
-Candidate pairs are generated using:
-
-- A-U and U-A compatibility;
-- G-C and C-G compatibility;
-- optional G-U and U-G wobble compatibility;
-- configurable minimum hairpin separation;
-- optional probability-guided pruning;
-- optional local-context scoring.
-
-### 5. Candidate-stem construction
-
-Nested consecutive pairs are grouped into stems. A stem record contains:
-
-- stem identifier;
-- constituent base pairs;
-- stem length;
-- occupied nucleotides;
-- approximate energy;
-- local loop context;
-- conflict list;
-- optional classical prior.
-
-### 6. Conflict-graph construction
-
-Each candidate stem is a graph node. Edges identify pairs of stems that cannot coexist because of:
-
-- nucleotide reuse;
-- alternative pairing of the same nucleotide;
-- prohibited crossing;
-- incompatible nesting;
-- invalid loop geometry;
-- other encoding-specific constraints.
-
-### 7. QUBO construction
-
-The QUBO builder creates:
-
-- linear coefficients;
-- quadratic coefficients;
-- constant offset;
-- variable-to-structure mapping;
-- normalized penalty configuration;
-- coefficient diagnostics;
-- graph and matrix density;
-- Ising Hamiltonian representation.
-
-### 8. Optimization
-
-The same QUBO can be solved with:
-
-- exact enumeration;
-- random sampling;
-- greedy selection;
-- hill climbing;
-- tabu search;
-- simulated annealing;
-- optional D-Wave QPU or hybrid solver;
-- QAOA;
-- optional CVaR-QAOA;
-- optional warm-start QAOA.
-
-### 9. Decoding
-
-Binary samples are translated into:
-
-- selected stems;
-- selected base pairs;
-- raw dot-bracket notation;
-- structural validation report;
-- repaired dot-bracket notation;
-- repair history.
-
-### 10. Thermodynamic rescoring
-
-Each candidate is evaluated using ViennaRNA. This produces:
-
-- candidate free energy;
-- energy gap from MFE;
-- energy before and after repair;
-- rank among generated candidates;
-- agreement between QUBO ranking and thermodynamic ranking.
-
-### 11. Evaluation and reporting
-
-The pipeline exports:
-
-- benchmark tables;
-- structural metrics;
-- runtime metrics;
-- resource estimates;
-- scaling plots;
-- raw solver samples;
-- experiment manifests;
-- human-readable decision cards.
-
----
-
-## Mathematical Formulation
-
-### Binary variables
-
-For a stem-based encoding, define:
-
-\[
-x_s =
-\begin{cases}
-1, & \text{if candidate stem } s \text{ is selected}, \\
-0, & \text{otherwise}.
-\end{cases}
-\]
-
-The optimization problem minimizes:
-
-\[
-H(\mathbf{x}) =
-H_{\text{structure}}(\mathbf{x})
-+
-H_{\text{constraints}}(\mathbf{x})
-+
-H_{\text{regularization}}(\mathbf{x}).
-\]
-
-A first-order stem QUBO can be written as:
-
-\[
-H(\mathbf{x}) =
-\sum_s E_s x_s
-+
-\lambda_{\text{overlap}}
-\sum_{(s,t)\in C_{\text{overlap}}} x_sx_t
-+
-\lambda_{\text{cross}}
-\sum_{(s,t)\in C_{\text{cross}}} x_sx_t
-+
-\lambda_{\text{loop}}P_{\text{loop}}(\mathbf{x})
-+
-\lambda_{\text{fragment}}P_{\text{fragment}}(\mathbf{x}).
-\]
-
-Where:
-
-- \(E_s\) approximates the energetic contribution of stem \(s\);
-- \(C_{\text{overlap}}\) contains stem pairs that reuse nucleotides;
-- \(C_{\text{cross}}\) contains incompatible crossing stems;
-- \(P_{\text{loop}}\) penalizes invalid or highly unfavorable loop arrangements;
-- \(P_{\text{fragment}}\) discourages excessive isolated or fragmented pairing.
-
-### QUBO representation
-
-The binary objective is represented as:
-
-\[
-f(\mathbf{x}) =
-\sum_i Q_{ii}x_i +
-\sum_{i<j}Q_{ij}x_ix_j.
-\]
-
-The implementation stores this as a binary quadratic model and preserves a complete variable map from each binary index to its biological meaning.
-
-### QUBO-to-Ising mapping
-
-For gate-based algorithms, binary variables are mapped to spin variables:
-
-\[
-x_i = \frac{1-z_i}{2}, \qquad z_i \in \{-1,+1\}.
-\]
-
-The resulting Ising objective is:
-
-\[
-H_{\text{Ising}} =
-\sum_i h_i Z_i +
-\sum_{i<j}J_{ij}Z_iZ_j +
-c.
-\]
-
-The corresponding cost operator is represented using Qiskit `SparsePauliOp`.
-
-### Penalty calibration
-
-Penalty coefficients are calibrated through:
-
-1. analytical lower bounds;
-2. normalized coefficient scaling;
-3. grid search;
-4. optional Bayesian optimization;
-5. sensitivity analysis across sequences;
-6. validation against exact small-instance solutions.
-
-A hard-constraint penalty should be large enough that no energetic reward from an invalid structure compensates for the violation. However, excessively large penalties can widen coefficient ranges, worsen conditioning, and reduce performance on noisy or analog hardware.
-
-The repository therefore records:
-
-- raw energy scale;
-- penalty scale;
-- coefficient range;
-- condition ratio;
-- constraint-violation rate;
-- sensitivity of the solution to small penalty changes.
-
----
-
-## RNA Encodings
-
-### Pair-based encoding
-
-Each valid candidate base pair receives one binary variable.
-
-#### Advantages
-
-- maximum local flexibility;
-- simple biological interpretation;
-- less dependence on candidate-stem construction;
-- potential to recover structures that use unusual stem lengths.
-
-#### Limitations
-
-- variable count can grow approximately quadratically with sequence length;
-- many overlap constraints are required;
-- QUBO density can become large;
-- isolated and fragmented pair selections are common;
-- circuit and embedding resources grow rapidly.
-
-### Stem-based encoding
-
-Each candidate stem receives one binary variable.
-
-#### Advantages
-
-- fewer variables;
-- structurally meaningful decisions;
-- fewer isolated pairs;
-- lower expected QUBO density;
-- potentially smaller quantum circuits.
-
-#### Limitations
-
-- candidate-generator bias;
-- correct structures may be excluded;
-- fixed stem boundaries reduce flexibility;
-- overlapping stem variants may still produce many variables.
-
-### Hierarchical encoding
-
-A planned advanced representation combines:
-
-- stem activation variables;
-- optional pair-refinement variables;
-- local loop or motif variables;
-- decomposition variables for sequence windows.
-
-The goal is to preserve coarse structural compression while permitting local corrections.
-
-### Encoding diagnostics
-
-Every encoded instance reports:
-
-- sequence length;
-- number of candidate pairs;
-- number of candidate stems;
-- number of binary variables;
-- number of linear terms;
-- number of quadratic terms;
-- QUBO density;
-- maximum conflict-graph degree;
-- number of excluded candidate pairs;
-- whether the ViennaRNA MFE structure remains representable.
-
-The last metric is critical: a solver cannot recover the MFE structure if the encoding removed one of its required stems.
-
----
-
-## Optimization Methods
-
-### Exact solver
-
-Used for small instances to determine:
-
-- exact QUBO ground energy;
-- ground-state bit strings;
-- degeneracy;
-- energy gap;
-- whether the QUBO optimum is structurally valid;
-- whether heuristic and quantum methods locate the true optimum.
-
-### Random baseline
-
-Provides a minimum baseline for:
-
-- energy quality;
-- valid-sample rate;
-- structural accuracy;
-- candidate diversity.
-
-### Greedy baseline
-
-Selects stable, non-conflicting stems using configurable ranking rules.
-
-Possible rankings include:
-
-- approximate stem energy;
-- energy per base pair;
-- stem length;
-- conflict-adjusted score;
-- classical probability prior.
-
-### Local search
-
-Possible local moves include:
-
-- add a stem;
-- remove a stem;
-- replace one stem with another;
-- swap conflicting stems;
-- repair one violation at a time.
-
-### Simulated annealing
-
-The primary quantum-inspired method uses D-Wave Ocean samplers.
-
-Configurable parameters include:
-
-- number of reads;
-- number of sweeps;
-- beta range;
-- beta schedule;
-- initial state;
-- random seed;
-- post-processing;
-- sample aggregation.
-
-### Quantum annealing
-
-Optional experiments can use D-Wave hardware or hybrid services when access is available.
-
-Hardware-specific metrics include:
-
-- embedding size;
-- physical qubits;
-- chain length;
-- chain strength;
-- broken-chain fraction;
-- QPU sampling time;
-- total access time.
-
-### QAOA
-
-The gate-based implementation follows:
-
-1. QUBO-to-Ising conversion.
-2. Cost Hamiltonian construction.
-3. Mixer Hamiltonian construction.
-4. Parameterized circuit generation.
-5. Classical parameter optimization.
-6. Statevector or shot-based execution.
-7. Bit-string sampling.
-8. Decoding and rescoring.
-
-Planned comparisons include:
-
-- depth \(p=1,2,3\), where feasible;
-- random initialization;
-- transferred parameters;
-- warm-start initialization;
-- standard X mixer;
-- constraint-aware mixer;
-- COBYLA;
-- SPSA;
-- Nelder-Mead;
-- expectation-value objective;
-- CVaR objective;
-- noiseless and noisy execution.
-
-### CVaR objective
-
-Instead of averaging over all measured energies, Conditional Value at Risk focuses optimization on a selected low-energy tail of the sampled distribution.
-
-A configurable \(\alpha\) determines the fraction of low-energy samples included in the objective.
-
-### Noise models
-
-Planned noise experiments include:
-
-- finite-shot sampling;
-- readout error;
-- single-qubit depolarizing error;
-- two-qubit depolarizing error;
-- device-inspired coupling maps;
-- transpilation overhead.
-
----
-
-## Thermodynamic Validation
-
-The QUBO is treated as a search surrogate, not as a complete replacement for the ViennaRNA energy model.
-
-For each candidate, the pipeline records:
-
-| Field | Meaning |
-|---|---|
-| `qubo_energy_raw` | Solver-reported objective before repair |
-| `qubo_energy_repaired` | QUBO objective after repair |
-| `vienna_energy_raw` | ViennaRNA energy of raw valid candidate |
-| `vienna_energy_repaired` | ViennaRNA energy after repair |
-| `mfe_energy` | ViennaRNA reference MFE |
-| `absolute_energy_gap` | Candidate energy minus MFE energy |
-| `relative_energy_gap` | Energy gap normalized by reference magnitude |
-| `qubo_rank` | Rank by optimization objective |
-| `vienna_rank` | Rank by thermodynamic energy |
-
-### Benchmark modes
-
-#### Independent mode
-
-ViennaRNA is used only after optimization for benchmarking and rescoring.
-
-#### Probability-guided mode
-
-ViennaRNA base-pair probabilities may be used to prune candidate pairs. Results must be labelled as classically guided.
-
-#### Warm-start mode
-
-A classical candidate or probability distribution initializes the quantum or annealing solver.
-
-#### Ensemble mode
-
-Candidates are compared with MFE, centroid, maximum-expected-accuracy, and suboptimal structures rather than only one fold.
-
----
-
-## Benchmarking and Evaluation
-
-### Benchmark tiers
-
-#### Tier 1: Formulation verification
-
-- approximate sequence length: 8–14 nt;
-- exact enumeration feasible;
-- penalty and encoding validation;
-- ground-state analysis.
-
-#### Tier 2: Gate-based simulation
-
-- approximate sequence length: 12–30 nt;
-- reduced stem encoding;
-- QAOA, CVaR, shot, and noise studies.
-
-#### Tier 3: Quantum-inspired optimization
-
-- approximate sequence length: 25–100 nt;
-- simulated annealing and local-search comparisons;
-- QUBO scaling analysis.
-
-#### Tier 4: Stress tests
-
-- approximate sequence length: 100–500 nt;
-- candidate generation and graph complexity;
-- pruning and decomposition;
-- projected quantum resources rather than direct QAOA execution.
-
-These ranges are initial targets, not guarantees. The actual feasible range depends more directly on the number of retained variables and interactions than on nucleotide length alone.
-
-### Controlled sequence characteristics
-
-Synthetic benchmark sets vary:
-
-- sequence length;
-- GC content;
-- wobble-pair allowance;
-- candidate-pair count;
-- candidate-stem count;
-- stem-length distribution;
-- conflict-graph density;
-- MFE base-pair density;
-- number of low-energy alternatives;
-- MFE energy gap;
-- motif repetition.
-
-### Structural metrics
-
-- exact dot-bracket match;
-- base-pair precision;
-- base-pair recall;
-- base-pair F1 score;
-- base-pair distance;
-- stem precision;
-- stem recall;
-- stem F1 score;
-- invalid overlap count;
-- crossing count;
-- repair count;
-- valid-sample rate.
-
-### Energy metrics
-
-- best ViennaRNA-rescored energy;
-- mean and median candidate energy;
-- absolute and relative MFE gap;
-- QUBO–Vienna energy correlation;
-- top-1, top-5, and top-10 MFE recovery;
-- probability of sampling the exact QUBO ground state;
-- probability of sampling the ViennaRNA MFE structure.
-
-### Optimization metrics
-
-- best objective value;
-- mean sampled objective;
-- ground-state hit rate;
-- unique valid candidates;
-- sampling entropy;
-- optimizer iterations;
-- objective evaluations;
-- seed sensitivity;
-- penalty sensitivity.
-
-### Runtime metrics
-
-- sequence validation time;
-- candidate generation time;
-- conflict-graph time;
-- QUBO-construction time;
-- solver time;
-- decoding time;
-- repair time;
-- ViennaRNA-rescoring time;
-- end-to-end runtime;
-- peak memory usage.
-
-### Quantum-resource metrics
-
-- logical qubits;
-- Hamiltonian terms;
-- QUBO density;
-- circuit depth;
-- transpiled depth;
-- one-qubit gates;
-- two-qubit gates;
-- SWAP gates;
-- shots;
-- optimizer iterations;
-- circuit evaluations;
-- estimated physical qubits;
-- optional annealing embedding overhead.
-
-### Statistical analysis
-
-Stochastic experiments should be repeated over multiple random seeds.
-
-Recommended reporting:
-
-- median;
-- interquartile range;
-- bootstrap confidence intervals;
-- success probability;
-- effect size;
-- paired comparisons when runs share the same sequence;
-- failure-case analysis rather than only aggregate means.
-
-### Required ablations
-
-1. Pair versus stem encoding.
-2. Canonical pairs versus canonical plus wobble pairs.
-3. Fixed versus adaptive penalties.
-4. QUBO ranking versus ViennaRNA rescoring.
-5. Raw versus repaired candidates.
-6. Full candidate set versus pruned candidate set.
-7. Cold-start versus warm-start QAOA.
-8. Expectation versus CVaR objective.
-9. Noiseless versus shot-based execution.
-10. Noiseless versus hardware-inspired noise.
-11. Monolithic versus decomposed QUBO.
-12. Minimum stem length sensitivity.
-13. QAOA depth sensitivity.
-
----
-
-## Technology Stack
-
-The dependency lockfile is the authoritative source for exact package versions. The following stack describes the target architecture.
-
-### Core
-
-| Technology | Purpose |
-|---|---|
-| Python 3.11 | Primary implementation language |
-| `pyproject.toml` | Package and build configuration |
-| `uv` or `pip` | Environment and dependency installation |
-| Conda/micromamba | Optional cross-platform ViennaRNA environment |
-| Docker | Reproducible Linux execution |
-
-### RNA and bioinformatics
-
-| Package | Purpose |
-|---|---|
-| ViennaRNA | MFE prediction, energy evaluation, partition functions |
-| Biopython | FASTA parsing and sequence utilities |
-| NetworkX | Stem conflict graphs and decomposition |
-| forgi | Optional RNA graph representation |
-| forna | Optional interactive RNA visualization |
-
-### Numerical and optimization
-
-| Package | Purpose |
-|---|---|
-| NumPy | Arrays and numerical calculations |
-| SciPy | Optimization, statistics, sparse structures |
-| pandas | Benchmark tables and result aggregation |
-| `dimod` | Binary quadratic models |
-| D-Wave Ocean SDK | Simulated annealing and optional quantum annealing |
-| Optuna | Penalty and hyperparameter search |
-| HiGHS through SciPy | Optional classical exact or mixed-integer baseline |
-
-### Quantum
-
-| Package | Purpose |
-|---|---|
-| Qiskit | Circuits, operators, primitives, transpilation |
-| qiskit-addon-opt-mapper | Optimization-model mapping utilities |
-| Qiskit Aer or equivalent local primitives | Statevector, shot-based, and noisy simulation |
-| qiskit-ibm-runtime | Optional IBM Quantum execution |
-| `SparsePauliOp` | Ising cost-Hamiltonian representation |
-
-### Quality and testing
-
-| Package | Purpose |
-|---|---|
-| pytest | Unit and integration tests |
-| pytest-cov | Coverage reporting |
-| Hypothesis | Property-based tests |
-| Ruff | Formatting and linting |
-| mypy | Static type checking |
-| pre-commit | Local quality checks |
-
-### Reporting and documentation
-
-| Package | Purpose |
-|---|---|
-| Matplotlib | Static publication figures |
-| Plotly | Optional interactive diagnostics |
-| Jinja2 | HTML decision-card generation |
-| MkDocs Material | Technical documentation |
-| Quarto or Jupyter Book | Research report and supplementary analysis |
-
-### Current reference versions at project planning time
-
-The following versions were current in July 2026 and may be used as the starting point for a compatibility lock:
-
-- Qiskit 2.5.0
-- qiskit-addon-opt-mapper 0.1.0
-- D-Wave Ocean SDK 9.4.0
-- ViennaRNA 2.7.x
-
-Do not rely on this section alone for reproduction. Use the committed lockfile and release manifest.
-
----
-
-## Repository Structure
-
-```text
-decidion-foldq/
-│
-├── README.md
-├── LICENSE
-├── CITATION.cff
-├── CONTRIBUTING.md
-├── CODE_OF_CONDUCT.md
-├── SECURITY.md
-├── CHANGELOG.md
-├── pyproject.toml
-├── uv.lock
-├── environment.yml
-├── Dockerfile
-├── docker-compose.yml
-├── Makefile
-├── .env.example
-├── .gitignore
-├── .pre-commit-config.yaml
-│
-├── .github/
-│   ├── workflows/
-│   │   ├── lint.yml
-│   │   ├── tests.yml
-│   │   ├── integration.yml
-│   │   ├── docker.yml
-│   │   └── reproduce.yml
-│   ├── ISSUE_TEMPLATE/
-│   ├── pull_request_template.md
-│   ├── CODEOWNERS
-│   └── dependabot.yml
-│
-├── configs/
-│   ├── base.yaml
-│   ├── exact.yaml
-│   ├── greedy.yaml
-│   ├── simulated_annealing.yaml
-│   ├── qaoa_statevector.yaml
-│   ├── qaoa_shot_based.yaml
-│   ├── qaoa_noise.yaml
-│   ├── cvar_qaoa.yaml
-│   ├── pair_encoding.yaml
-│   ├── stem_encoding.yaml
-│   ├── penalty_search.yaml
-│   └── scaling_study.yaml
-│
-├── data/
-│   ├── raw/
-│   │   ├── synthetic/
-│   │   └── public/
-│   ├── processed/
-│   ├── benchmark_sets/
-│   ├── manifests/
-│   └── README.md
-│
-├── src/
-│   └── foldq/
-│       ├── __init__.py
-│       ├── cli.py
-│       ├── pipeline.py
-│       ├── config.py
-│       ├── constants.py
-│       │
-│       ├── schemas/
-│       ├── io/
-│       ├── biology/
-│       ├── classical/
-│       ├── encodings/
-│       ├── qubo/
-│       ├── solvers/
-│       ├── decoding/
-│       ├── evaluation/
-│       ├── experiments/
-│       ├── visualization/
-│       └── reporting/
-│
-├── scripts/
-│   ├── generate_synthetic_data.py
-│   ├── build_reference_dataset.py
-│   ├── validate_qubo.py
-│   ├── run_classical_baselines.py
-│   ├── run_annealing.py
-│   ├── run_qaoa.py
-│   ├── run_ablation_study.py
-│   ├── run_scaling_study.py
-│   └── build_final_report.py
-│
-├── notebooks/
-│   ├── 01_viennarna_reference.ipynb
-│   ├── 02_candidate_generation.ipynb
-│   ├── 03_qubo_validation.ipynb
-│   ├── 04_annealing_benchmark.ipynb
-│   ├── 05_qaoa_benchmark.ipynb
-│   ├── 06_noise_analysis.ipynb
-│   └── 07_scalability_analysis.ipynb
-│
-├── tests/
-│   ├── unit/
-│   ├── property/
-│   ├── integration/
-│   ├── regression/
-│   ├── scientific/
-│   └── fixtures/
-│
-├── results/
-│   ├── raw/
-│   ├── processed/
-│   ├── metrics/
-│   ├── figures/
-│   ├── tables/
-│   ├── decision_cards/
-│   └── manifests/
-│
-├── docs/
-│   ├── index.md
-│   ├── architecture.md
-│   ├── mathematical_formulation.md
-│   ├── thermodynamic_model.md
-│   ├── solver_methods.md
-│   ├── benchmarking.md
-│   ├── reproducibility.md
-│   ├── limitations.md
-│   └── api_reference.md
-│
-├── paper/
-│   ├── manuscript.tex
-│   ├── references.bib
-│   ├── figures/
-│   ├── tables/
-│   └── supplementary_information.tex
-│
-└── presentation/
-    ├── slides.pptx
-    ├── slides.pdf
-    ├── speaker_notes.md
-    └── demo_script.md
-```
-
----
-
-## Installation
-
-### System requirements
-
-Recommended development environment:
-
-- Python 3.11;
-- Git;
-- 8 GB RAM minimum;
-- 16 GB or more recommended for simulation;
-- C/C++ build tools if installing packages from source;
-- optional Docker;
-- optional IBM Quantum or D-Wave account for hardware experiments.
-
-### Clone the repository
-
-```bash
-git clone <repository-url>
-cd decidion-foldq
-```
-
-### Option A: `uv` installation
-
-```bash
-uv venv --python 3.11
-```
-
-Activate the environment:
-
-```bash
-# Linux or macOS
-source .venv/bin/activate
-
-# Windows PowerShell
-.venv\Scripts\Activate.ps1
-```
-
-Install the base project:
-
-```bash
-uv sync
-```
-
-Install development and quantum extras:
-
-```bash
-uv sync --extra dev --extra quantum
-```
-
-### Option B: standard virtual environment
-
-```bash
-python -m venv .venv
-```
-
-Activate it and install:
-
-```bash
-python -m pip install --upgrade pip
-pip install -e ".[dev,quantum]"
-```
-
-### Option C: Conda or micromamba
-
-```bash
-micromamba create -n foldq -f environment.yml
-micromamba activate foldq
-pip install -e ".[dev,quantum]"
-```
-
-### Option D: Docker
-
-```bash
-docker build -t decidion-foldq:latest .
-```
-
-Run the demonstration:
-
-```bash
-docker run --rm \
-  -v "${PWD}/results:/app/results" \
-  decidion-foldq:latest \
-  foldq predict \
-  --sequence GGGAAAUCCCU \
-  --solver simulated-annealing \
-  --output results/docker-demo
-```
-
-### Verify the installation
-
-```bash
-foldq doctor
-```
-
-Expected checks:
-
-- Python version;
-- ViennaRNA import;
-- Qiskit import;
-- D-Wave Ocean import;
-- optional IBM credentials;
-- optional D-Wave credentials;
-- writable result directory.
-
-Run tests:
-
-```bash
-pytest -q
-```
+| A — reference structure representable | 19/19 = 100% |
+| B — reference is the QUBO ground state | 17/19 = 89% |
+| **B conditional on A (formulation fidelity)** | **17/19 = 89%** |
+| D — mean base-pair F1 | 0.977 |
+| D — mean energy gap | +0.02 kcal/mol |
+
+**Gate C is not measured by E1** — its table has no Gate-C column. Solver optimality is measured
+separately, at scale, by E3; see
+[Solver comparison](#solver-comparison-and-the-no-quantum-advantage-finding-rq3) below, where
+every heuristic solver except `greedy` and `random` passes Gate C on 100% of the runs where it
+is determinate.
+
+Attribution across the 19 instances: 17 no failure, 2 energy model, 0 candidate generation.
+
+Gate A reads 100% here specifically because this default-configuration sweep caps instances at
+`max_variables=18`. That is not representative of larger instances: the RQ2 encoding sweep in
+[Results](#results) below measures Gate A on the same kind of candidates at `min_stem_length=2`
+and finds it at 75%, not 100% — candidate-generation failures are real and grow with instance
+size, they are simply outside what this particular n=19 sample reaches.
+
+This table is a full-sweep result (`make reproduce`, not the `--quick` smoke test — see
+[Reproducibility](#reproducibility)), reproduced at `results/full/e1_formulation.csv`. The
+mechanism is exercised directly by `foldq.evaluation.gates` and at scale by
+`foldq.experiments.e1_formulation`.
 
 ---
 
 ## Quick Start
 
-### Predict with simulated annealing
+Verified against Python 3.11 with the project installed in `.venv` (`uv sync --extra dev
+--extra quantum`, or `pip install -e ".[dev,quantum]"`).
 
 ```bash
-foldq predict \
-  --sequence GGGAAAUCCCU \
-  --encoding stem \
-  --solver simulated-annealing \
-  --config configs/base.yaml \
-  --output results/demo
-```
+# Full test suite
+.venv/bin/pytest tests -q
 
-### Run an exact small-instance analysis
+# Environment check
+.venv/bin/foldq doctor
 
-```bash
-foldq predict \
-  --sequence GGGAAAUCCCU \
-  --encoding stem \
-  --solver exact \
-  --config configs/exact.yaml \
-  --output results/exact-demo
-```
+# Predict a structure with the exact solver and write run artifacts
+.venv/bin/foldq predict --sequence GGGAAAUCCCU --solver exact --output results/demo
 
-### Run QAOA simulation
+# Render a self-contained HTML decision card for the same sequence
+.venv/bin/foldq report --sequence GGGAAAUCCCU --output results/demo/decision-card.html
 
-```bash
-foldq predict \
-  --sequence GGGAAAUCCCU \
-  --encoding stem \
-  --solver qaoa \
-  --config configs/qaoa_statevector.yaml \
-  --output results/qaoa-demo
-```
+# Fast smoke test of every experiment (~10 seconds, reduced sample counts)
+.venv/bin/python -m foldq.experiments.run_all --quick --output results/quick
 
-### Compare multiple solvers
-
-```bash
-foldq benchmark \
-  --dataset data/benchmark_sets/tier1.csv \
-  --solvers exact,greedy,simulated-annealing,qaoa \
-  --encodings pair,stem \
-  --output results/tier1-comparison
-```
-
-### Run the primary reproducibility target
-
-```bash
+# Full reproduction — ~2h47m on an M-series Mac, not minutes; this is what the
+# tables in this README were measured from. Run --quick first (~10s) as a smoke
+# test before committing to the full run.
 make reproduce
 ```
+
+`foldq predict` prints a summary whose attribution line reads `no failure: all gates passed`
+for the demo sequence, and writes `manifest.json` and `summary.md` to the output directory.
+
+---
+
+## Results
+
+The tables in this section are full-sweep results at the stated sample size, produced by
+`make reproduce` (or the underlying experiment module run without `--quick`). The `--quick`
+smoke test exercises the same code paths at drastically reduced sample counts for fast CI
+checks and will not reproduce these exact figures — that is expected, not a discrepancy to
+chase.
+
+### Representability and the lone-pair ceiling (RQ2, n = 40)
+
+`foldq.experiments.e2_encoding` sweeps `min_stem_length` because Gate A's failures at the
+default setting (`min_stem_length=2`) were found to be dominated by lone base pairs — isolated,
+single-pair helices that `min_stem_length=2` structurally excludes from the candidate set
+before the QUBO is even built. Stem encoding, maximal mode, from
+`results/full/e2_encoding.csv`:
+
+| `min_stem_length` | Gate A pass | mean coverage | mean variables |
+|---|---|---|---|
+| 1 | 40/40 (100%) | 1.000 | 551.4 |
+| 2 | 30/40 (75%) | 0.983 | 195.1 |
+| 3 | 16/40 (40%) | 0.905 | 72.7 |
+
+Every instance that fails Gate A at `min_stem_length=2` is rescued at `min_stem_length=1` — a
+**100% rescue rate**, guaranteed structurally rather than merely observed (for a fixed sequence
+and stem mode, the `min_stem_length=1` candidate set is always a superset of the
+`min_stem_length=2` one — see the module docstring) — at a **2.83× variable-count cost**.
+Sub-stems mode shows the identical Gate A and coverage pattern at higher absolute variable
+counts: 1337.5 / 479.2 / 172.2 mean variables at `min_stem_length` 1 / 2 / 3 respectively. Lone
+base pairs are therefore the *sole* cause of the Gate A ceiling at the default setting. This
+answers RQ2 with a measured exchange curve rather than an assumption: perfect representability
+is achievable, and it costs roughly 2.8× the logical qubits.
+
+**Stem compression at matched representability.** The pair-based encoding baseline
+(`foldq.encodings.pair_encoding`, described in
+[Architecture and Repository Layout](#architecture-and-repository-layout)) gives every base
+pair its own variable, so it is 100% representable by construction — there is no lone-pair
+ceiling to close. Comparing at the only point where stem encoding matches that same 100%
+representability, `min_stem_length=1`:
+
+| encoding | mean variables | Gate A |
+|---|---|---|
+| pair | 858.4 | 100% |
+| **stem (maximal, `min_stem_length=1`)** | **551.4** | **100%** |
+
+Stem encoding reaches identical representability with **36% fewer variables**. This comparison
+is deliberately restricted to `min_stem_length=1` on both sides — the stem average pooled
+across all three `min_stem_length` values (273.1) is a smaller number but mixes configurations
+that are not representationally comparable, since only `min_stem_length=1` reaches 100% Gate A.
+
+### Solver comparison and the no-quantum-advantage finding (RQ3)
+
+**Correction.** An earlier draft of this project's design spec claimed that *"at 40 nt,
+simulated annealing already missed the true ground state,"* presented as evidence of genuine
+optimization difficulty. That claim is retracted here. It was an artifact of measuring against
+`TreeDecompositionSampler`, which is a **stochastic** Boltzmann sampler, not an exact solver —
+`src/foldq/solvers/exact.py` documents the specific case that exposed this: on a toy problem
+probed during development, the sampler returned the true optimum in 4 of 5 independent calls
+and a strictly worse energy on the 5th. `ExactSolver` was changed to use
+`TreeDecompositionSolver` instead, which runs the same tree decomposition as a **deterministic**
+dynamic program over the elimination order and returns the true minimum on every call.
+
+`foldq.experiments.e3_solvers` re-measures all eight solvers against the deterministic exact
+solver across 25 sequences, 20–50 nt (450 rows, `results/full/e3_solvers.csv`):
+
+| solver | mean F1 | mean energy gap | found optimum | mean runtime |
+|---|---|---|---|---|
+| tabu | 0.873 | 0.248 | 100% | 10.5 s |
+| local_search | 0.861 | 0.253 | 100% | 33.1 s |
+| path_integral_sqa | 0.849 | 0.259 | 100% | 19.8 s |
+| simulated_annealing | 0.837 | 0.264 | 100% | 0.19 s |
+| greedy | 0.572 | 1.860 | 60% | 0.006 s |
+| random | 0.213 | 5.405 | 13% | 0.03 s |
+
+"Found optimum" is determinate on only **30 of the 75 runs per solver** — the rest exceed
+`ExactSolver`'s ~22-variable ceiling (see [Known Limitations](#known-limitations)) and are
+excluded from that column rather than guessed at. Among the determinate runs, every solver
+except `greedy` and `random` finds the exact QUBO optimum 100% of the time, and Gate C passes
+accordingly. **Simulated annealing is ~55× faster than tabu (0.19 s vs. 10.5 s) for mean F1 and
+energy gap within 0.04 and 0.016 of it** — the runtime-versus-quality tradeoff a
+resource-constrained reproduction should actually care about.
+
+The corrected statement: **at sizes where exact verification is possible, these QUBO instances
+are easy for classical heuristics.** This is reported as a finding that strengthens the
+no-quantum-advantage position with evidence, not as a disappointment — it says the difficulty
+in this problem, if any, has not been demonstrated to live in the optimization step at
+verifiable sizes. It says nothing about instances beyond exact-verification reach (~22
+variables); see [Known Limitations](#known-limitations).
+
+### QAOA solution quality — the project's central negative result
+
+The classical comparison above only tells half the story. `foldq.experiments.e4_qaoa` asks the
+same question of the gate-based method: does QAOA actually reach the ground states classical
+heuristics reach 100% of the time? Noiseless expectation objective, by `reps` (99 rows,
+`results/full/e4_qaoa.csv`):
+
+| reps | logical qubits | circuit depth | 2-qubit gates | mean F1 | found optimum |
+|---|---|---|---|---|---|
+| 1 | 11.8 | 69 | 123.6 | 0.519 | 29.6% |
+| 2 | 11.8 | 123 | 247.1 | 0.405 | 40.7% |
+| 3 | 11.8 | 177 | 370.7 | 0.534 | 44.4% |
+
+Neither the objective nor noise closes the gap: CVaR scores mean F1 0.456, ground state found
+22.2% of the time; the plain expectation objective (all `reps` pooled) scores 0.486 and 38.3%;
+the same expectation objective transpiled onto `fake_hanoi` noise data scores 0.493 and 22.2%.
+**CVaR does not outperform the plain expectation objective at matched conditions** — it was
+tried specifically because it is the variant more commonly reported to help, and here it does
+not.
+
+**This is reported prominently, as the project's central negative result, because it is the
+evidence behind this project's no-quantum-advantage position.** QAOA reaches the exact QUBO
+ground state on 30–44% of instances depending on `reps`; every classical heuristic in the
+solver-comparison table above except `greedy` and `random` reaches it 100% of the time on the
+same class of instances. A gate-based method that cannot reliably match simple classical
+heuristics on instances small enough to verify exactly is itself evidence against near-term
+quantum advantage for this formulation — not merely an absence of evidence for one — and that
+is stated directly here rather than minimized.
+
+### Surrogate fidelity (RQ4)
+
+The stem-additive QUBO objective, under the **default `charge_refund` energy model**, correlates
+with true ViennaRNA thermodynamic energy at **r = 0.9935** (MAE 1.24 kcal/mol), measured over
+sequences **30–100 nt** under the default `dangles=2` folding model — the `30-100 nt
+charge_refund` row printed by `scripts/probes/02_surrogate_fidelity.py`. Restricted to **30–60
+nt** — the narrower range this project's benchmark generator actually produces sequences in most
+often — the same default-model surrogate scores **r = 0.9804** (MAE 0.95 kcal/mol), the script's
+`30-60 nt charge_refund` row.
+
+| length range | `stacking_only` r | `charge_refund` (default) r | `charge_refund` MAE |
+|---|---|---|---|
+| 30–100 nt | 0.9584 | **0.9935** | 1.24 kcal/mol |
+| 30–60 nt | 0.8943 | **0.9804** | 0.95 kcal/mol |
+
+All four cells above are printed directly by `scripts/probes/02_surrogate_fidelity.py`'s final
+table, one row per length range per model (`30-100 nt stacking_only`, `30-100 nt charge_refund`,
+`30-60 nt stacking_only`, `30-60 nt charge_refund`); the script computes `charge_refund` from a
+`dangles=0` coefficient backend against the `dangles=2` reference fold, matching the pipeline.
+
+The `stacking_only` column is kept as the ablation contrast, not the headline: it is the energy
+model without the charge-and-refund hairpin/interior-loop construction, and E1 shows exactly
+what dropping that construction costs at the level of Gate B, not just correlation —
+`stacking_only` reaches Gate B on only **50.9%** of instances (pooled across nesting policy and
+overlap-penalty settings) versus charge-and-refund's **89.5%**
+(`results/full/e1_formulation.csv`). A weaker surrogate does not just correlate worse, it
+changes the QUBO's actual ground state more often.
+
+The caveat that a surrogate correlation "drops on short sequences" applies to `stacking_only`,
+not to the default model: `stacking_only` varies **0.690–0.934 across random seeds** (mean
+0.846) at 30–60 nt, a real and fairly wide spread, while the default `charge_refund` model holds
+**0.9804** at the same range. Citing only the 30–100 nt headline number for either model would
+overstate its fidelity at the shorter lengths most of this project's other experiments actually
+run at, which is why both ranges are reported for both models here rather than only the wider,
+better-looking one.
+
+### Quantum resource scaling (RQ5)
+
+`foldq.evaluation.resources.estimate_resources` builds the QAOA ansatz, decomposes it to its
+target gate basis, and counts gates by arity (1-qubit, 2-qubit, 3+-qubit) directly from
+instruction width — not from a hardcoded gate-name allowlist, which silently drops gates when
+Qiskit's basis set changes (this project's development history includes exactly that bug, since
+fixed).
+
+Measured on `fake_hanoi` (5 qubits, real IBM device calibration data, `reps=1`):
+
+| | Ideal (no device target) | Transpiled onto `fake_hanoi` | Change |
+|---|---|---|---|
+| Circuit depth | 24 | 60 | 2.5× |
+| Single-qubit gates | 25 | 55 | +120% |
+| Two-qubit gates | 20 | 32 | +60% |
+| `swap_gates` | — | 0 | — |
+
+**`swap_gates = 0` does not mean no routing overhead.** Qiskit's transpiler decomposes each
+SWAP into three CX instructions rather than emitting a named `swap` instruction, so routing
+cost is folded entirely into `two_qubit_gates`, not reported separately. The +60% two-qubit-gate
+increase above is basis-gate translation *plus* routing combined — comparing `two_qubit_gates`
+against a same-`reps`, same-shots, no-device-target row is the only way to see the routing
+contribution; the `swap_gates` column alone will always read zero regardless of how much
+routing actually happened.
+
+---
+
+## Pseudoknots
+
+Disabling the crossing-pair penalty (`forbid_crossing=False`, or `foldq predict
+--pseudoknots`) lets this formulation express structures that ViennaRNA's classical dynamic
+program cannot represent **at all**, because ViennaRNA's dot-bracket notation only nests, never
+crosses. Measured by `foldq.experiments.e5_pseudoknot` under the default `dangles=2` folding
+model (`results/full/e5_pseudoknot.csv`):
+
+| | 28 nt (8 true bp) | 33 nt (10 true bp) |
+|---|---|---|
+| ViennaRNA | F1 0.667, recall 0.500 | **F1 0.000, recall 0.000** |
+| FoldQ strict mode | F1 0.667, recall 0.500 | F1 0.667, recall 0.500 |
+| **FoldQ pseudoknot mode** | **F1 1.000, recall 1.000** | **F1 1.000, recall 1.000** |
+
+The 33 nt fixture's ViennaRNA row is not a typo. Under the default `dangles=2` model, ViennaRNA's
+MFE fold shares **zero** of the reference's 10 base pairs — it is an entirely different fold, not
+a partially-overlapping one. (Under the non-default `dangles=0` model the same fixture's
+ViennaRNA fold shares 5 of 10 pairs, F1 0.667 — see
+[Thermodynamic Model and Its Limits](#thermodynamic-model-and-its-limits) and that record's
+`notes` field in `data/fixtures/curated.json`. `dangles=2` is reported here because it is what
+this pipeline and ordinary ViennaRNA/RNAfold both use by default.) Disabling the crossing
+penalty takes FoldQ's own base-pair recovery from 50% to 100% on both fixtures — structures
+ViennaRNA is structurally incapable of expressing at all. Because ViennaRNA cannot score a
+crossing structure (its energy evaluator requires legal, non-crossing dot-bracket input), this
+comparison is made through base-pair precision/recall/F1 against each fixture's known
+structure, never through an energy gap — a pseudoknotted `FoldCandidate` correctly reports
+`is_pseudoknotted=True` and a NaN `vienna_energy` by construction
+(`src/foldq/decoding/decode.py`), and the decision card explains that NaN rather than presenting
+it as missing data.
+
+**The honest result at real-structure scale.** Both fixtures above are small and constructed
+specifically to be representable. On a real, larger structure — the yeast tRNA-Phe cloverleaf
+(76 nt, a public-domain sequence, no pseudoknot, 229 variables) — the same pipeline scores
+**F1 0.326, recall 0.333**, identically in strict and pseudoknot mode (there is no crossing pair
+for the penalty toggle to affect). This is reported here deliberately rather than only citing
+the two small pseudoknot fixtures: the method performs well on small and specifically-designed
+structures, and recovers roughly a third of base pairs on a real 76 nt structure — a materially
+harder and more representative regime than either pseudoknot fixture.
+
+**The CLI reports a different, also-correct number for the 28 nt fixture.** `foldq predict
+--pseudoknots` does not reproduce the pseudoknot-mode 1.000 above; it prints 0.667, and that is
+correct, not a bug. Actual output:
+
+```text
+$ .venv/bin/foldq predict --sequence GGGGAAAAGCGCAAAACCCCAAAAGCGC --pseudoknots --seed 42
+
+# FoldQ prediction: cli
+
+Sequence      GGGGAAAAGCGCAAAACCCCAAAAGCGC
+ViennaRNA MFE ((((............))))........  -6.00 kcal/mol
+FoldQ         ............................  nan kcal/mol
+
+Solver        simulated_annealing (8 variables, density 0.39)
+Base-pair F1  0.667
+Energy gap    nan kcal/mol
+Attribution   pseudoknotted candidate: the selected structure contains crossing pairs, which
+              ViennaRNA cannot represent or score. The reference fold can hold at most one of
+              any two crossing helices, so precision against it is capped even when the
+              structure is correct. Divergence from the nested reference is expected here, not
+              a failure
+```
+
+Both 1.000 and 0.667 are correct measurements of different things, against different
+references. E5's 1.000 scores the candidate against the curated fixture's own annotated *known*
+structure — a ground truth that exists only for curated records. The CLI has no such ground
+truth for an arbitrary sequence, so `gate_d_physical` falls back to the only reference an
+arbitrary sequence has: ViennaRNA's own MFE fold, which — being ordinary dot-bracket notation —
+can hold at most one of any two crossing helices. A candidate that correctly recovers both
+helices of a crossing pair therefore gets full recall but only ~0.5 precision against the one
+helix that reference can see, capping F1 at 0.667 even when the structure is exactly right. Do
+not expect the CLI to print 1.000 on this fixture; 0.667 is the ceiling, not a defect.
+
+**Fixture provenance.** The two pseudoknot fixtures used above
+(`pk_htype_constructed_28`, `pk_htype_constructed_33` in `data/fixtures/curated.json`) were
+**constructed for this project, not literature-derived, and carry no citation.** This is stated
+in each fixture's `source` field and carried through into every experiment table that uses
+them. An earlier draft of the fixture file incorrectly attributed them to PseudoBase and the
+PDB; that claim was false and has been removed — it is not reintroduced anywhere in this
+repository. Cited literature pseudoknots should be substituted for these two constructed
+records before any publication beyond this challenge submission.
+
+Reproduce via `foldq.experiments.e5_pseudoknot` (included in `make reproduce`).
+
+---
+
+## Thermodynamic Model and Its Limits
+
+The QUBO's linear stem coefficients come from a **charge-and-refund** construction
+(`src/foldq/encodings/energy.py`): every stem is provisionally charged as if it closes a
+hairpin, and that charge is refunded, with an interior-loop charge substituted, when another
+stem is found nesting inside it. This recovers a context-dependent (technically 3-body) energy
+term inside a degree-2 QUBO, at the cost of an approximation the module documents and E1
+measures rather than hides: when several helices nest inside one, the refund can apply more
+than once. The default `immediate_only` nesting policy (below) bounds that error; the
+alternative `all_nestable` policy is kept selectable specifically so E1 can measure the size of
+the error it introduces.
+
+**Dangling ends cannot be represented, at any penalty setting.** ViennaRNA's default
+(`dangles=2`) energy model adds dangling-end stacking bonuses on unpaired nucleotides adjacent
+to a helix. Those terms attach to *unpaired context*, not to any stem, so a stem-indexed QUBO
+has no variable to attach such a term to — this is a representational gap, not a tuning
+problem. Measured gap on this project's demo fixture: **1.20 kcal/mol**
+(`tests/scientific/test_vienna.py::test_dangles_gap_is_measured_not_hidden`).
+
+The pipeline resolves this by using **two different `dangles` settings deliberately**
+(`FoldQConfig.dangles=2`, `FoldQConfig.energy_dangles=0`, see `src/foldq/pipeline.py` and
+`src/foldq/config.py`):
+
+- **`energy_dangles=0`** is what extracts the QUBO's linear and quadratic coefficients. At
+  `dangles=0`, the Turner energy model is exactly additive over loops — precisely what the
+  charge-and-refund construction assumes.
+- **`dangles=2`** (ViennaRNA's ordinary default) is what folds the reference structure and
+  rescores every decoded candidate, so the benchmark comparison is against ordinary ViennaRNA
+  behaviour, not a hobbled version of it.
+
+**Consequence, stated plainly:** FoldQ's strict mode reproduces ViennaRNA exactly **under the
+`dangles=0` model it actually encodes.** Under the default `dangles=2` model used for reference
+folding and rescoring, ViennaRNA can prefer a lower-energy fold that this project's candidate
+set does not reach at all — observed directly on the 33-nt constructed pseudoknot fixture,
+where ViennaRNA's `dangles=2` fold and FoldQ's candidate share **zero base pairs**
+(`data/fixtures/curated.json`).
+
+---
+
+## Architecture and Repository Layout
+
+```mermaid
+flowchart TD
+    A[SequenceRecord] --> B[ViennaRNA reference fold]
+    A --> C[Maximal-stem generation]
+    C --> D[Conflict graph: overlap + crossing]
+    D --> E[Stem QUBO: charge-and-refund energy + penalties]
+    E --> F[Ising / SparsePauliOp]
+
+    E --> G1[Exact solver]
+    E --> G2[Random / greedy / local search]
+    E --> G3[Simulated annealing / tabu / path-integral SQA]
+    F --> G4[QAOA / CVaR-QAOA]
+
+    G1 --> H[decode_sample: bits to stems to dot-bracket]
+    G2 --> H
+    G3 --> H
+    G4 --> H
+
+    H --> I[Deterministic repair]
+    I --> J[ViennaRNA rescoring]
+    B --> K[evaluate_gates: four-gate ladder]
+    J --> K
+    K --> L[Decision card + figures]
+```
+
+Pair-based encoding (`foldq.encodings.pair_encoding`) exists as a comparison baseline used only
+inside experiment E2 to quantify RQ2 (stem compression versus pair-level variables); it is not
+reachable through `FoldQPipeline` or the CLI, which implement the stem encoding exclusively.
+
+### Repository layout (as it actually exists)
+
+```text
+FoldQ/
+├── README.md
+├── Makefile
+├── pyproject.toml
+├── configs/
+│   └── base.yaml
+├── data/
+│   └── fixtures/curated.json
+├── scripts/probes/            # exploratory probes behind the measurements above
+├── src/foldq/
+│   ├── cli.py, config.py, constants.py, pipeline.py
+│   ├── schemas/                # SequenceRecord, Stem, QuboProblem, FoldCandidate, GateReport, ...
+│   ├── biology/                 # pairs, maximal/sub-stem generation, conflict graph, dot-bracket
+│   ├── classical/vienna.py      # ViennaRNA backend
+│   ├── encodings/                # charge-and-refund energy, stem QUBO, pair QUBO (E2 baseline)
+│   ├── qubo/                     # QuboProblem builder, Ising/SparsePauliOp mapping
+│   ├── solvers/                  # exact, baselines, annealing (SA/tabu/SQA), QAOA
+│   ├── decoding/                 # bits -> stems -> dot-bracket, deterministic repair
+│   ├── evaluation/                # metrics, four-gate ladder, quantum resource accounting
+│   ├── data/generate.py          # rejection-sampled benchmark sequence generator
+│   ├── io/fixtures.py            # curated-fixture loader
+│   ├── experiments/               # e1-e5 runners + run_all ("make reproduce")
+│   └── reporting/                 # decision_card.py, figures.py, templates/
+└── tests/
+    ├── unit/, property/, integration/, scientific/
+```
+
+No `Dockerfile`, `docs/` API site, `paper/`, `notebooks/`, or `.github/workflows/` beyond what
+CI actually needs currently exist in this repository — see
+[Scope and Deferred Work](#scope-and-deferred-work).
 
 ---
 
 ## Command-Line Interface
 
-### General help
-
 ```bash
-foldq --help
+foldq doctor                                          # environment + solver registry check
+foldq validate --sequence AUGGCUAACGCU                 # sequence validation
+foldq predict --sequence <seq> --solver <name> [--pseudoknots] [--config path.yaml] [--seed N] --output DIR
+foldq generate --count 100 --lengths 20,30,40 --seed 42 --output data/raw/synthetic/set.csv
+foldq benchmark --dataset set.csv --solvers greedy,simulated_annealing --output results/benchmark
+foldq report --sequence <seq> --solver <name> --output card.html
 ```
 
-### Validate a sequence
+Available solver names (`foldq doctor` lists exactly what is registered in the running
+environment): `exact`, `random`, `greedy`, `local_search`, `simulated_annealing`, `tabu`,
+`path_integral_sqa`, and — when the optional `quantum` extra is installed — `qaoa` and
+`cvar_qaoa`.
 
-```bash
-foldq validate --sequence AUGGCUAACGCU
-```
-
-### Generate synthetic sequences
-
-```bash
-foldq generate \
-  --count 100 \
-  --lengths 12,16,20,24,30 \
-  --gc-range 0.30,0.70 \
-  --seed 42 \
-  --output data/raw/synthetic/tier1.csv
-```
-
-### Build ViennaRNA references
-
-```bash
-foldq reference \
-  --input data/raw/synthetic/tier1.csv \
-  --partition-function \
-  --suboptimal-band 2.0 \
-  --output data/processed/tier1_reference.parquet
-```
-
-### Inspect candidate stems
-
-```bash
-foldq candidates \
-  --sequence GGGAAAUCCCU \
-  --minimum-hairpin 3 \
-  --minimum-stem-length 2 \
-  --allow-wobble \
-  --output results/candidate-inspection
-```
-
-### Export a QUBO
-
-```bash
-foldq build-qubo \
-  --sequence GGGAAAUCCCU \
-  --encoding stem \
-  --config configs/stem_encoding.yaml \
-  --format json \
-  --output results/qubo-demo
-```
-
-### Run a scaling study
-
-```bash
-foldq scale \
-  --dataset data/benchmark_sets/scaling.csv \
-  --encodings pair,stem \
-  --max-qaoa-variables 24 \
-  --output results/scaling-study
-```
-
-### Generate a decision card
-
-```bash
-foldq report \
-  --manifest results/demo/manifest.json \
-  --format html \
-  --output results/demo/decision-card.html
-```
+`configs/base.yaml` is the one example resolved-configuration file committed to the repository;
+it documents the shape `FoldQConfig.from_yaml` expects. It is not required for any command
+above — every command works from `FoldQConfig`'s built-in defaults.
 
 ---
 
-## Python API
-
-```python
-from foldq.pipeline import FoldQPipeline
-from foldq.schemas.sequence import SequenceRecord
-from foldq.config import load_config
-
-config = load_config("configs/base.yaml")
-
-record = SequenceRecord(
-    sequence_id="demo_001",
-    sequence="GGGAAAUCCCU",
-    source_type="synthetic",
-    random_seed=42,
-)
-
-pipeline = FoldQPipeline(config=config)
-
-result = pipeline.predict(
-    record=record,
-    encoding="stem",
-    solver="simulated-annealing",
-)
-
-print("ViennaRNA MFE:", result.reference.dot_bracket)
-print("FoldQ candidate:", result.best_candidate.dot_bracket)
-print("Energy gap:", result.best_candidate.energy_gap)
-print("Base-pair F1:", result.best_candidate.metrics.base_pair_f1)
-```
-
-### Build only the encoded problem
-
-```python
-from foldq.biology.stems import generate_candidate_stems
-from foldq.biology.conflicts import build_conflict_graph
-from foldq.encodings.stem_encoding import StemEncoding
-
-sequence = "GGGAAAUCCCU"
-
-stems = generate_candidate_stems(
-    sequence,
-    minimum_stem_length=2,
-    allow_wobble=True,
-)
-
-graph = build_conflict_graph(stems)
-
-encoding = StemEncoding()
-problem = encoding.build(
-    sequence=sequence,
-    stems=stems,
-    conflict_graph=graph,
-)
-```
-
-### Solve an existing QUBO
-
-```python
-from foldq.solvers.simulated_annealing import SimulatedAnnealingSolver
-
-solver = SimulatedAnnealingSolver(
-    num_reads=1_000,
-    num_sweeps=10_000,
-    seed=42,
-)
-
-solver_result = solver.solve(problem)
-```
-
----
-
-## Configuration
-
-Experiments are controlled through YAML so every reported result can be reproduced.
-
-Example:
-
-```yaml
-experiment:
-  name: tier1_stem_sa
-  seed: 42
-  output_dir: results/tier1_stem_sa
-
-sequence:
-  allow_wobble: true
-  minimum_hairpin_distance: 3
-  temperature_celsius: 37.0
-
-candidate_generation:
-  encoding: stem
-  minimum_stem_length: 2
-  maximum_stem_length: null
-  probability_pruning:
-    enabled: false
-    minimum_probability: 0.01
-
-qubo:
-  energy_model: approximate_stacking_v1
-  normalize_coefficients: true
-  penalties:
-    overlap: adaptive
-    crossing: adaptive
-    loop: 2.0
-    fragmentation: 0.5
-
-solver:
-  name: simulated_annealing
-  num_reads: 1000
-  num_sweeps: 10000
-  beta_range: auto
-
-decoding:
-  repair_invalid: true
-  repair_strategy: marginal_energy
-
-evaluation:
-  use_vienna_rescoring: true
-  calculate_partition_function: true
-  calculate_suboptimal: false
-  top_k: 10
-
-reporting:
-  save_raw_samples: true
-  save_qubo: true
-  save_figures: true
-  generate_decision_card: true
-```
-
-### Configuration precedence
-
-1. package defaults;
-2. YAML configuration;
-3. environment variables;
-4. command-line arguments.
-
-All resolved settings are written into the experiment manifest.
-
----
-
-## Outputs
-
-A typical experiment directory contains:
-
-```text
-results/demo/
-├── manifest.json
-├── resolved_config.yaml
-├── sequence.json
-├── vienna_reference.json
-├── candidates.json
-├── conflict_graph.graphml
-├── qubo.json
-├── ising_hamiltonian.json
-├── raw_samples.parquet
-├── decoded_candidates.parquet
-├── benchmark_metrics.json
-├── resource_metrics.json
-├── runtime_metrics.json
-├── decision-card.html
-├── summary.md
-└── figures/
-    ├── structure_comparison.svg
-    ├── selected_stems.svg
-    ├── energy_distribution.png
-    ├── conflict_graph.png
-    └── circuit_resources.png
-```
-
-### Folding decision card
-
-Each decision card should include:
-
-- input sequence;
-- sequence metadata;
-- ViennaRNA MFE;
-- FoldQ candidate;
-- structural overlay;
-- correct, missing, and additional base pairs;
-- selected stems;
-- rejected conflicts;
-- QUBO energy;
-- ViennaRNA energy;
-- energy gap;
-- repair operations;
-- solver configuration;
-- runtime;
-- logical-variable count;
-- circuit or annealing resources;
-- sampling-based confidence;
-- limitations.
-
----
-
-## Testing
-
-### Unit tests
-
-Unit tests cover:
-
-- sequence validation;
-- base-pair compatibility;
-- hairpin-distance rules;
-- stem extraction;
-- conflict detection;
-- dot-bracket conversion;
-- QUBO coefficient construction;
-- QUBO-to-Ising mapping;
-- sample decoding;
-- repair operations;
-- structural metrics;
-- runtime and resource collection.
-
-Run:
-
-```bash
-pytest tests/unit -q
-```
-
-### Property-based tests
-
-Property tests verify invariants over randomly generated sequences:
-
-- dot-bracket length equals sequence length;
-- brackets are balanced;
-- no nucleotide has more than one partner;
-- every selected stem maps to its expected pairs;
-- hard-constraint violations increase objective energy;
-- same seed produces the same deterministic output.
-
-Run:
-
-```bash
-pytest tests/property -q
-```
-
-### Scientific validation tests
-
-Scientific tests verify:
-
-- exact enumeration matches stored reference solutions;
-- the MFE structure is representable when expected;
-- ViennaRNA energies match known fixtures within tolerance;
-- penalty changes have the expected effect;
-- QUBO and Ising evaluations agree after accounting for offset.
-
-Run:
-
-```bash
-pytest tests/scientific -q
-```
-
-### Integration tests
-
-Integration tests execute:
-
-```text
-sequence
-→ reference
-→ candidates
-→ QUBO
-→ solver
-→ decode
-→ repair
-→ ViennaRNA rescore
-→ metrics
-→ report
-```
-
-Run:
-
-```bash
-pytest tests/integration -q
-```
-
-### Regression tests
-
-Fixed sequences and result checksums are used to detect silent changes in scientific behavior.
-
-```bash
-pytest tests/regression -q
-```
-
-### Coverage
-
-```bash
-pytest --cov=foldq --cov-report=term-missing
-```
-
-Target coverage:
-
-- at least 90% for deterministic core modules;
-- at least 80% overall;
-- all mathematical formulation and decoding functions covered.
-
----
-
-## Reproducibility
-
-Every experiment manifest records:
-
-- Git commit;
-- release version;
-- operating system;
-- Python version;
-- package versions;
-- input checksum;
-- configuration checksum;
-- random seeds;
-- solver settings;
-- QUBO coefficients;
-- raw samples;
-- runtime metadata;
-- hardware backend, when used;
-- transpilation seed;
-- output checksums.
-
-### Reproduce the main benchmark
-
-```bash
-make reproduce
-```
-
-### Reproduce one experiment
-
-```bash
-foldq reproduce --manifest results/example/manifest.json
-```
-
-### Container reproduction
-
-```bash
-docker pull <container-registry>/decidion-foldq:v1.0.0
-docker run --rm \
-  -v "${PWD}/reproduced:/app/results" \
-  <container-registry>/decidion-foldq:v1.0.0 \
-  foldq reproduce \
-  --manifest examples/submission_manifest.json
-```
-
-### Release archiving
-
-The final submission release should include:
-
-- GitHub release tag;
-- source archive;
-- lockfile;
-- Docker image digest;
-- result checksums;
-- Zenodo DOI, if available;
-- presentation;
-- manuscript or technical report.
-
----
-
-## Continuous Integration
-
-Planned GitHub Actions workflows:
-
-### `lint.yml`
-
-- Ruff formatting;
-- Ruff linting;
-- Markdown linting;
-- import checks.
-
-### `tests.yml`
-
-- Python test matrix;
-- unit tests;
-- type checks;
-- coverage upload.
-
-### `integration.yml`
-
-- install ViennaRNA;
-- run a small complete pipeline;
-- verify expected output files.
-
-### `reproduce.yml`
-
-- create a clean environment;
-- run the small public benchmark;
-- regenerate tables;
-- compare checksums.
-
-### `docker.yml`
-
-- build container;
-- run tests inside the image;
-- publish tagged images after release.
-
-### Pull-request requirements
-
-Each pull request should state:
-
-1. scientific or engineering purpose;
-2. effect on the mathematical formulation;
-3. effect on benchmark outputs;
-4. tests added;
-5. reproducibility impact;
-6. documentation changes.
-
----
-
-## Data and Privacy
-
-Only the following data are permitted:
-
-- synthetic RNA sequences;
-- randomly generated RNA sequences;
-- public benchmark sequences;
-- public experimentally characterized structures where licensing permits.
-
-The project must not use:
-
-- confidential Moderna data;
-- patient or clinical data;
-- proprietary therapeutic sequences;
-- personally identifiable information;
-- restricted datasets without redistribution permission.
-
-### Data manifest
-
-Every dataset should include:
-
-- source;
-- license;
-- retrieval or generation date;
-- checksum;
-- processing steps;
-- allowed uses;
-- sequence identifiers;
-- whether redistribution is permitted.
-
-### Secrets
-
-Do not commit:
-
-- IBM Quantum tokens;
-- D-Wave API tokens;
-- private keys;
-- `.env` files;
-- proprietary datasets.
-
-Use `.env.example` for variable names only.
-
----
-
-## Experiment Plan
-
-### Experiment 1: QUBO correctness
-
-Purpose:
-
-- verify coefficient construction;
-- distinguish formulation error from solver error;
-- measure exact ground-state agreement.
-
-Methods:
-
-- short sequences;
-- exact enumeration;
-- pair and stem encodings;
-- systematic penalty sweeps.
-
-### Experiment 2: Encoding comparison
-
-Compare:
-
-- candidate count;
-- variable count;
-- QUBO density;
-- MFE representability;
-- structural F1;
-- energy gap;
-- runtime.
-
-### Experiment 3: Solver comparison
-
-Compare:
-
-- random;
-- greedy;
-- local search;
-- exact;
-- simulated annealing;
-- QAOA.
-
-Use the same encoded problem and evaluation procedure.
-
-### Experiment 4: Penalty sensitivity
-
-Vary:
-
-- overlap penalty;
-- crossing penalty;
-- fragmentation penalty;
-- loop penalty;
-- coefficient normalization.
-
-Measure:
-
-- valid-sample rate;
-- QUBO ground state;
-- ViennaRNA energy;
-- robustness.
-
-### Experiment 5: QAOA depth and initialization
-
-Compare:
-
-- \(p=1,2,3\);
-- random initialization;
-- transferred parameters;
-- warm start;
-- multiple optimizers.
-
-### Experiment 6: CVaR study
-
-Compare:
-
-- expectation objective;
-- several CVaR \(\alpha\) values;
-- best-sample quality;
-- sampling diversity;
-- optimizer stability.
-
-### Experiment 7: Noise study
-
-Introduce:
-
-- finite shots;
-- readout error;
-- single-qubit error;
-- two-qubit error;
-- transpilation overhead.
-
-### Experiment 8: Scaling study
-
-Measure versus sequence length and variable count:
-
-- candidate generation;
-- conflict graph;
-- QUBO size;
-- logical qubits;
-- circuit depth;
-- solver runtime;
-- structural accuracy;
-- energy quality.
-
-### Experiment 9: Graph decomposition
-
-Compare:
-
-- monolithic QUBO;
-- community-based decomposition;
-- overlapping windows;
-- local solutions plus master reconciliation.
-
-### Experiment 10: Failure analysis
-
-Manually inspect cases where:
-
-- MFE is not representable;
-- QUBO optimum differs from MFE;
-- solver misses QUBO optimum;
-- repair substantially changes the result;
-- QUBO and Vienna energy rankings disagree.
-
----
-
-## Research Paper Plan
-
-### Working title
-
-**Stem-Compressed QUBO Encodings for Explainable Hybrid Quantum-Classical RNA Secondary-Structure Prediction**
-
-### Proposed contributions
-
-1. A modular pair- and stem-based RNA QUBO framework.
-2. Exact small-instance separation of formulation and solver error.
-3. Hybrid ViennaRNA rescoring with raw-versus-repaired reporting.
-4. Common benchmarking of exact, classical, annealing, and QAOA solvers.
-5. Detailed logical-qubit, circuit, runtime, and scaling analysis.
-6. An explainable folding decision-card framework.
-7. A fully reproducible public codebase and benchmark suite.
-
-### Manuscript outline
-
-#### 1. Introduction
-
-- importance of RNA secondary structure;
-- combinatorial complexity;
-- strengths of classical thermodynamic methods;
-- motivation for quantum optimization;
-- research gap;
-- project contributions.
-
-#### 2. Related work
-
-- ViennaRNA and MFE prediction;
-- RNA QUBO formulations;
-- quantum annealing approaches;
-- gate-based QAOA approaches;
-- CVaR-based mRNA optimization;
-- quantum-centric longer-sequence workflows.
-
-#### 3. Mathematical formulation
-
-- candidate pairs;
-- candidate stems;
-- conflict graph;
-- pair QUBO;
-- stem QUBO;
-- penalties;
-- Ising conversion;
-- complexity.
-
-#### 4. Methods
-
-- datasets;
-- ViennaRNA references;
-- solvers;
-- QAOA circuits;
-- noise models;
-- metrics;
-- statistical analysis;
-- reproducibility.
-
-#### 5. Experiments
-
-- exact formulation validation;
-- pair-versus-stem encoding;
-- solver comparison;
-- penalty ablation;
-- depth and initialization;
-- CVaR;
-- noise;
-- scaling;
-- decomposition.
-
-#### 6. Results
-
-Planned primary figures:
-
-1. system architecture;
-2. example stem conflict graph;
-3. pair-versus-stem variable growth;
-4. QUBO density versus sequence length;
-5. structural F1 by solver;
-6. ViennaRNA energy gap by solver;
-7. QUBO–Vienna energy correlation;
-8. valid-sample rate;
-9. QAOA depth and noise sensitivity;
-10. qubit and gate scaling.
-
-Planned primary tables:
-
-1. benchmark characteristics;
-2. encoding statistics;
-3. solver configurations;
-4. structural and energetic performance;
-5. resource requirements;
-6. ablation results;
-7. failure cases.
-
-#### 7. Discussion
-
-- value and limitations of compression;
-- dependence on candidate generation;
-- difference between solving the QUBO and solving RNA folding;
-- role of classical rescoring;
-- near-term usefulness of quantum sampling;
-- hardware requirements.
-
-#### 8. Limitations
-
-- approximate energy objective;
-- restricted quantum instance size;
-- limited circuit depth;
-- classical preprocessing dependence;
-- limited pseudoknot support;
-- no quantum-advantage claim.
-
-#### 9. Reproducibility statement
-
-- repository;
-- lockfile;
-- Docker image;
-- datasets;
-- raw samples;
-- configuration files;
-- checksums;
-- scripts;
-- archived release.
-
-### Paper directory
-
-```text
-paper/
-├── manuscript.tex
-├── references.bib
-├── supplementary_information.tex
-├── figures/
-├── tables/
-└── response_to_reviewers/
-```
-
----
-
-## Development Roadmap
-
-### Phase 1: Foundation
-
-- repository setup;
-- environment lock;
-- sequence schemas;
-- validation;
-- ViennaRNA wrapper;
-- synthetic dataset generation;
-- test infrastructure.
-
-### Phase 2: Biological representation
-
-- candidate pairs;
-- candidate stems;
-- loop rules;
-- conflict graph;
-- dot-bracket utilities;
-- MFE representability analysis.
-
-### Phase 3: QUBO formulation
-
-- pair encoding;
-- stem encoding;
-- penalty terms;
-- coefficient normalization;
-- Ising mapping;
-- exact validation.
-
-### Phase 4: Solver layer
-
-- random;
-- greedy;
-- local search;
-- exact;
-- simulated annealing;
-- common result schema.
-
-### Phase 5: Quantum implementation
-
-- QAOA;
-- multiple depths;
-- optimizer comparison;
-- CVaR;
-- warm start;
-- shot-based simulation;
-- noise models.
-
-### Phase 6: Benchmarking
-
-- encoding ablation;
-- penalty calibration;
-- solver comparison;
-- scaling analysis;
-- resource analysis;
-- failure-case review.
-
-### Phase 7: Submission
-
-- final figures;
-- decision cards;
-- README;
-- technical report;
-- clean reproduction;
-- presentation;
-- tagged release.
-
-### Challenge timeline
-
-| Date | Target |
-|---|---|
-| July 22–24, 2026 | Environment, schemas, ViennaRNA, dataset |
-| July 25–27, 2026 | Candidate generation, conflicts, QUBO |
-| July 28–30, 2026 | Classical and annealing pipeline |
-| July 31–August 2, 2026 | QAOA, CVaR, noise, resources |
-| August 3–4, 2026 | Benchmarks and scaling |
-| August 5, 2026 | Figures, report, decision cards |
-| August 6, 2026 | Clean reproduction and presentation |
-| August 7, 2026 | Release and submission |
+## Scope and Deferred Work
+
+Stated plainly rather than left to be discovered missing. Deferred, and why:
+
+- **`manuscript.tex` and a `paper/` directory.** The written report for this submission is
+  delivered separately from this repository, not as a LaTeX build target inside it.
+- **MkDocs documentation site.** This README and the module docstrings are the documentation
+  surface for this submission; a generated static site was judged non-essential given the
+  timeline.
+- **Docker / `docker-compose.yml`.** The environment is `uv`/`pip`-installable on a bare Python
+  3.11 interpreter with no OS-level RNA-folding dependency beyond the `viennarna` wheel; a
+  container was judged to add packaging overhead without adding reproducibility for a
+  submission of this size.
+- **Most CI workflows.** Only what was needed to keep the test suite green locally during
+  development was set up; a full lint/test/integration/reproduce/docker workflow matrix was not
+  built out, and `make lint`/`make typecheck` are not currently green — see
+  [Testing](#testing).
+- **Notebooks.** All exploratory work lives in `scripts/probes/` as plain scripts, not notebooks
+  — easier to diff, easier to run headless, and this project had no need for inline
+  visualization during development.
+- **D-Wave QPU and IBM Quantum hardware execution.** Every quantum-inspired result in this
+  repository runs on D-Wave Ocean's local samplers; every gate-based result runs on Qiskit Aer,
+  optionally against locally-shipped IBM device *calibration data* (`qiskit-ibm-runtime`'s fake
+  backends) for noise and transpilation realism — never against a live QPU or a hardware queue.
+  No hardware account is required to reproduce anything in this repository.
+- **Optuna penalty search.** Penalties are calibrated analytically
+  (`2 * max|E_s| + 1`, see `qubo/builder.py`) and swept manually in E1 and E4; an automated
+  hyperparameter search was not built.
+- **Hierarchical encoding.** The stem/sub-stem distinction is the only compression axis
+  implemented; a further stem-plus-local-refinement hierarchy described in early planning was
+  not built.
+- **The graph-decomposition experiment (E9 in early planning).** Splitting large conflict graphs
+  into communities and solving sub-QUBOs independently was scoped out; every experiment here
+  solves one monolithic QUBO per sequence.
+
+If a reader is looking for any of the above and does not find it, this is why.
 
 ---
 
 ## Known Limitations
 
-1. **Thermodynamic approximation**
+1. **Dangling-end representability gap.** A stem-indexed QUBO cannot represent dangling-end
+   terms at any penalty setting (they attach to unpaired context, not to any stem); measured gap
+   1.20 kcal/mol on the demo fixture. See
+   [Thermodynamic Model and Its Limits](#thermodynamic-model-and-its-limits).
 
-   The first QUBO cannot compactly reproduce every term in the full nearest-neighbor energy model.
+2. **Lone base pairs are the dominant Gate A ceiling.** At the default `min_stem_length=2`,
+   isolated single-pair helices account for the entire measured Gate A gap (100% rescue rate at
+   `min_stem_length=1`, at 2.83× the variable count). See [Results](#results).
 
-2. **Candidate-generator dependence**
+3. **The hard-constraint penalty bound is not provably sufficient above brute-force-verifiable
+   sizes.** `calibrate_penalty` sets the overlap/crossing penalty to `2 * max|E_s| + 1`, which
+   is sufficient to outbid any *single* conflicting term but is not a formal proof that it
+   outbids *accumulated* refund terms from deep nesting chains. It is empirically valid at
+   every size E1 can check exactly (up to `ExactSolver`'s ~22-variable ceiling) and unproven
+   above that. Under the non-default `all_nestable` nesting policy, this bound demonstrably
+   failed in practice: **14 of 18 instances at 70–200 nt produced structurally invalid QUBO
+   optima** (the defect rate), with energies as low as −2689 kcal/mol from unbounded refund
+   accumulation. This is why `immediate_only` — which caps refund accumulation at one level — is
+   the default nesting policy. A separate, smaller follow-up check independently re-verified
+   that `immediate_only` restores validity in **8 of 8** instances at 70–150 nt (the *fix*
+   verification, not the defect rate above — two different numbers answering two different
+   questions). That 8/8 figure is also the one cited in `src/foldq/encodings/energy.py` and
+   `tests/scientific/test_energy_model.py`'s docstrings, where its phrasing reads as if it were
+   the defect count; it is not. `all_nestable` remains selectable only for the E1 ablation that
+   measures the original failure mode directly.
 
-   Stem compression can remove the correct structure before optimization.
+4. **Exact ground-truth verification caps near 22 variables.** Gates B and C, and every
+   solver-optimality claim in this document, are meaningful only up to `ExactSolver`'s reach.
+   Above that, Gates B and C report `None` (indeterminate), not a pass or a fail — this is
+   visible directly in E3's full-length sweep, where lengths 30, 40, and 50 (measured stem
+   counts 23–106) never produce exact ground truth and are reported that way rather than
+   silently dropped (see the E3 module docstring for the specific bug this was fixed from).
 
-3. **Restricted QAOA size**
+5. **The QUBO is a degree-2 approximation of the Turner nearest-neighbor model,** not a
+   complete thermodynamic representation of every RNA loop type; see
+   [Thermodynamic Model and Its Limits](#thermodynamic-model-and-its-limits).
 
-   Statevector simulation and iterative variational optimization limit feasible logical-variable counts.
+6. **Candidate-generator dependence.** Stem compression can exclude the correct structure before
+   optimization even runs; Gate A measures exactly this ceiling.
 
-4. **Circuit depth**
+7. **The two pseudoknot fixtures are constructed for this project, not literature-derived**, and
+   should be replaced with cited literature pseudoknots before any publication beyond this
+   challenge submission. See [Pseudoknots](#pseudoknots).
 
-   Dense QUBOs can require many two-qubit interactions and transpilation overhead.
+8. **QAOA reproducibility depends on the pinned Qiskit range.** See
+   [Reproducibility](#reproducibility).
 
-5. **Classical dependence**
+9. **No quantum-advantage claim is made or implied anywhere in this repository.** Every
+   comparison here measures formulation fidelity, solver correctness, and resource cost — not
+   speedup. Where a result could be read as suggesting quantum methods are unnecessary for
+   instances at this scale (see the solver-comparison finding in
+   [Results](#results)), that reading is stated directly rather than hedged around.
 
-   Candidate generation, repair, and ViennaRNA rescoring remain classical.
+10. **MFE is not the full biological picture.** RNA exists as a structural ensemble; a single
+    minimum-free-energy fold is what this project predicts and validates against, not a claim
+    about biological function.
 
-6. **Pseudoknots**
-
-   The primary model excludes crossing base pairs.
-
-7. **Hardware access**
-
-   Real hardware execution is optional and may be constrained by account access, queue time, topology, and calibration.
-
-8. **No quantum-advantage conclusion**
-
-   A successful small-instance demonstration does not establish asymptotic or practical advantage.
-
-9. **MFE is not the full biological picture**
-
-   RNA exists as a structural ensemble, and biological function may not be determined by one MFE fold alone.
-
-10. **Challenge timeline**
-
-    The short implementation window limits sequence sizes, parameter sweeps, and experimental validation.
+11. **This is a research prototype**, not a clinical, diagnostic, or therapeutic-design tool,
+    and was built on a short, fixed challenge timeline.
 
 ---
 
-## Future Work
+## Reproducibility
 
-### Improved thermodynamic objective
+Every `foldq predict` run writes a `manifest.json` recording the resolved configuration, solver,
+sequence checksum, gate results, and runtime; `run_all.py` additionally records the git commit,
+Python version, and platform into a top-level `manifest.json` alongside every experiment's
+output table. Every experiment module accepts an explicit `seed`.
 
-Add:
+### Environment
 
-- nearest-neighbor stacking;
-- hairpin-loop energy;
-- bulges;
-- internal loops;
-- multiloops;
-- terminal mismatch;
-- dangling ends;
-- special-loop corrections;
-- temperature-dependent parameters.
+Python **3.11 exactly** (`requires-python = ">=3.11,<3.12"` in `pyproject.toml`). Dependency
+*ranges* are pinned in `pyproject.toml`; **no `uv.lock` is currently committed to this
+repository.** That is a real gap, stated here rather than implied away — reproduction today
+depends on `pyproject.toml`'s ranges resolving the same way twice, which is not guaranteed. As
+a concrete fallback, the exact versions this submission was tested and measured against are:
 
-### Pseudoknots
+| Package | Version | Package | Version |
+|---|---|---|---|
+| Python | 3.11.14 | qiskit | 2.5.1 |
+| viennarna | 2.7.2 | qiskit-aer | 0.17.2 |
+| dimod | 0.12.22 | qiskit-ibm-runtime | 0.48.0 |
+| dwave-samplers | 1.8.0 | numpy | 2.4.6 |
+| networkx | 3.6.1 | scipy | 1.17.1 |
+| pandas | 3.0.5 | pydantic | 2.13.4 |
+| typer | 0.27.0 | jinja2 | 3.1.6 |
+| matplotlib | 3.11.1 | pyyaml | 6.0.3 |
+| pytest | 9.1.1 | hypothesis | 6.161.5 |
 
-Explore:
+**The Qiskit pin is load-bearing, not incidental.** `QAOASolver` builds its ansatz with
+Qiskit's `QAOAAnsatz`, which internally depends on `NLocal` and `BlueprintCircuit` — both
+deprecated in Qiskit 2.1 and **slated for removal in Qiskit 3.0** (`pyproject.toml`'s
+`filterwarnings` entries document and silence these specifically, rather than the warning
+being incidental noise). Every QAOA result in this repository reproduces only against the
+pinned `qiskit>=2.5,<3` range. Reproducing against a newer Qiskit release will raise an import
+error with no obvious connection to this project unless it is known in advance — which is why
+it is stated here explicitly rather than left for a future reproducer to debug from scratch.
 
-- selected pseudoknot classes;
-- crossing-type variables;
-- soft rather than universal crossing penalties;
-- higher-order models and quadratization.
+### Reproduce
 
-### Decomposition
+```bash
+.venv/bin/pytest tests -q                                          # 267 tests
+.venv/bin/python -m foldq.experiments.run_all --output results/    # full sweep (make reproduce)
+.venv/bin/python -m foldq.experiments.run_all --quick --output results/quick   # ~10s smoke test
+```
 
-For larger instances:
+**`make reproduce` (the full, non-`--quick` sweep) takes approximately 2 hours 47 minutes on an
+M-series Mac.** Read that before starting it, not after. `--quick` (~10 seconds) exercises every
+code path at drastically reduced sample counts as a smoke test and is what CI runs; it does not
+reproduce the exact figures in this README, which are all full-sweep results.
 
-1. construct the conflict graph;
-2. identify graph communities;
-3. solve local subproblems;
-4. retain multiple local candidates;
-5. build a master reconciliation QUBO;
-6. perform global refinement.
+`foldq.experiments.run_all` skips E4 (QAOA) with a printed message, rather than failing, when
+the optional `quantum` extra is not installed — the classical/quantum-inspired results (E1, E2,
+E3, E5) do not depend on it.
 
-### Ensemble prediction
+---
 
-Return:
+## Testing
 
-- top-k structures;
-- sampling frequencies;
-- energy distribution;
-- consensus stems;
-- base-pair uncertainty;
-- alternative conformations.
+267 tests across four categories, all passing:
 
-### Mutation analysis
+- **`tests/unit/`** — sequence validation, base-pair compatibility, stem extraction, conflict
+  detection, dot-bracket conversion, QUBO coefficient construction, decoding, repair,
+  structural metrics, the four-gate ladder, solver behavior, decision-card and figure output.
+- **`tests/property/`** — Hypothesis-based invariants over randomly generated sequences (e.g.
+  dot-bracket length and bracket balance, no nucleotide with more than one partner).
+- **`tests/scientific/`** — ViennaRNA energy agreement, the measured dangling-end gap, the
+  measured nesting-policy failure/fix, exact-solver correctness.
+- **`tests/integration/`** — full sequence → reference → candidates → QUBO → solver → decode →
+  repair → rescore → gates path, and every experiment runner (E1–E5, including the noise study).
 
-Evaluate how substitutions change:
+```bash
+.venv/bin/pytest tests -q                # make test      -- passes, 267/267
+.venv/bin/ruff check src tests           # make lint (1/2) -- currently fails, 22 errors
+.venv/bin/ruff format --check src tests  # make lint (2/2) -- currently fails, 24 files
+.venv/bin/mypy src/foldq                 # make typecheck  -- currently fails, 7 errors
+```
 
-- MFE;
-- base pairs;
-- stems;
-- ensemble diversity;
-- candidate count;
-- solver difficulty.
-
-### Inverse design
-
-Optimize a sequence for:
-
-- target structure;
-- regional accessibility;
-- GC constraints;
-- motif avoidance;
-- codon constraints;
-- structural robustness.
-
-### Experimental validation
-
-Future work could use public SHAPE or DMS probing data, where licensing and data-use terms permit.
-
-### Interface and deployment
-
-Potential deployment:
-
-- FastAPI service;
-- Streamlit or React demonstration;
-- queued experiment execution;
-- downloadable decision cards;
-- persistent experiment registry.
+**`make lint` and `make typecheck` do not currently pass.** Stated plainly rather than implied:
+`ruff check` reports 22 errors across 12 files, 17 of them in `src/foldq/` (mostly `zip()`
+missing `strict=` and `typer.Option()` called directly in CLI argument defaults) and 5 in
+`tests/`; `ruff format --check` separately reports 24 files that would be reformatted; `mypy
+src/foldq` reports 7 errors, all in `src/foldq/experiments/e4_qaoa.py`, from `argparse` values
+typed `str | int | None` flowing into functions that expect concrete `int`/`str` types. The test
+suite above is green; lint and typecheck debt is real and unresolved as of this commit.
 
 ---
 
@@ -2318,115 +785,33 @@ Potential deployment:
 
 ### Siddhartha Pahari
 
-Primary contributions:
+Primary contributions: RNA-biology research, ViennaRNA benchmarking, experimental design,
+scientific validation, evaluation methodology, project management, technical writing,
+presentation development.
 
-- RNA-biology research;
-- ViennaRNA benchmarking;
-- experimental design;
-- scientific validation;
-- evaluation methodology;
-- project management;
-- technical writing;
-- presentation development.
-
-Affiliations:
-
-- Decidion AI
-- University of Toronto
-- Canada
+Affiliations: Decidion AI · University of Toronto · Canada
 
 ### Jainish Solanki
 
-Primary contributions:
+Primary contributions: mathematical modeling, QUBO formulation, quantum and quantum-inspired
+algorithms, Qiskit implementation, solver architecture, computational benchmarking, scalability
+and resource analysis, software engineering.
 
-- mathematical modeling;
-- QUBO formulation;
-- quantum and quantum-inspired algorithms;
-- Qiskit implementation;
-- solver architecture;
-- computational benchmarking;
-- scalability and resource analysis;
-- software engineering.
-
-Affiliation:
-
-- Decidion AI
-- Canada
-
----
-
-## Contributing
-
-Contributions should preserve scientific reproducibility and modularity.
-
-### Development workflow
-
-1. Create or select an issue.
-2. Create a feature branch.
-3. Implement the change.
-4. Add or update tests.
-5. Update documentation.
-6. Run quality checks.
-7. Open a pull request.
-8. Obtain code and scientific review.
-9. Merge only after required checks pass.
-
-Example:
-
-```bash
-git checkout -b feature/stem-conflict-graph
-pre-commit run --all-files
-pytest
-git commit -m "feat: add stem conflict graph"
-```
-
-### Branch conventions
-
-- `main`: stable releases;
-- `develop`: integrated development;
-- `feature/*`: new functionality;
-- `fix/*`: bug fixes;
-- `experiment/*`: isolated research experiments;
-- `docs/*`: documentation.
-
-### Commit style
-
-Conventional commit examples:
-
-```text
-feat: add pair-based QUBO
-fix: correct crossing-stem detection
-test: add exact-energy regression fixture
-docs: document penalty calibration
-experiment: add CVaR alpha sweep
-```
-
-### Scientific-change requirement
-
-Any pull request that changes:
-
-- energy terms;
-- candidate generation;
-- penalty scaling;
-- decoding;
-- repair;
-- benchmark metrics;
-
-must state whether existing results change and must regenerate affected fixtures.
+Affiliation: Decidion AI · Canada
 
 ---
 
 ## Citation
 
-A `CITATION.cff` file should be included in the final repository.
+A `CITATION.cff` file has not yet been added to this repository.
 
-Suggested citation format:
+Suggested citation:
 
 ```text
 Pahari, S., and Solanki, J. (2026).
 Decidion FoldQ: Explainable Hybrid Quantum-Classical Optimization
 for mRNA Secondary-Structure Prediction.
-Version 1.0.0.
+Version 0.1.0.
 ```
 
 Suggested BibTeX:
@@ -2437,22 +822,20 @@ Suggested BibTeX:
   title   = {Decidion FoldQ: Explainable Hybrid Quantum-Classical
              Optimization for mRNA Secondary-Structure Prediction},
   year    = {2026},
-  version = {1.0.0},
+  version = {0.1.0},
   note    = {WISER Summer Program 2026 Moderna Challenge}
 }
 ```
-
-Replace the repository URL and DOI after publication.
 
 ---
 
 ## License
 
-The intended license should be selected before public release.
-
-An Apache-2.0 license is suitable when the team wants a permissive license that also includes an explicit patent grant. An MIT license is simpler and highly permissive.
-
-The license applies to project code. Public datasets, third-party software, research papers, and external models retain their original licenses and terms.
+No `LICENSE` file has been added to this repository yet; a license should be selected before
+any public release beyond this challenge submission. Apache-2.0 is suitable if the team wants a
+permissive license with an explicit patent grant; MIT is simpler and equally permissive. Any
+license chosen would apply to project code only — the public datasets, third-party software,
+and external models referenced below retain their own licenses and terms.
 
 ---
 
@@ -2460,64 +843,50 @@ The license applies to project code. Public datasets, third-party software, rese
 
 ### Challenge and official documentation
 
-1. WISER Summer Program 2026, Moderna Challenge.  
+1. WISER Summer Program 2026, Moderna Challenge.
    https://www.thewiser.org/summer-program-2026/modernachallenge
-
-2. ViennaRNA Package, Python API.  
-   https://viennarna.readthedocs.io/en/latest/api_python.html
-
-3. ViennaRNA Package, Python examples.  
+2. ViennaRNA Package, Python API. https://viennarna.readthedocs.io/en/latest/api_python.html
+3. ViennaRNA Package, Python examples.
    https://viennarna.readthedocs.io/en/latest/examples/python.html
-
-4. ViennaRNA source repository.  
-   https://github.com/ViennaRNA/ViennaRNA
-
-5. Qiskit source repository.  
-   https://github.com/Qiskit/qiskit
-
-6. Qiskit addon for optimization modeling.  
-   https://github.com/Qiskit/qiskit-addon-opt-mapper
-
-7. D-Wave Ocean documentation.  
-   https://docs.dwavequantum.com/en/latest/ocean/
-
-8. D-Wave QUBO and Ising documentation.  
+4. ViennaRNA source repository. https://github.com/ViennaRNA/ViennaRNA
+5. Qiskit source repository. https://github.com/Qiskit/qiskit
+6. D-Wave Ocean documentation. https://docs.dwavequantum.com/en/latest/ocean/
+7. D-Wave QUBO and Ising documentation.
    https://docs.dwavequantum.com/en/latest/quantum_research/qubo_ising.html
 
 ### Foundational RNA software
 
-9. Lorenz, R., Bernhart, S. H., Höner zu Siederdissen, C., Tafer, H., Flamm, C., Stadler, P. F., and Hofacker, I. L.  
-   *ViennaRNA Package 2.0.* Algorithms for Molecular Biology, 6, 26, 2011.  
+8. Lorenz, R., Bernhart, S. H., Höner zu Siederdissen, C., Tafer, H., Flamm, C., Stadler, P. F.,
+   and Hofacker, I. L. *ViennaRNA Package 2.0.* Algorithms for Molecular Biology, 6, 26, 2011.
    https://pubmed.ncbi.nlm.nih.gov/22115189/
 
 ### Quantum and quantum-inspired RNA folding
 
-10. Zaborniak, T., Giraldo, J., Müller, H., Jabbari, H., and Stege, U.  
-    *A QUBO Model of the RNA Folding Problem Optimized by Variational Hybrid Quantum Annealing.* 2022.  
-    https://arxiv.org/abs/2208.04367
-
-11. Jiang, J., Yan, Q., Li, Y., Lu, M., Cui, Z., Dou, M., Wang, Q., Wu, Y.-C., and Guo, G.-P.  
-    *Predicting RNA Secondary Structure on Universal Quantum Computer.* 2023.  
+9. Zaborniak, T., Giraldo, J., Müller, H., Jabbari, H., and Stege, U. *A QUBO Model of the RNA
+   Folding Problem Optimized by Variational Hybrid Quantum Annealing.* 2022.
+   https://arxiv.org/abs/2208.04367
+10. Jiang, J., Yan, Q., Li, Y., Lu, M., Cui, Z., Dou, M., Wang, Q., Wu, Y.-C., and Guo, G.-P.
+    *Predicting RNA Secondary Structure on Universal Quantum Computer.* 2023.
     https://arxiv.org/abs/2305.09561
-
-12. Alevras, D., Metkar, M., Yamamoto, T., Kumar, V., Friedhoff, T., Park, J.-E., Takeori, M., LaDue, M., Davis, W., and Galda, A.  
-    *mRNA Secondary Structure Prediction Using Utility-Scale Quantum Computers.* 2024.  
-    https://arxiv.org/abs/2405.20328
-
-13. Kumar, V., Alevras, D., Metkar, M., Welling, E., Cade, C., Niesen, I., Friedhoff, T., Park, J.-E., Shivpuje, S., LaDue, M., Davis, W., and Galda, A.  
-    *Towards Secondary Structure Prediction of Longer mRNA Sequences Using a Quantum-Centric Optimization Scheme.* 2025.  
+11. Alevras, D., Metkar, M., Yamamoto, T., Kumar, V., Friedhoff, T., Park, J.-E., Takeori, M.,
+    LaDue, M., Davis, W., and Galda, A. *mRNA Secondary Structure Prediction Using Utility-Scale
+    Quantum Computers.* 2024. https://arxiv.org/abs/2405.20328
+12. Kumar, V., Alevras, D., Metkar, M., Welling, E., Cade, C., Niesen, I., Friedhoff, T., Park,
+    J.-E., Shivpuje, S., LaDue, M., Davis, W., and Galda, A. *Towards Secondary Structure
+    Prediction of Longer mRNA Sequences Using a Quantum-Centric Optimization Scheme.* 2025.
     https://arxiv.org/abs/2505.05782
 
 ---
 
 ## Acknowledgements
 
-This project is being developed for the WISER Summer Program 2026 Moderna Challenge.
-
-The team acknowledges the open-source communities behind ViennaRNA, Qiskit, D-Wave Ocean, Biopython, NetworkX, NumPy, SciPy, pandas, pytest, and the broader RNA and quantum-computing research communities.
-
----
+This project was developed for the WISER Summer Program 2026 Moderna Challenge. The team
+acknowledges the open-source communities behind ViennaRNA, Qiskit, D-Wave Ocean, NetworkX,
+NumPy, SciPy, pandas, pytest, and the broader RNA and quantum-computing research communities.
 
 ## Disclaimer
 
-Decidion FoldQ is a research prototype. It is not a clinical tool, diagnostic system, therapeutic-design product, or substitute for experimental validation. Results should be interpreted as computational research outputs subject to the assumptions and limitations documented in this repository.
+Decidion FoldQ is a research prototype. It is not a clinical tool, diagnostic system,
+therapeutic-design product, or substitute for experimental validation. Results should be
+interpreted as computational research outputs subject to the assumptions and limitations
+documented in this repository.

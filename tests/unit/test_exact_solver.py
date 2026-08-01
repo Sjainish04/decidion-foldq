@@ -1,0 +1,182 @@
+import itertools
+
+import pytest
+
+from foldq.schemas.qubo import QuboProblem
+from foldq.schemas.result import Sample, SolverResult
+from foldq.schemas.structure import Stem
+from foldq.solvers.base import SolverConfig
+from foldq.solvers.exact import ExactSolver, ExactSolverTooLarge
+
+DEMO = "GGGAAAUCCCU"
+
+
+def _toy(num_vars: int = 3) -> QuboProblem:
+    return QuboProblem(
+        linear={0: -5.0, 1: -3.0, 2: -1.0},
+        quadratic={(0, 1): 20.0},
+        offset=0.0,
+        variable_map=tuple(Stem(0, 9, 2) for _ in range(num_vars)),
+        sequence=DEMO,
+        metadata={},
+    )
+
+
+def test_solver_result_best_is_lowest_energy():
+    result = SolverResult(
+        solver_name="t",
+        samples=(Sample((0,), 5.0), Sample((1,), -2.0)),
+        runtime_seconds=0.0,
+        metadata={},
+    )
+    assert result.best.energy == -2.0
+
+
+def test_solver_result_rejects_empty_samples():
+    with pytest.raises(ValueError, match="at least one sample"):
+        SolverResult(solver_name="t", samples=(), runtime_seconds=0.0, metadata={})
+
+
+def test_exact_solver_finds_true_ground_state():
+    problem = _toy()
+    result = ExactSolver().solve(problem, SolverConfig())
+    brute = min(
+        (problem.energy(bits), bits)
+        for bits in itertools.product((0, 1), repeat=problem.num_variables)
+    )
+    assert result.best.energy == pytest.approx(brute[0])
+    assert problem.energy(result.best.bits) == pytest.approx(brute[0])
+
+
+def test_exact_solver_avoids_the_penalised_pair():
+    """Variables 0 and 1 carry a penalty of 20; the optimum cannot take both."""
+    result = ExactSolver().solve(_toy(), SolverConfig())
+    assert not (result.best.bits[0] and result.best.bits[1])
+
+
+def test_exact_solver_refuses_oversized_problems():
+    big = QuboProblem(
+        linear={i: -1.0 for i in range(40)},
+        quadratic={},
+        offset=0.0,
+        variable_map=tuple(Stem(0, 9, 2) for _ in range(40)),
+        sequence=DEMO,
+        metadata={},
+    )
+    with pytest.raises(ExactSolverTooLarge, match="40 variables"):
+        ExactSolver(max_variables=22).solve(big, SolverConfig())
+
+
+def test_brute_force_counts_degeneracy_exactly():
+    """Two symmetric variables that exclude each other give two ground states."""
+    problem = QuboProblem(
+        linear={0: -1.0, 1: -1.0},
+        quadratic={(0, 1): 2.0},
+        offset=0.0,
+        variable_map=(Stem(0, 9, 2), Stem(0, 9, 3)),
+        sequence=DEMO,
+        metadata={},
+    )
+    _, energy, degeneracy, method, degeneracy_is_exact = ExactSolver()._brute_force(problem)
+    assert energy == pytest.approx(-1.0)
+    assert degeneracy == 2
+    assert method == "brute_force"
+    assert degeneracy_is_exact is True
+
+
+def test_both_exact_methods_agree_on_the_ground_energy():
+    """Tree decomposition and brute force must never disagree; the gates depend on it."""
+    problem = _toy()
+    tree_bits, tree_energy, _, _, _ = ExactSolver()._tree_decomposition(problem)
+    brute_bits, brute_energy, _, _, _ = ExactSolver()._brute_force(problem)
+    assert tree_energy == pytest.approx(brute_energy)
+    assert problem.energy(tree_bits) == pytest.approx(problem.energy(brute_bits))
+
+
+def test_exact_solver_records_which_method_it_used():
+    result = ExactSolver().solve(_toy(), SolverConfig())
+    assert result.metadata["method"] in {"tree_decomposition", "brute_force"}
+    assert result.metadata["is_exact"] is True
+
+
+def test_tree_decomposition_is_fast_at_the_variable_cap():
+    """Regression guard: brute force at this size would take minutes.
+
+    Verified fixture: 26 nt -> 20 variables, solved by tree decomposition in
+    ~0.009s with a non-trivial optimum (E = -1.3, i.e. the ground state actually
+    selects stems rather than the empty structure).
+
+    The bounds assertion is deliberate. The previous version of this test used a
+    sequence that produced 40 variables, so the solver refused it outright and
+    the test never exercised the path it claims to guard. Asserting the variable
+    count turns fixture drift into a loud failure instead of a vacuous pass.
+    """
+    import time
+
+    from foldq.biology.stems import generate_maximal_stems
+    from foldq.classical.vienna import ViennaBackend
+    from foldq.encodings.stem_encoding import build_stem_qubo
+
+    backend = ViennaBackend(dangles=0)
+    sequence = "CACGUUUGCACACCUGGCGGUUCCAA"
+    problem = build_stem_qubo(
+        sequence, generate_maximal_stems(sequence, min_stem_length=2), backend
+    )
+    assert 15 <= problem.num_variables <= 24, (
+        f"fixture drifted: {problem.num_variables} variables, expected 15-24"
+    )
+
+    start = time.perf_counter()
+    result = ExactSolver(max_variables=24).solve(problem, SolverConfig())
+    elapsed = time.perf_counter() - start
+
+    assert result.metadata["method"] == "tree_decomposition"
+    assert result.best.energy < 0.0, "fixture should have a non-trivial optimum"
+    assert elapsed < 10.0, f"took {elapsed:.2f}s; likely fell back to brute force"
+
+
+def test_exact_solver_is_deterministic():
+    a = ExactSolver().solve(_toy(), SolverConfig(seed=1))
+    b = ExactSolver().solve(_toy(), SolverConfig(seed=1))
+    assert a.best.bits == b.best.bits
+
+
+def test_exact_solver_records_runtime_and_name():
+    result = ExactSolver().solve(_toy(), SolverConfig())
+    assert result.solver_name == "exact"
+    assert result.runtime_seconds >= 0.0
+
+
+def test_tree_path_counts_degeneracy_beyond_two():
+    """Regression guard: the probe budget used to be hardcoded at 2.
+
+    A three-fold degenerate ground state was reported as degeneracy 2, silently,
+    while the brute-force path reported it exactly. TreeDecompositionSolver
+    returns distinct solutions capped at min(num_reads, 2**n), so the count is
+    only as good as the probe budget.
+    """
+    import dimod
+
+    bqm = dimod.BinaryQuadraticModel(
+        {0: -1.0, 1: -1.0, 2: -1.0},
+        {(0, 1): 2.0, (0, 2): 2.0, (1, 2): 2.0},
+        0.0,
+        dimod.BINARY,
+    )
+    problem = QuboProblem(
+        linear=dict(bqm.linear),
+        quadratic={(0, 1): 2.0, (0, 2): 2.0, (1, 2): 2.0},
+        offset=0.0,
+        variable_map=(Stem(0, 9, 2), Stem(0, 9, 3), Stem(0, 10, 2)),
+        sequence=DEMO,
+        metadata={},
+    )
+    _, _, degeneracy, _, _ = ExactSolver()._tree_decomposition(problem)
+    assert degeneracy == 3, f"expected 3 ground states, got {degeneracy}"
+
+
+def test_metadata_flags_whether_degeneracy_is_exact():
+    """A bounded count must announce itself rather than looking authoritative."""
+    result = ExactSolver().solve(_toy(), SolverConfig())
+    assert "degeneracy_is_exact" in result.metadata
+    assert isinstance(result.metadata["degeneracy_is_exact"], bool)
