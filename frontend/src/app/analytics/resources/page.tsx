@@ -57,7 +57,7 @@ export default function ResourcesPage() {
             { key: "groundStateRate", label: "Reached ground state", format: pct },
             { key: "circuits", label: "Circuits" },
           ],
-          rows: qaoa as unknown as Record<string, unknown>[],
+          rows: qaoa,
         }}
       >
         <BarChart
@@ -82,7 +82,7 @@ export default function ResourcesPage() {
             { key: "meanF1", label: "Mean F1", format: fixed3 },
             { key: "groundStateRate", label: "Reached ground state", format: pct },
           ],
-          rows: shots as unknown as Record<string, unknown>[],
+          rows: shots,
         }}
       >
         <BarChart
@@ -146,7 +146,7 @@ export default function ResourcesPage() {
             { key: "meanF1", label: "Mean F1", format: fixed3 },
             { key: "groundStateRate", label: "Reached ground state", format: pct },
           ]}
-          rows={objective.arms as unknown as Record<string, unknown>[]}
+          rows={objective.arms}
         />
       </section>
 
@@ -163,7 +163,7 @@ export default function ResourcesPage() {
             { key: "meanF1", label: "Mean F1", format: fixed3 },
             { key: "groundStateRate", label: "Reached ground state", format: pct },
           ],
-          rows: byLength as unknown as Record<string, unknown>[],
+          rows: byLength,
         }}
       >
         <LineChart
@@ -195,7 +195,7 @@ export default function ResourcesPage() {
             { key: "meanF1", label: "Mean F1", format: fixed3 },
             { key: "groundStateRate", label: "Reached ground state", format: pct },
           ]}
-          rows={[noiseless, noisy] as unknown as Record<string, unknown>[]}
+          rows={[noiseless, noisy]}
         />
       </section>
 
@@ -216,7 +216,7 @@ export default function ResourcesPage() {
             { key: "groundStateRate", label: "Reached ground state", format: pct },
             { key: "meanRuntimeSeconds", label: "Mean runtime (s)", format: fixed3 },
           ]}
-          rows={classical as unknown as Record<string, unknown>[]}
+          rows={classical}
         />
       </section>
     </div>

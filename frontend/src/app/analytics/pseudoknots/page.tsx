@@ -35,7 +35,7 @@ export default function PseudoknotsPage() {
             { key: "strictF1", label: "FoldQ strict F1", format: fixed3 },
             { key: "pseudoknotModeF1", label: "Pseudoknot mode F1", format: fixed3 },
           ],
-          rows: knotted as unknown as Record<string, unknown>[],
+          rows: knotted,
         }}
       >
         <BarChart
@@ -87,7 +87,7 @@ export default function PseudoknotsPage() {
             { key: "strictF1", label: "FoldQ F1", format: fixed3 },
             { key: "source", label: "Provenance" },
           ],
-          rows: controls as unknown as Record<string, unknown>[],
+          rows: controls,
         }}
       >
         <BarChart

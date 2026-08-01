@@ -76,7 +76,7 @@ export default function ScalingPage() {
             { key: "meanDensity", label: "Mean density", format: fixed3 },
             { key: "instances", label: "Instances" },
           ],
-          rows: scaling as unknown as Record<string, unknown>[],
+          rows: scaling,
         }}
       >
         <LineChart
