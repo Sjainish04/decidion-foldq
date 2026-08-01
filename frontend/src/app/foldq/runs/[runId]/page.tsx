@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 import { GateLadder } from "@/components/foldq/GateLadder";
 import { RunSummary } from "@/components/foldq/RunSummary";
 import { StageTimeline } from "@/components/foldq/StageTimeline";
@@ -49,6 +50,12 @@ export default function RunPage() {
           {data.sequence}
         </p>
       </header>
+      <Link
+        href={`/reports/${data.run_id}`}
+        className="inline-block rounded border border-[var(--border)] px-3 py-1.5 text-sm"
+      >
+        Open decision card
+      </Link>
       <RunSummary result={data} />
       <StructureComparison result={data} />
       <GateLadder gates={data.gates} />
