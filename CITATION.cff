@@ -1,0 +1,71 @@
+cff-version: 1.2.0
+title: >-
+  Decidion FoldQ: Explainable Hybrid Quantum-Classical Optimization
+  for mRNA Secondary-Structure Prediction
+message: >-
+  If you use this software or its results, please cite it using the
+  metadata below.
+type: software
+authors:
+  - family-names: Pahari
+    given-names: Siddhartha
+    email: siddhartha.pahari@mail.utoronto.ca
+    affiliation: Decidion AI / University of Toronto
+  - family-names: Solanki
+    given-names: Jainish
+    email: jainish.solanki@mail.utoronto.ca
+    affiliation: Decidion AI / University of Toronto
+repository-code: https://github.com/Sjainish04/decidion-foldq
+abstract: >-
+  A reproducible research platform that formulates RNA secondary-structure
+  prediction as a Quadratic Unconstrained Binary Optimization problem and
+  solves it with classical, quantum-inspired, and gate-based quantum methods,
+  validating every candidate against ViennaRNA. Its central contribution is a
+  four-gate diagnostic ladder that attributes each result to candidate
+  generation, the energy model, or the optimizer, rather than reporting an
+  unexplained score. Built for the WISER Summer Program 2026 Moderna Challenge.
+  No quantum-advantage claim is made.
+keywords:
+  - RNA secondary structure
+  - QUBO
+  - quantum optimization
+  - QAOA
+  - simulated annealing
+  - ViennaRNA
+  - pseudoknots
+  - mRNA
+license: MIT
+version: 0.1.0
+date-released: "2026-08-01"
+references:
+  - type: article
+    title: "ViennaRNA Package 2.0"
+    authors:
+      - family-names: Lorenz
+        given-names: Ronny
+      - family-names: Bernhart
+        given-names: Stephan H.
+      - family-names: "Höner zu Siederdissen"
+        given-names: Christian
+      - family-names: Tafer
+        given-names: Hakim
+      - family-names: Flamm
+        given-names: Christoph
+      - family-names: Stadler
+        given-names: Peter F.
+      - family-names: Hofacker
+        given-names: Ivo L.
+    journal: Algorithms for Molecular Biology
+    volume: "6"
+    year: 2011
+    doi: 10.1186/1748-7188-6-26
+  - type: article
+    title: >-
+      RNA pseudoknot prediction in energy-based models
+    authors:
+      - family-names: "Lyngsø"
+        given-names: Rune B.
+      - family-names: Pedersen
+        given-names: Christian N. S.
+    journal: Journal of Computational Biology
+    year: 2000

@@ -796,6 +796,8 @@ Behaviour is unchanged; the test suite above stayed at 267/267 throughout.
 
 ### Siddhartha Pahari
 
+**Contact:** siddhartha.pahari@mail.utoronto.ca
+
 Primary contributions: RNA-biology research, ViennaRNA benchmarking, experimental design,
 scientific validation, evaluation methodology, project management, technical writing,
 presentation development.
@@ -804,17 +806,20 @@ Affiliations: Decidion AI · University of Toronto · Canada
 
 ### Jainish Solanki
 
+**Contact:** jainish.solanki@mail.utoronto.ca
+
 Primary contributions: mathematical modeling, QUBO formulation, quantum and quantum-inspired
 algorithms, Qiskit implementation, solver architecture, computational benchmarking, scalability
 and resource analysis, software engineering.
 
-Affiliation: Decidion AI · Canada
+Affiliations: Decidion AI · University of Toronto · Canada
 
 ---
 
 ## Citation
 
-A `CITATION.cff` file has not yet been added to this repository.
+Machine-readable citation metadata is in [`CITATION.cff`](CITATION.cff); GitHub renders it as a
+*Cite this repository* option in the sidebar.
 
 Suggested citation:
 
@@ -842,11 +847,17 @@ Suggested BibTeX:
 
 ## License
 
-No `LICENSE` file has been added to this repository yet; a license should be selected before
-any public release beyond this challenge submission. Apache-2.0 is suitable if the team wants a
-permissive license with an explicit patent grant; MIT is simpler and equally permissive. Any
-license chosen would apply to project code only — the public datasets, third-party software,
-and external models referenced below retain their own licenses and terms.
+This project is released under the **MIT License** — see [`LICENSE`](LICENSE).
+
+The license applies to the source code and documentation in this repository. Third-party
+software, public datasets, and external tools retain their own licenses and terms: ViennaRNA
+under its own license, Qiskit and the D-Wave Ocean SDK under Apache-2.0, and the remaining
+scientific Python dependencies under their respective terms. All are listed in `LICENSE` and
+credited in [References](#references).
+
+The tRNA-Phe benchmark sequence is public-domain sequence data. The two pseudoknot fixtures in
+`data/fixtures/curated.json` were constructed for this project, are not derived from any
+published structure, and claim no citation — see [Pseudoknots](#pseudoknots).
 
 ---
 
