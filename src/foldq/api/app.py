@@ -9,7 +9,7 @@ from __future__ import annotations
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from foldq.api.routes import fold, meta
+from foldq.api.routes import fold, meta, structures
 
 
 def create_app() -> FastAPI:
@@ -29,6 +29,7 @@ def create_app() -> FastAPI:
     )
     app.include_router(fold.router, prefix="/api/v1")
     app.include_router(meta.router, prefix="/api/v1")
+    app.include_router(structures.router, prefix="/api/v1")
     return app
 
 

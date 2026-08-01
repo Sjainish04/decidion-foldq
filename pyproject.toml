@@ -35,7 +35,7 @@ dev = [
 # starlette 1.3.1, which swapped TestClient's HTTP client out from under the test
 # suite. A judged submission has to install the same way months from now, so this
 # extra is bounded like `viennarna` and `qiskit` are.
-api = ["fastapi>=0.115,<1", "uvicorn[standard]>=0.32,<1"]
+api = ["fastapi>=0.115,<1", "uvicorn[standard]>=0.32,<1", "httpx>=0.27,<1"]
 
 [project.scripts]
 foldq = "foldq.cli:app"
