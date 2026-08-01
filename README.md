@@ -320,15 +320,21 @@ is stated directly here rather than minimized.
 
 The stem-additive QUBO objective, under the **default `charge_refund` energy model**, correlates
 with true ViennaRNA thermodynamic energy at **r = 0.9935** (MAE 1.24 kcal/mol), measured over
-sequences **30–100 nt** under the default `dangles=2` folding model
-(`scripts/probes/02_surrogate_fidelity.py`). Restricted to **30–60 nt** — the narrower range
-this project's benchmark generator actually produces sequences in most often — the same
-default-model surrogate scores **r = 0.9804** (MAE 0.95 kcal/mol).
+sequences **30–100 nt** under the default `dangles=2` folding model — the `30-100 nt
+charge_refund` row printed by `scripts/probes/02_surrogate_fidelity.py`. Restricted to **30–60
+nt** — the narrower range this project's benchmark generator actually produces sequences in most
+often — the same default-model surrogate scores **r = 0.9804** (MAE 0.95 kcal/mol), the script's
+`30-60 nt charge_refund` row.
 
 | length range | `stacking_only` r | `charge_refund` (default) r | `charge_refund` MAE |
 |---|---|---|---|
 | 30–100 nt | 0.9584 | **0.9935** | 1.24 kcal/mol |
 | 30–60 nt | 0.8943 | **0.9804** | 0.95 kcal/mol |
+
+All four cells above are printed directly by `scripts/probes/02_surrogate_fidelity.py`'s final
+table, one row per length range per model (`30-100 nt stacking_only`, `30-100 nt charge_refund`,
+`30-60 nt stacking_only`, `30-60 nt charge_refund`); the script computes `charge_refund` from a
+`dangles=0` coefficient backend against the `dangles=2` reference fold, matching the pipeline.
 
 The `stacking_only` column is kept as the ablation contrast, not the headline: it is the energy
 model without the charge-and-refund hairpin/interior-loop construction, and E1 shows exactly
