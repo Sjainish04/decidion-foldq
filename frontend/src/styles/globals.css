@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+/* Tailwind v4 uses CSS-first config: this makes `dark:` utilities key off the
+   `.dark` class on <html> (set in layout.tsx) instead of the OS-level
+   prefers-color-scheme media query, matching the class-driven token
+   overrides below. See https://tailwindcss.com/docs/dark-mode */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #f8fafc;
+  --surface: #ffffff;
+  --surface-elevated: #f1f5f9;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --border: #dbe4ee;
+
+  --rna-a: #16a34a;
+  --rna-u: #f59e0b;
+  --rna-c: #2563eb;
+  --rna-g: #dc2626;
+
+  --classical: #0ea5e9;
+  --quantum-inspired: #8b5cf6;
+  --quantum: #d946ef;
+  --reference: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+}
+
+.dark {
+  --background: #070b14;
+  --surface: #0d1422;
+  --surface-elevated: #121c2d;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --border: #22304a;
+}
+
+body {
+  background: var(--background);
+  color: var(--text-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
