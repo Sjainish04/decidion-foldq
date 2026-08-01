@@ -5035,7 +5035,7 @@ import { comparePairs } from "@/lib/foldq/diff";
 
 describe("comparePairs", () => {
   it("partitions pairs into shared and exclusive sets", () => {
-    const result = comparePairs("(((....))).", "((.....))..");
+    const result = comparePairs("(((....))).", "((......)).");
     expect(result.shared).toEqual([
       [0, 9],
       [1, 8],
@@ -5053,13 +5053,13 @@ describe("comparePairs", () => {
 
   it("returns empty sets for two unpaired structures", () => {
     const result = comparePairs("....", "....");
-    expect(result).toEqual({ shared: [], onlyA: [], onlyB: [] });
+    expect(result).toEqual({ shared: [], onlyA: [], onlyB: [], f1: 0 });
   });
 
   it("computes the F1 between the two structures", () => {
     // Two of three A-pairs are shared with two of two B-pairs:
     // precision 2/3, recall 2/2 -> F1 0.8
-    const result = comparePairs("(((....))).", "((.....))..");
+    const result = comparePairs("(((....))).", "((......)).");
     expect(result.f1).toBeCloseTo(0.8);
   });
 
