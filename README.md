@@ -244,9 +244,11 @@ representability, `min_stem_length=1`:
 | **stem (maximal, `min_stem_length=1`)** | **551.4** | **100%** |
 
 Stem encoding reaches identical representability with **36% fewer variables**. This comparison
-is deliberately restricted to `min_stem_length=1` on both sides — the stem average pooled
-across all three `min_stem_length` values (273.1) is a smaller number but mixes configurations
-that are not representationally comparable, since only `min_stem_length=1` reaches 100% Gate A.
+is deliberately restricted to `min_stem_length=1` on both sides — the maximal-mode stem average
+pooled across all three `min_stem_length` values (273.1) is a smaller number but mixes
+configurations that are not representationally comparable, since only `min_stem_length=1`
+reaches 100% Gate A. (Pooling every stem row in the file, sub-stems included, gives 468.0
+instead; neither pooled figure belongs in a matched comparison.)
 
 ### Solver comparison and the no-quantum-advantage finding (RQ3)
 
@@ -260,8 +262,10 @@ and a strictly worse energy on the 5th. `ExactSolver` was changed to use
 `TreeDecompositionSolver` instead, which runs the same tree decomposition as a **deterministic**
 dynamic program over the elimination order and returns the true minimum on every call.
 
-`foldq.experiments.e3_solvers` re-measures all eight solvers against the deterministic exact
-solver across 25 sequences, 20–50 nt (450 rows, `results/full/e3_solvers.csv`):
+`foldq.experiments.e3_solvers` re-measures the six classical and quantum-inspired solvers
+against the deterministic exact solver across 25 sequences, 20–50 nt (6 × 75 = 450 rows,
+`results/full/e3_solvers.csv`). The two gate-based solvers, `qaoa` and `cvar_qaoa`, are measured
+separately by E4 below, and `exact` is the reference rather than a candidate:
 
 | solver | mean F1 | mean energy gap | found optimum | mean runtime |
 |---|---|---|---|---|
@@ -371,15 +375,31 @@ table, one row per length range per model (`30-100 nt stacking_only`, `30-100 nt
 The `stacking_only` column is kept as the ablation contrast, not the headline: it is the energy
 model without the charge-and-refund hairpin/interior-loop construction, and E1 shows exactly
 what dropping that construction costs at the level of Gate B, not just correlation —
-`stacking_only` reaches Gate B on only **50.9%** of instances (pooled across nesting policy and
-overlap-penalty settings) versus charge-and-refund's **89.5%**
-(`results/full/e1_formulation.csv`). A weaker surrogate does not just correlate worse, it
-changes the QUBO's actual ground state more often.
+`stacking_only` reaches Gate B on only **50.9%** of instances versus charge-and-refund's
+**89.5%** (`results/full/e1_formulation.csv`). Those two pooled averages are not taken over the
+same cells — `stacking_only` was only ever run under `all_nestable`, so its pool is three
+overlap-penalty settings while charge-and-refund's is six. **Compared cell by cell at matched
+settings the gap is wider, not narrower:**
 
-The caveat that a surrogate correlation "drops on short sequences" applies to `stacking_only`,
-not to the default model: `stacking_only` varies **0.690–0.934 across random seeds** (mean
-0.846) at 30–60 nt, a real and fairly wide spread, while the default `charge_refund` model holds
-**0.9804** at the same range. Citing only the 30–100 nt headline number for either model would
+| nesting policy | overlap penalty | `charge_refund` Gate B | `stacking_only` Gate B |
+|---|---|---|---|
+| `all_nestable` | adaptive | 89.5% | 57.9% |
+| `all_nestable` | 20.0 | 89.5% | 57.9% |
+| `all_nestable` | 5.0 | 89.5% | 36.8% |
+
+Charge-and-refund reaches **89.5% in all six cells it was run in** — its Gate B rate is
+invariant to both the nesting policy and the overlap penalty, so the pooled figure is not a
+tuned number. `stacking_only` is the side that moves with the penalty setting, from 57.9% down
+to 36.8%. A weaker surrogate does not just correlate worse, it changes the QUBO's actual ground
+state more often.
+
+The caveat that a surrogate correlation "drops on short sequences" applies far more to
+`stacking_only` than to the default model: at 30–60 nt `stacking_only` varies **0.690–0.934
+across random seeds** (mean 0.846), a real and fairly wide spread, while the default
+`charge_refund` model stays in a much narrower band — **0.942–0.980** across the seeds sampled,
+against **0.9804** at the probe's own seed. Both models move with the sample; charge-and-refund
+moves roughly a quarter as much, and that difference in stability is the claim, not
+seed-invariance for either one. Citing only the 30–100 nt headline number for either model would
 overstate its fidelity at the shorter lengths most of this project's other experiments actually
 run at, which is why both ranges are reported for both models here rather than only the wider,
 better-looking one.
