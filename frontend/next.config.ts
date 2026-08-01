@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Mol* ships untranspiled ESM under lib/; Next must process it.
+  transpilePackages: ["molstar"],
 };
 
 export default nextConfig;
