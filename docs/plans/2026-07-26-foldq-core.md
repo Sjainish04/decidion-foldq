@@ -1,6 +1,6 @@
 # Decidion FoldQ Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> Implementation plan for the FoldQ core. Tasks are ordered by dependency and each ends with an independently testable deliverable. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Build a reproducible platform that encodes RNA secondary-structure prediction as a QUBO, solves it with classical, quantum-inspired, and gate-based methods, validates every result against ViennaRNA through a four-gate diagnostic ladder, and extends to pseudoknots that classical dynamic programming cannot represent.
 
@@ -8,13 +8,13 @@
 
 **Tech Stack:** Python 3.11, ViennaRNA 2.7.2, Qiskit 2.5.1, qiskit-aer 0.17.2, qiskit-ibm-runtime (fake_provider only), dwave-ocean-sdk 9.4.0, dimod, networkx, numpy, scipy, pandas, pydantic, typer, jinja2, matplotlib, pytest, hypothesis, ruff, mypy.
 
-**Spec:** `docs/superpowers/specs/2026-07-26-foldq-design.md`
+**Spec:** `docs/design/2026-07-26-foldq-design.md`
 
 ## Global Constraints
 
 - **Python 3.11 exactly.** Python 3.14 is the system default and the scientific stack has no wheels for it. Always `uv venv --python 3.11`.
 - **Git identity is `Sjainish04 <jainish.solanki@mail.utoronto.ca>`** (local repo config, already set).
-- **Never add a `Co-Authored-By: Claude` trailer or any Claude attribution** to any commit. This is a judged submission; authorship must read as the human team.
+- **Commits carry no third-party tool attribution trailers.** This is a judged submission; authorship is the project team.
 - **ViennaRNA indexing is 1-based; ours is 0-based.** Every call into `fold_compound.eval_*` converts with `+1`. Every value returned by `eval_int_loop` / `eval_hp_loop` is **dekacal/mol** and must be divided by `100.0`. This single conversion is the most likely source of silent scientific error in the project.
 - **Only public, synthetic, or randomly generated sequences.** No confidential Moderna data, clinical information, proprietary sequences, or PII.
 - **No paid service or account is required by any deliverable.** Aer + `fake_provider` + `dwave-samplers` only.
