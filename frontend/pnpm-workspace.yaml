@@ -8,7 +8,15 @@
 #
 # Nothing else is allowed to run a build script. Leaving these unapproved makes
 # `pnpm install` halt and prompt, which would break a clean-checkout reproduction.
+#   @scarf/scarf   DENIED. Reached us transitively as molstar -> swagger-ui-dist
+#                  -> scarf. Its install script exists only to report install
+#                  analytics to a third party. Denying it stops that telemetry and
+#                  breaks nothing: the package still installs, and Mol* does not
+#                  use it. pnpm left the literal placeholder "set this to true or
+#                  false" here after a non-interactive install, which is an invalid
+#                  value that makes `pnpm install` fail closed on a clean checkout.
 allowBuilds:
+  '@scarf/scarf': false
   msw: true
   sharp: true
   unrs-resolver: true
