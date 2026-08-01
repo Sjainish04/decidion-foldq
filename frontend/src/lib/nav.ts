@@ -32,4 +32,8 @@ export const NAV_SECTIONS: NavSection[] = [
       { href: "/analytics/pseudoknots", label: "Pseudoknots" },
     ],
   },
+  {
+    label: "Structural Evidence",
+    items: [{ href: "/structures", label: "PDB Structures" }],
+  },
 ];
