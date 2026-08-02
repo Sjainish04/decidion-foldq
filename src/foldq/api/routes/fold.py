@@ -15,8 +15,9 @@ import time
 from pathlib import Path
 from typing import Literal
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 
+from foldq.api.errors import ErrorCode, FoldQAPIError
 from foldq.api.schemas import (
     CandidateOut,
     FoldRequest,
@@ -70,24 +71,30 @@ def _run_id(request: FoldRequest) -> str:
 @router.post("/fold", response_model=FoldResponse)
 def fold(request: FoldRequest) -> FoldResponse:
     if request.solver not in SOLVER_REGISTRY:
-        raise HTTPException(
-            status_code=422,
-            detail=f"unknown solver {request.solver!r}; available: {sorted(SOLVER_REGISTRY)}",
+        raise FoldQAPIError(
+            ErrorCode.UNKNOWN_SOLVER,
+            f"unknown solver {request.solver!r}",
+            details={"requested": request.solver, "available": sorted(SOLVER_REGISTRY)},
         )
     try:
         record = SequenceRecord(sequence_id="api", sequence=request.sequence, source_type="user")
     except ValueError as error:
-        raise HTTPException(status_code=422, detail=str(error)) from error
+        raise FoldQAPIError(
+            ErrorCode.INVALID_SEQUENCE, str(error), details={"sequence": request.sequence[:60]}
+        ) from error
 
     cap = SIMULATED_SOLVER_MAX_LENGTH.get(request.solver)
     if cap is not None and record.length > cap:
-        raise HTTPException(
-            status_code=422,
-            detail=(
-                f"solver {request.solver!r} is limited to {cap} nt in the API; "
-                f"this sequence is {record.length} nt. Use a heuristic solver "
-                "such as simulated_annealing, or run the CLI directly."
-            ),
+        raise FoldQAPIError(
+            ErrorCode.SEQUENCE_TOO_LONG_FOR_SOLVER,
+            f"solver {request.solver!r} is limited to {cap} nt in this API; "
+            f"this sequence is {record.length} nt",
+            details={
+                "solver": request.solver,
+                "sequence_length": record.length,
+                "maximum_length": cap,
+                "suggested_solver": "simulated_annealing",
+            },
         )
 
     config = FoldQConfig(seed=request.seed, forbid_crossing=not request.pseudoknots)

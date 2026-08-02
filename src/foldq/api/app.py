@@ -11,6 +11,7 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from foldq.api import errors
 from foldq.api.routes import fold, meta, structures, system
 
 DEFAULT_ORIGINS = ("http://localhost:3000",)
@@ -53,6 +54,7 @@ def create_app() -> FastAPI:
     app.include_router(meta.router, prefix="/api/v1")
     app.include_router(structures.router, prefix="/api/v1")
     app.include_router(system.router, prefix="/api/v1")
+    errors.install(app)
     return app
 
 

@@ -1,1 +1,1 @@
-{"versions":{"python":"3.11.14","foldq":"0.1.0","viennarna":"2.7.2","qiskit":"2.5.1","dimod":"0.12.22"},"solvers":["cvar_qaoa","exact","greedy","local_search","path_integral_sqa","qaoa","random","simulated_annealing","tabu"],"commit":"d3a5e6bfef45ea8ddfb87d704d1cdd37bd7416b5"}
+{"versions":{"python":"3.11.14","foldq":"0.1.0","viennarna":"2.7.2","qiskit":"2.5.1","dimod":"0.12.22"},"solvers":["cvar_qaoa","exact","greedy","local_search","path_integral_sqa","qaoa","random","simulated_annealing","tabu"],"commit":"1f0668d702cd46a2f7cf61e1a6ca6fe46c5735e2"}

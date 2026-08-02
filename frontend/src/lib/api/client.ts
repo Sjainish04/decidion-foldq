@@ -18,6 +18,11 @@ export class ApiError extends Error {
   constructor(
     message: string,
     readonly status: number,
+    /** Stable identifier from the API, e.g. SEQUENCE_TOO_LONG_FOR_SOLVER.
+     *  Undefined for framework-level validation errors, which are raised before
+     *  the typed handler runs. */
+    readonly code?: string,
+    readonly traceId?: string,
   ) {
     super(message);
     this.name = "ApiError";
@@ -35,7 +40,16 @@ async function request<T>(
   });
   const body = await response.json().catch(() => ({}));
   if (!response.ok) {
-    throw new ApiError(body.detail ?? response.statusText, response.status);
+    // The API returns a typed body: { error: { code, message, details, trace_id } }.
+    // `detail` is still read as a fallback because FastAPI raises its own
+    // validation errors in that shape before any handler runs.
+    const typed = body?.error;
+    throw new ApiError(
+      typed?.message ?? body?.detail ?? response.statusText,
+      response.status,
+      typed?.code,
+      typed?.trace_id,
+    );
   }
   return schema.parse(body);
 }

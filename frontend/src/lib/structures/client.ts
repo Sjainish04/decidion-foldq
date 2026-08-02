@@ -12,7 +12,16 @@ async function request<T>(path: string, schema: { parse: (v: unknown) => T }): P
   const response = await fetch(`${BASE}${path}`);
   const body = await response.json().catch(() => ({}));
   if (!response.ok) {
-    throw new ApiError(body.detail ?? response.statusText, response.status);
+    // The API returns a typed body: { error: { code, message, details, trace_id } }.
+    // `detail` is still read as a fallback because FastAPI raises its own
+    // validation errors in that shape before any handler runs.
+    const typed = body?.error;
+    throw new ApiError(
+      typed?.message ?? body?.detail ?? response.statusText,
+      response.status,
+      typed?.code,
+      typed?.trace_id,
+    );
   }
   return schema.parse(body);
 }

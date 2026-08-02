@@ -1,0 +1,54 @@
+{
+  "dataset": "decidion-foldq curated fixtures",
+  "generated_on": "2026-08-02",
+  "git_commit": "1f0668d702cd46a2f7cf61e1a6ca6fe46c5735e2",
+  "count": 4,
+  "note": "Every sequence here is public, synthetic, or constructed. No confidential, clinical, proprietary or personally identifying data is used anywhere in this project. Benchmark sequences beyond these fixtures are generated at run time by foldq.data.generate from a fixed seed and are therefore reproducible rather than distributed.",
+  "provenance_summary": {
+    "literature/experimental": 1,
+    "constructed for this project": 2,
+    "constructed control": 1
+  },
+  "records": [
+    {
+      "sequence_id": "hairpin_gc_synthetic",
+      "length": 16,
+      "sha256": "bf794e9e2d0ad8c4",
+      "has_pseudoknot": false,
+      "source": "Constructed control (perfect GC hairpin)",
+      "license": "CC0",
+      "provenance": "constructed control",
+      "citation_claimed": false
+    },
+    {
+      "sequence_id": "trna_phe_yeast_acceptor",
+      "length": 76,
+      "sha256": "28890de0dd203337",
+      "has_pseudoknot": false,
+      "source": "PDB 1EHZ entity 1 (X-ray, 1.93 A, Saccharomyces cerevisiae); sequence is public domain",
+      "license": "Public domain sequence data",
+      "provenance": "literature/experimental",
+      "citation_claimed": true
+    },
+    {
+      "sequence_id": "pk_htype_constructed_28",
+      "length": 28,
+      "sha256": "02fcea4185c57cb2",
+      "has_pseudoknot": true,
+      "source": "CONSTRUCTED for this project - NOT literature-derived, no citation claimed",
+      "license": "CC0",
+      "provenance": "constructed for this project",
+      "citation_claimed": false
+    },
+    {
+      "sequence_id": "pk_htype_constructed_33",
+      "length": 33,
+      "sha256": "6ba2aed302308649",
+      "has_pseudoknot": true,
+      "source": "CONSTRUCTED for this project - NOT literature-derived, no citation claimed",
+      "license": "CC0",
+      "provenance": "constructed for this project",
+      "citation_claimed": false
+    }
+  ]
+}

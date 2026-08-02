@@ -44,7 +44,9 @@ def test_fold_is_deterministic_for_the_same_request(client):
 def test_fold_rejects_an_invalid_sequence(client):
     response = client.post("/api/v1/fold", json={"sequence": "GGXAU", "solver": "exact"})
     assert response.status_code == 422
-    assert "invalid nucleotide" in response.json()["detail"].lower()
+    body = response.json()["error"]
+    assert body["code"] == "INVALID_SEQUENCE"
+    assert "invalid nucleotide" in body["message"].lower()
 
 
 def test_fold_rejects_an_unknown_solver(client):
@@ -62,7 +64,11 @@ def test_fold_reports_stage_timings(client):
 def test_fold_refuses_a_circuit_simulation_that_would_never_finish(client):
     response = client.post("/api/v1/fold", json={"sequence": "GC" * 40, "solver": "qaoa"})
     assert response.status_code == 422
-    assert "limited to 40 nt" in response.json()["detail"]
+    body = response.json()["error"]
+    assert body["code"] == "SEQUENCE_TOO_LONG_FOR_SOLVER"
+    # The client is told what to do instead, not just what went wrong.
+    assert body["details"]["maximum_length"] == 40
+    assert body["details"]["suggested_solver"] == "simulated_annealing"
 
 
 def test_pseudoknot_mode_flags_the_candidate(client):
@@ -212,3 +218,50 @@ def _registry_names():
     from foldq.pipeline import SOLVER_REGISTRY
 
     return sorted(SOLVER_REGISTRY)
+
+
+def test_errors_carry_a_stable_code_a_client_can_branch_on(client):
+    """The code, not the message, is the contract.
+
+    A client deciding whether to suggest a different solver must not have to
+    match on prose that may be reworded.
+    """
+    body = client.post("/api/v1/fold", json={"sequence": "GGGAAAUCCCU", "solver": "nope"}).json()[
+        "error"
+    ]
+    assert body["code"] == "UNKNOWN_SOLVER"
+    assert body["details"]["available"]
+    assert body["trace_id"].startswith("trace_")
+
+
+def test_every_response_carries_a_trace_id_header(client):
+    for response in (
+        client.get("/api/v1/health"),
+        client.post("/api/v1/fold", json={"sequence": "GGXAU"}),
+    ):
+        assert response.headers["x-trace-id"].startswith("trace_")
+
+
+def test_the_trace_id_in_the_body_matches_the_header(client):
+    response = client.post("/api/v1/fold", json={"sequence": "GGXAU"})
+    assert response.json()["error"]["trace_id"] == response.headers["x-trace-id"]
+
+
+def test_indeterminate_gates_are_a_result_not_an_error(client):
+    """Gates B and C going indeterminate must return 200.
+
+    An instance too large for exact ground truth is a scientific outcome, not a
+    failure, and turning it into an error would invert the finding the whole
+    diagnostic ladder exists to express.
+    """
+    response = client.post(
+        "/api/v1/fold",
+        json={
+            "sequence": "GCGCGCAAAAGCGCGCUUUUGCGCGCAAAAGCGCGCUUUUGCGCGCAAAAGCGCGC",
+            "solver": "simulated_annealing",
+        },
+    )
+    assert response.status_code == 200
+    gates = response.json()["gates"]
+    assert gates["is_qubo_ground_state"] is None
+    assert "indeterminate" in gates["attribution"]
