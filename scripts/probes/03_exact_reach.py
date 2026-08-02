@@ -5,12 +5,14 @@ nested/planar, so tree-decomposition solving may reach far larger instances.
 If treewidth stays low, Gate B (is the MFE the QUBO ground state?) works at
 50-80nt instead of only ~20nt. That is a large difference in claim strength.
 """
+
 import random
 import time
-import RNA
+
 import networkx as nx
+import RNA
 from dimod import BinaryQuadraticModel
-from dwave.samplers import TreeDecompositionSampler, SimulatedAnnealingSampler
+from dwave.samplers import SimulatedAnnealingSampler, TreeDecompositionSampler
 
 PAIRS = {("A", "U"), ("U", "A"), ("G", "C"), ("C", "G")}
 WOBBLE = {("G", "U"), ("U", "G")}
@@ -49,16 +51,18 @@ def conflicts(s, t):
     nt = {x for p in pt for x in p}
     if ns & nt:
         return True
-    for (a, b) in ps:
-        for (c, d) in pt:
+    for a, b in ps:
+        for c, d in pt:
             if a < c < b < d or c < a < d < b:
                 return True
     return False
 
 
 random.seed(11)
-print(f"{'nt':>4} {'vars':>5} {'edges':>6} {'dens':>6} {'treewidth':>10} "
-      f"{'exact(s)':>9} {'SA(s)':>7} {'match':>6}")
+print(
+    f"{'nt':>4} {'vars':>5} {'edges':>6} {'dens':>6} {'treewidth':>10} "
+    f"{'exact(s)':>9} {'SA(s)':>7} {'match':>6}"
+)
 print("-" * 62)
 
 for n in (30, 40, 50, 60, 80, 100, 120):

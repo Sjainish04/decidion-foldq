@@ -4,7 +4,9 @@ Answers the core feasibility question: how many binary variables does a
 stem-based encoding actually produce at each sequence length, and is the
 ViennaRNA MFE structure representable in that candidate set?
 """
+
 import random
+
 import RNA
 
 PAIRS = {("A", "U"), ("U", "A"), ("G", "C"), ("C", "G")}
@@ -28,8 +30,7 @@ def maximal_stems(seq, min_len=3, min_hairpin=3, wobble=True):
             if i > 0 and j < n - 1 and can_pair(seq[i - 1], seq[j + 1], wobble):
                 continue
             k = 0
-            while (i + k < j - k - min_hairpin - 1 + 1
-                   and can_pair(seq[i + k], seq[j - k], wobble)):
+            while i + k < j - k - min_hairpin - 1 + 1 and can_pair(seq[i + k], seq[j - k], wobble):
                 k += 1
             if k >= min_len:
                 key = (i, j, k)
@@ -42,7 +43,7 @@ def maximal_stems(seq, min_len=3, min_hairpin=3, wobble=True):
 def all_substems(maximal, min_len=3):
     """Every contiguous sub-helix of every maximal stem (the full candidate set)."""
     out = set()
-    for (i, j, k) in maximal:
+    for i, j, k in maximal:
         for start in range(k):
             for length in range(min_len, k - start + 1):
                 out.add((i + start, j - start, length))
@@ -77,7 +78,9 @@ for n in (12, 16, 20, 25, 30, 40, 50, 80, 120):
         covered_by |= stem_pairs(s)
     mp = mfe_pairs(struct)
     cov = f"{len(mp & covered_by)}/{len(mp)}" if mp else "0/0"
-    print(f"{n:>5} {len(mx):>9} {len(allsub):>8} {len(mp):>7} {cov:>8}  {struct[:40]} {energy:6.2f}")
+    print(
+        f"{n:>5} {len(mx):>9} {len(allsub):>8} {len(mp):>7} {cov:>8}  {struct[:40]} {energy:6.2f}"
+    )
 
 print()
 print("ViennaRNA sanity:")

@@ -11,7 +11,6 @@ Usage:
 from __future__ import annotations
 
 import json
-import math
 import sys
 from pathlib import Path
 
@@ -27,7 +26,12 @@ REQUIRED_NON_NULL: dict[str, tuple[str, ...]] = {
     "e2_encoding": ("sequence_id", "length", "encoding", "num_variables", "representable"),
     "e3_solvers": ("sequence_id", "solver", "num_variables", "base_pair_f1", "runtime_seconds"),
     "e4_qaoa": ("sequence_id", "reps", "logical_qubits", "circuit_depth", "two_qubit_gates"),
-    "e5_pseudoknot": ("sequence_id", "has_pseudoknot", "forbid_crossing", "base_pair_f1_vs_reference"),
+    "e5_pseudoknot": (
+        "sequence_id",
+        "has_pseudoknot",
+        "forbid_crossing",
+        "base_pair_f1_vs_reference",
+    ),
 }
 
 # A gate fraction or F1 outside [0, 1] means the metric itself is broken.
@@ -103,6 +107,20 @@ def main(directory: Path) -> None:
     if unknown:
         fail(f"e1_formulation: unrecognised attribution categories {sorted(unknown)}")
     print(f"ok   attribution categories: {sorted(seen)}")
+
+    # Every CSV present must be declared. Without this a result file added later
+    # sits in the directory undescribed -- no row count, no provenance, no commit
+    # -- while the manifest still claims to describe the sweep. e6_surrogate.csv
+    # was in exactly that state until this check was added.
+    on_disk = {path.stem for path in directory.glob("*.csv")}
+    declared = set(manifest["experiments"])
+    undeclared = on_disk - declared
+    if undeclared:
+        fail(f"CSV present but absent from the manifest: {sorted(undeclared)}")
+    missing = declared - on_disk
+    if missing:
+        fail(f"manifest declares experiments with no CSV: {sorted(missing)}")
+    print(f"ok   manifest covers every CSV present ({len(on_disk)})")
 
     print(f"\nPASS {directory} is a valid sweep")
 

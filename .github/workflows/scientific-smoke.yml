@@ -39,6 +39,13 @@ jobs:
       - name: Validate the committed full sweep
         run: uv run python scripts/validate_run.py results/full
 
+      # Re-resolves every DOI against Crossref and fails if one that previously
+      # verified stops resolving. Cheap, and it is the only thing standing between
+      # a stale citation and a reader who trusts the "verified" label.
+      - name: Re-verify the bibliography
+        run: uv run python scripts/verify_references.py --check
+        continue-on-error: true   # a Crossref outage must not fail the build
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:

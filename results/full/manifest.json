@@ -109,6 +109,32 @@
         "vienna_recovers_crossing_pairs",
         "num_crossing_pairs_in_reference"
       ]
+    },
+    "e6_surrogate": {
+      "rows": 30,
+      "columns": [
+        "sequence_id",
+        "sequence_length",
+        "candidate_count",
+        "pearson",
+        "spearman",
+        "kendall_tau",
+        "top1_match",
+        "top5_overlap",
+        "regret_kcal_mol",
+        "best_qubo_candidate_vienna_energy",
+        "best_vienna_candidate_energy"
+      ],
+      "git_commit": "9ed30e0e03e1822b7765be372385516a0584bb4d",
+      "generated_on": "2026-08-02",
+      "python_version": "3.11.14",
+      "note": "Added after the E1-E5 sweep; measures within-sequence surrogate fidelity. Deterministic given the seed, verified to reproduce byte-identically."
     }
-  }
+  },
+  "note": "git_commit, python_version and platform describe the E1-E5 sweep. Experiments added later carry their own provenance under their own key.",
+  "figures": [
+    "resource_scaling.png",
+    "solver_comparison.png",
+    "variable_scaling.png"
+  ]
 }

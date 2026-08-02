@@ -10,6 +10,7 @@ Also scores the actual `charge_refund` objective -- linear charge plus
 pipeline construct it -- against the same reference folds, broken out by the
 two length ranges README RQ4 quotes.
 """
+
 import random
 
 import RNA
@@ -55,7 +56,7 @@ def isolated_stem_energy(seq, stem):
     """Energy of this helix alone: fold nothing else, just this stem + its hairpin."""
     n = len(seq)
     s = ["."] * n
-    for (i, j) in stem:
+    for i, j in stem:
         s[i], s[j] = "(", ")"
     return RNA.energy_of_struct(seq, "".join(s))
 
@@ -101,8 +102,10 @@ def charge_refund_energy(backend, seq, raw_stems):
     return linear + refunds
 
 
-print(f"{'n':>4} {'stems':>5} {'sum_iso':>9} {'sum_stack':>10} {'vienna':>8} "
-      f"{'iso_err':>8} {'stack_err':>9}")
+print(
+    f"{'n':>4} {'stems':>5} {'sum_iso':>9} {'sum_stack':>10} {'vienna':>8} "
+    f"{'iso_err':>8} {'stack_err':>9}"
+)
 print("-" * 66)
 
 rows = []
@@ -123,8 +126,10 @@ for n in (30, 40, 50, 60, 80, 100):
         cr = charge_refund_energy(energy_backend, seq, stems)
         rows.append((e, iso, stk, sph, cr, n))
         if trial == 0:
-            print(f"{n:>4} {len(stems):>5} {iso:>9.2f} {stk:>10.2f} {e:>8.2f} "
-                  f"{iso - e:>8.2f} {stk - e:>9.2f}")
+            print(
+                f"{n:>4} {len(stems):>5} {iso:>9.2f} {stk:>10.2f} {e:>8.2f} "
+                f"{iso - e:>8.2f} {stk - e:>9.2f}"
+            )
 
 # correlation across all samples
 import statistics as st_
@@ -171,8 +176,10 @@ for range_label, keep in length_ranges:
     v_sub = [vien[k] for k in idx]
     for model_label, series in models:
         s_sub = [series[k] for k in idx]
-        print(f"{range_label:<10} {model_label:<14} {corr(s_sub, v_sub):>7.4f} "
-              f"{mae(s_sub, v_sub):>8.2f}")
+        print(
+            f"{range_label:<10} {model_label:<14} {corr(s_sub, v_sub):>7.4f} "
+            f"{mae(s_sub, v_sub):>8.2f}"
+        )
 
 print()
 print("=== pseudoknot check: can ViennaRNA even score one? ===")

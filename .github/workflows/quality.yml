@@ -32,10 +32,10 @@ jobs:
         run: uv sync --frozen --extra dev --extra quantum --extra api
 
       - name: Lint
-        run: uv run ruff check src tests
+        run: uv run ruff check src tests scripts
 
       - name: Format check
-        run: uv run ruff format --check src tests
+        run: uv run ruff format --check src tests scripts
 
       - name: Types
         run: uv run mypy src

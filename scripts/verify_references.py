@@ -255,8 +255,7 @@ def verify(reference: Reference) -> VerifiedReference:
     dates = message.get("published-print") or message.get("published") or {}
     year = (dates.get("date-parts") or [[None]])[0][0]
     authors = [
-        " ".join(filter(None, [a.get("given"), a.get("family")]))
-        for a in message.get("author", [])
+        " ".join(filter(None, [a.get("given"), a.get("family")])) for a in message.get("author", [])
     ][:8]
 
     print(f"    verified {doi}")
