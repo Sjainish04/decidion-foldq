@@ -14,9 +14,9 @@
       "sequence": "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUCUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCACCA",
       "known_structure": "(((((((..((((........)))).(((((.......))))).....(((((.......))))))))))))....",
       "has_pseudoknot": false,
-      "source": "Yeast tRNA-Phe canonical cloverleaf; sequence is public domain",
+      "source": "PDB 1EHZ entity 1 (X-ray, 1.93 A, Saccharomyces cerevisiae); sequence is public domain",
       "license": "Public domain sequence data",
-      "notes": "Classic 76-nt benchmark. Tier S; too large for the exact gates. Structure is the textbook cloverleaf, not re-derived here."
+      "notes": "Classic 76-nt benchmark. Tier S; too large for the exact gates. Structure is the textbook cloverleaf, not re-derived here. Sequence verified byte-identical to RCSB PDB 1EHZ polymer entity 1."
     },
     {
       "sequence_id": "pk_htype_constructed_28",

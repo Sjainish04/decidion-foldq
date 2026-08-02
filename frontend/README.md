@@ -51,3 +51,23 @@ experimental base pairs (RCSB serves no secondary-structure annotation) — see 
 plan's "Deliberately not built" section for the full list and reasoning. Any view added
 later against fixture data must carry a persistent `Demonstration data — not part of
 the challenge submission` badge.
+
+## Structural evidence
+
+`/structures` searches the RCSB Protein Data Bank for RNA-containing entries and ranks
+them best resolution first. `/structures/[pdbId]` renders one in 3D with Mol*, with
+hetero-atoms as sticks.
+
+Three rules this layer holds to:
+
+- **Only experimental structures are listed.** RCSB also serves computed models
+  (AlphaFold, ESMFold); those are filtered out server-side, not ranked lower. Every card
+  names its experimental method.
+- **Every record shows its retrieval date.** RCSB content changes.
+- **No fixture data.** If RCSB is unreachable the structure routes show an error and
+  every other route is unaffected.
+
+The carbon-quantum-dot material layer described in the source workflow is deliberately
+not built — see `docs/plans/2026-08-01-frontend-structures.md`.
+
+RCSB is public and needs no key or account.

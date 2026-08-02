@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ChartCard } from "@/components/analytics/ChartCard";
 import { BarChart } from "@/components/analytics/BarChart";
 import { pseudoknotComparison } from "@/lib/charts/transforms";
@@ -99,6 +100,15 @@ export default function PseudoknotsPage() {
           yLabel="base-pair F1"
           yMax={1}
         />
+        <p className="mt-3 text-xs text-[var(--text-secondary)]">
+          The tRNA-Phe control is the hardest case measured here, and its structure is
+          experimentally determined:{" "}
+          <Link href="/structures/1EHZ" className="text-[var(--accent-text)] underline">
+            PDB 1EHZ
+          </Link>{" "}
+          (X-ray, 1.93 Å). Its 76 nt give 229 variables, and the cloverleaf&apos;s multiloop
+          junction is precisely the k-body structure a degree-2 QUBO approximates worst.
+        </p>
       </ChartCard>
     </div>
   );
