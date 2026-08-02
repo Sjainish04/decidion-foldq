@@ -43,7 +43,7 @@ platform and seed. Every number below traces to it. Alongside it:
 a [dataset manifest](data/MANIFEST.json) and a
 [Crossref-verified bibliography](docs/references.json).
 
-**Live:** [site](https://foldq-site.vercel.app) · [API](https://foldq-api.vercel.app)
+**Live:** [site](https://decidion-foldq.vercel.app) · [API](https://decidion-foldq-api.vercel.app)
 
 ### Claims and their evidence
 

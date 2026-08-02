@@ -4,8 +4,8 @@
 
 | | URL |
 |---|---|
-| Site | <https://foldq-site.vercel.app> |
-| API | <https://foldq-api.vercel.app> |
+| Site | <https://decidion-foldq.vercel.app> |
+| API | <https://decidion-foldq-api.vercel.app> |
 
 
 Both halves run on **Vercel Hobby**, as two projects from this one repository. No
@@ -15,6 +15,16 @@ card, no other provider.
 |---|---|---|
 | `foldq` | `frontend` | the Next.js site |
 | `foldq-api` | *(repo root)* | the FastAPI serverless function |
+
+**Both are connected to the GitHub repository**, so a push to `main` redeploys
+them automatically. The site project's Root Directory is set to `frontend`; the
+API project builds from the repository root.
+
+One trap worth recording: `.vercelignore` patterns are matched at **any depth**
+unless they start with `/`. An unanchored `scripts/` excluded `frontend/scripts`
+as well, which removed `bundle-results.mjs` and broke the site's prebuild. It
+stayed hidden while deploys were done by CLI from inside `frontend/`, because a
+CLI deploy run from a subdirectory never reads a root `.vercelignore` at all.
 
 They are separate projects because they **degrade** separately. The Analytics
 Lab, the dashboard and saved reports read experiment data bundled at build time
@@ -52,7 +62,7 @@ Deployed from the repository root, where `api/index.py`, `requirements.txt` and
 `vercel.json` live.
 
 1. <https://vercel.com/new> → import `Sjainish04/decidion-foldq`.
-2. **Project Name** `foldq-api` · **Root Directory** the repository root.
+2. **Project Name** `decidion-foldq-api` · **Root Directory** the repository root.
 3. Deploy. Vercel detects the FastAPI app and routes every path to it.
 
    **Do not add a `rewrites` rule for `/api/*`.** Vercel now routes backend
@@ -63,7 +73,7 @@ Deployed from the repository root, where `api/index.py`, `requirements.txt` and
 4. Check it:
 
    ```bash
-   curl https://foldq-api-<hash>.vercel.app/api/v1/meta
+   curl https://decidion-foldq-api.vercel.app/api/v1/meta
    ```
 
    Expect seven solvers and `"python": "3.1x"`. `qaoa` should be **absent** —
@@ -72,7 +82,7 @@ Deployed from the repository root, where `api/index.py`, `requirements.txt` and
 ## 2. Frontend project
 
 1. <https://vercel.com/new> → import the **same repository** again.
-2. **Project Name** `foldq-site` · **Root Directory** → **`frontend`**.
+2. **Project Name** `decidion-foldq` · **Root Directory** → **`frontend`**.
 
    The frontend is self-contained: `frontend/src/lib/results/data/*.json` is
    committed, so the build does not need `results/` from the repository root.
@@ -88,7 +98,7 @@ Deployed from the repository root, where `api/index.py`, `requirements.txt` and
 4. Environment variable, for Production and Preview:
 
    ```
-   NEXT_PUBLIC_API_URL = https://foldq-api-<hash>.vercel.app
+   NEXT_PUBLIC_API_URL = https://decidion-foldq-api.vercel.app
    ```
 
    `NEXT_PUBLIC_` is required — the value is read in the browser.
@@ -99,7 +109,7 @@ Deployed from the repository root, where `api/index.py`, `requirements.txt` and
 On the **API** project → *Settings → Environment Variables*:
 
 ```
-FOLDQ_ALLOWED_ORIGINS = https://foldq-<hash>.vercel.app
+FOLDQ_ALLOWED_ORIGINS = https://decidion-foldq.vercel.app
 ```
 
 Comma-separate more origins if you want preview deployments to fold. Redeploy the
