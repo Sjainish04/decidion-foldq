@@ -48,25 +48,19 @@ def test_fold_rejects_an_invalid_sequence(client):
 
 
 def test_fold_rejects_an_unknown_solver(client):
-    response = client.post(
-        "/api/v1/fold", json={"sequence": "GGGAAAUCCCU", "solver": "nope"}
-    )
+    response = client.post("/api/v1/fold", json={"sequence": "GGGAAAUCCCU", "solver": "nope"})
     assert response.status_code == 422
 
 
 def test_fold_reports_stage_timings(client):
-    body = client.post(
-        "/api/v1/fold", json={"sequence": "GGGAAAUCCCU", "solver": "exact"}
-    ).json()
+    body = client.post("/api/v1/fold", json={"sequence": "GGGAAAUCCCU", "solver": "exact"}).json()
     names = [stage["name"] for stage in body["stages"]]
     assert "reference" in names and "solve" in names
     assert all(stage["seconds"] >= 0 for stage in body["stages"])
 
 
 def test_fold_refuses_a_circuit_simulation_that_would_never_finish(client):
-    response = client.post(
-        "/api/v1/fold", json={"sequence": "GC" * 40, "solver": "qaoa"}
-    )
+    response = client.post("/api/v1/fold", json={"sequence": "GC" * 40, "solver": "qaoa"})
     assert response.status_code == 422
     assert "limited to 40 nt" in response.json()["detail"]
 

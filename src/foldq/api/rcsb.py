@@ -46,9 +46,7 @@ class StructureSummary:
     ligands: tuple[str, ...]
     organisms: tuple[str, ...]
     released: str
-    retrieved: str = field(
-        default_factory=lambda: dt.datetime.now(dt.UTC).date().isoformat()
-    )
+    retrieved: str = field(default_factory=lambda: dt.datetime.now(dt.UTC).date().isoformat())
 
     @property
     def has_rna(self) -> bool:
@@ -84,9 +82,7 @@ _SEARCH_BODY: dict[str, Any] = {
     "return_type": "entry",
     "request_options": {
         "paginate": {"start": 0, "rows": 25},
-        "sort": [
-            {"sort_by": "rcsb_entry_info.resolution_combined", "direction": "asc"}
-        ],
+        "sort": [{"sort_by": "rcsb_entry_info.resolution_combined", "direction": "asc"}],
     },
 }
 
@@ -202,19 +198,15 @@ def fetch_entries(pdb_ids: tuple[str, ...]) -> tuple[StructureSummary, ...]:
                     item["entity_poly"]["rcsb_sample_sequence_length"] for item in rna
                 ),
                 rna_sequences=tuple(
-                    (item["entity_poly"].get("pdbx_seq_one_letter_code_can") or "")
-                    for item in rna
+                    (item["entity_poly"].get("pdbx_seq_one_letter_code_can") or "") for item in rna
                 ),
                 ligands=tuple(
-                    (entry.get("rcsb_entry_info") or {}).get(
-                        "nonpolymer_bound_components"
-                    )
-                    or ()
+                    (entry.get("rcsb_entry_info") or {}).get("nonpolymer_bound_components") or ()
                 ),
                 organisms=tuple(sorted(organisms)),
-                released=(entry.get("rcsb_accession_info") or {}).get(
-                    "initial_release_date", ""
-                )[:10],
+                released=(entry.get("rcsb_accession_info") or {}).get("initial_release_date", "")[
+                    :10
+                ],
             )
         )
     return tuple(summaries)

@@ -65,9 +65,7 @@ def search(
         ids = search_rna_structures(max_resolution=max_resolution, limit=limit, text=text)
         entries = fetch_entries(ids)
     except httpx.HTTPError as error:
-        raise HTTPException(
-            status_code=503, detail=f"RCSB PDB is unavailable: {error}"
-        ) from error
+        raise HTTPException(status_code=503, detail=f"RCSB PDB is unavailable: {error}") from error
     return StructureSearchResponse(
         structures=[_to_out(entry) for entry in rank_structures(list(entries))],
         query=text,
@@ -80,9 +78,7 @@ def entry(pdb_id: str) -> StructureOut:
     try:
         entries = fetch_entries((pdb_id.upper(),))
     except httpx.HTTPError as error:
-        raise HTTPException(
-            status_code=503, detail=f"RCSB PDB is unavailable: {error}"
-        ) from error
+        raise HTTPException(status_code=503, detail=f"RCSB PDB is unavailable: {error}") from error
     if not entries:
         raise HTTPException(status_code=404, detail=f"no PDB entry {pdb_id!r}")
     return _to_out(entries[0])

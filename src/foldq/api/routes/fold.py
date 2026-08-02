@@ -75,9 +75,7 @@ def fold(request: FoldRequest) -> FoldResponse:
             detail=f"unknown solver {request.solver!r}; available: {sorted(SOLVER_REGISTRY)}",
         )
     try:
-        record = SequenceRecord(
-            sequence_id="api", sequence=request.sequence, source_type="user"
-        )
+        record = SequenceRecord(sequence_id="api", sequence=request.sequence, source_type="user")
     except ValueError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
 
@@ -105,9 +103,7 @@ def fold(request: FoldRequest) -> FoldResponse:
 
     candidate = result.best_candidate
     with tempfile.TemporaryDirectory() as directory:
-        card_html = render_decision_card(
-            result, Path(directory) / "card.html"
-        ).read_text()
+        card_html = render_decision_card(result, Path(directory) / "card.html").read_text()
 
     return FoldResponse(
         run_id=_run_id(request),

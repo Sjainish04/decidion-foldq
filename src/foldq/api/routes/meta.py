@@ -31,6 +31,4 @@ def meta() -> MetaResponse:
             versions[label] = __import__(module).__version__
         except (ImportError, AttributeError):
             versions[label] = "unavailable"
-    return MetaResponse(
-        versions=versions, solvers=sorted(SOLVER_REGISTRY), commit=_commit()
-    )
+    return MetaResponse(versions=versions, solvers=sorted(SOLVER_REGISTRY), commit=_commit())
