@@ -16,6 +16,11 @@ const ROUTES = [
   "/analytics/scaling",
   "/analytics/resources",
   "/analytics/pseudoknots",
+  // Added with the pages themselves. A new route that ships without an
+  // accessibility check is a route nobody has checked.
+  "/analytics/multivariate",
+  "/design-theory",
+  "/references",
 ];
 
 for (const route of ROUTES) {

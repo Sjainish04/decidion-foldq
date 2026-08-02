@@ -1,8 +1,8 @@
 {
   "generated_by": "scripts/verify_references.py",
-  "verified_on": "2026-08-01",
-  "crossref_verified": 10,
-  "total": 15,
+  "verified_on": "2026-08-02",
+  "crossref_verified": 18,
+  "total": 23,
   "references": [
     {
       "key": "lorenz2011",
@@ -23,7 +23,7 @@
         "Peter F Stadler",
         "Ivo L Hofacker"
       ],
-      "verified_on": "2026-08-01",
+      "verified_on": "2026-08-02",
       "note": "Every energy coefficient in this project comes from this package's Turner primitives."
     },
     {
@@ -40,7 +40,7 @@
         "Rune B. Lyngs\u00f8",
         "Christian N. S. Pedersen"
       ],
-      "verified_on": "2026-08-01",
+      "verified_on": "2026-08-02",
       "note": "Establishes that pseudoknotted folding is NP-hard, which is why this project treats it as the interesting regime."
     },
     {
@@ -57,8 +57,27 @@
         "Douglas H. Turner",
         "David H. Mathews"
       ],
-      "verified_on": "2026-08-01",
+      "verified_on": "2026-08-02",
       "note": "The nearest-neighbour parameters underlying the ViennaRNA energy model."
+    },
+    {
+      "key": "mathews1999",
+      "title": "Expanded sequence dependence of thermodynamic parameters improves prediction of RNA secondary structure",
+      "role": "energy model",
+      "doi": "10.1006/jmbi.1999.2700",
+      "url": "https://doi.org/10.1006/jmbi.1999.2700",
+      "crossref_verified": true,
+      "resolved_title": "Expanded sequence dependence of thermodynamic parameters improves prediction of RNA secondary structure",
+      "container": "Journal of Molecular Biology",
+      "year": 1999,
+      "authors": [
+        "David H. Mathews",
+        "Jeffrey Sabina",
+        "Michael Zuker",
+        "Douglas H. Turner"
+      ],
+      "verified_on": "2026-08-02",
+      "note": "Refines the nearest-neighbour parameter set the Turner/ViennaRNA energy model (and this project's QUBO couplings) are built from."
     },
     {
       "key": "zuker1981",
@@ -74,7 +93,7 @@
         "Michael Zuker",
         "Patrick Stiegler"
       ],
-      "verified_on": "2026-08-01",
+      "verified_on": "2026-08-02",
       "note": "The dynamic program this project measures itself against and does not claim to beat."
     },
     {
@@ -90,8 +109,44 @@
       "authors": [
         "J. S. McCaskill"
       ],
-      "verified_on": "2026-08-01",
+      "verified_on": "2026-08-02",
       "note": "Partition-function folding; the basis of the ensemble view ViennaRNA also exposes."
+    },
+    {
+      "key": "wuchty1999",
+      "title": "Complete suboptimal folding of RNA and the stability of secondary structures",
+      "role": "classical baseline",
+      "doi": "10.1002/(sici)1097-0282(199902)49:2<145::aid-bip4>3.0.co;2-g",
+      "url": "https://doi.org/10.1002/(sici)1097-0282(199902)49:2<145::aid-bip4>3.0.co;2-g",
+      "crossref_verified": true,
+      "resolved_title": "Complete suboptimal folding of RNA and the stability of secondary structures",
+      "container": "Biopolymers",
+      "year": 1999,
+      "authors": [
+        "Stefan Wuchty",
+        "Walter Fontana",
+        "Ivo L. Hofacker",
+        "Peter Schuster"
+      ],
+      "verified_on": "2026-08-02",
+      "note": "Suboptimal/near-optimal DP folding; the classical counterpart to reading off near-ground-state structures from a QUBO solution landscape."
+    },
+    {
+      "key": "rivaseddy1999",
+      "title": "A dynamic programming algorithm for RNA structure prediction including pseudoknots",
+      "role": "classical baseline",
+      "doi": "10.1006/jmbi.1998.2436",
+      "url": "https://doi.org/10.1006/jmbi.1998.2436",
+      "crossref_verified": true,
+      "resolved_title": "A dynamic programming algorithm for RNA structure prediction including pseudoknots 1 1Edited by I. Tinoco",
+      "container": "Journal of Molecular Biology",
+      "year": 1999,
+      "authors": [
+        "Elena Rivas",
+        "Sean R. Eddy"
+      ],
+      "verified_on": "2026-08-02",
+      "note": "The strongest dynamic program that reaches some pseudoknots, restricted to a limited class; the general case this project's QUBO route targets instead."
     },
     {
       "key": "farhi2014",
@@ -124,8 +179,46 @@
         "Ivano Tavernelli",
         "Stefan Woerner"
       ],
-      "verified_on": "2026-08-01",
+      "verified_on": "2026-08-02",
       "note": "The CVaR objective variant this project tested against the plain expectation value."
+    },
+    {
+      "key": "mcclean2018",
+      "title": "Barren plateaus in quantum neural network training landscapes",
+      "role": "known limitation",
+      "doi": "10.1038/s41467-018-07090-4",
+      "url": "https://doi.org/10.1038/s41467-018-07090-4",
+      "crossref_verified": true,
+      "resolved_title": "Barren plateaus in quantum neural network training landscapes",
+      "container": "Nature Communications",
+      "year": 2018,
+      "authors": [
+        "Jarrod R. McClean",
+        "Sergio Boixo",
+        "Vadim N. Smelyanskiy",
+        "Ryan Babbush",
+        "Hartmut Neven"
+      ],
+      "verified_on": "2026-08-02",
+      "note": "A proposed theoretical reason shallow variational circuits like QAOA become hard to train at scale; cited as context for this project's negative QAOA result."
+    },
+    {
+      "key": "kirkpatrick1983",
+      "title": "Optimization by Simulated Annealing",
+      "role": "classical baseline",
+      "doi": "10.1126/science.220.4598.671",
+      "url": "https://doi.org/10.1126/science.220.4598.671",
+      "crossref_verified": true,
+      "resolved_title": "Optimization by Simulated Annealing",
+      "container": "Science",
+      "year": 1983,
+      "authors": [
+        "S. Kirkpatrick",
+        "C. D. Gelatt",
+        "M. P. Vecchi"
+      ],
+      "verified_on": "2026-08-02",
+      "note": "The thermal-annealing algorithm this project's classical annealing solver directly implements."
     },
     {
       "key": "kadowaki1998",
@@ -141,7 +234,7 @@
         "Tadashi Kadowaki",
         "Hidetoshi Nishimori"
       ],
-      "verified_on": "2026-08-01",
+      "verified_on": "2026-08-02",
       "note": "The basis of the path-integral simulated quantum annealing solver."
     },
     {
@@ -213,7 +306,7 @@
       "authors": [
         "H. M. Berman"
       ],
-      "verified_on": "2026-08-01",
+      "verified_on": "2026-08-02",
       "note": "The archive the structural-evidence layer queries; PDB 1EHZ is the tRNA benchmark's structure."
     },
     {
@@ -230,7 +323,7 @@
         "HUIJING SHI",
         "PETER B. MOORE"
       ],
-      "verified_on": "2026-08-01",
+      "verified_on": "2026-08-02",
       "note": "PDB 1EHZ. The experimental structure of this project's 76-nt benchmark sequence."
     },
     {
@@ -248,8 +341,64 @@
         "Gary Kochenberger",
         "Yu Du"
       ],
-      "verified_on": "2026-08-01",
+      "verified_on": "2026-08-02",
       "note": "Standard reference for QUBO formulation and penalty construction."
+    },
+    {
+      "key": "lucas2014",
+      "title": "Ising formulations of many NP problems",
+      "role": "formulation",
+      "doi": "10.3389/fphy.2014.00005",
+      "url": "https://doi.org/10.3389/fphy.2014.00005",
+      "crossref_verified": true,
+      "resolved_title": "Ising formulations of many NP problems",
+      "container": "Frontiers in Physics",
+      "year": 2014,
+      "authors": [
+        "Andrew Lucas"
+      ],
+      "verified_on": "2026-08-02",
+      "note": "The standard catalogue of QUBO/Ising encodings for NP-hard combinatorial problems that this project's own penalty construction follows."
+    },
+    {
+      "key": "leppek2022",
+      "title": "Combinatorial optimization of mRNA structure, stability, and translation for RNA-based therapeutics",
+      "role": "motivating application",
+      "doi": "10.1038/s41467-022-28776-w",
+      "url": "https://doi.org/10.1038/s41467-022-28776-w",
+      "crossref_verified": true,
+      "resolved_title": "Combinatorial optimization of mRNA structure, stability, and translation for RNA-based therapeutics",
+      "container": "Nature Communications",
+      "year": 2022,
+      "authors": [
+        "Kathrin Leppek",
+        "Gun Woo Byeon",
+        "Wipapat Kladwang",
+        "Hannah K. Wayment-Steele",
+        "Craig H. Kerr",
+        "Adele F. Xu",
+        "Do Soon Kim",
+        "Ved V. Topkar"
+      ],
+      "verified_on": "2026-08-02",
+      "note": "Shows mRNA secondary structure governs vaccine stability and translation efficiency \u2014 the applied motivation (the 'Moderna challenge') behind reaching pseudoknots that DP cannot represent."
+    },
+    {
+      "key": "gardnergiegerich2004",
+      "title": "A comprehensive comparison of comparative RNA structure prediction approaches",
+      "role": "evaluation metric",
+      "doi": "10.1186/1471-2105-5-140",
+      "url": "https://doi.org/10.1186/1471-2105-5-140",
+      "crossref_verified": true,
+      "resolved_title": "A comprehensive comparison of comparative RNA structure prediction approaches",
+      "container": "BMC Bioinformatics",
+      "year": 2004,
+      "authors": [
+        "Paul P Gardner",
+        "Robert Giegerich"
+      ],
+      "verified_on": "2026-08-02",
+      "note": "Source of the sensitivity/PPV-style base-pair accuracy metrics (precision, recall, F1) this project reports when comparing predicted structures to ViennaRNA."
     }
   ]
 }

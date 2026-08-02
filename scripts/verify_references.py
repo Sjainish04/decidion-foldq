@@ -100,6 +100,18 @@ REFERENCES: list[Reference] = [
         note="The nearest-neighbour parameters underlying the ViennaRNA energy model.",
     ),
     Reference(
+        "mathews1999",
+        (
+            "Expanded sequence dependence of thermodynamic parameters improves "
+            "prediction of RNA secondary structure"
+        ),
+        "energy model",
+        note=(
+            "Refines the nearest-neighbour parameter set the Turner/ViennaRNA energy "
+            "model (and this project's QUBO couplings) are built from."
+        ),
+    ),
+    Reference(
         "zuker1981",
         (
             "Optimal computer folding of large RNA sequences using thermodynamics "
@@ -118,6 +130,24 @@ REFERENCES: list[Reference] = [
         note="Partition-function folding; the basis of the ensemble view ViennaRNA also exposes.",
     ),
     Reference(
+        "wuchty1999",
+        "Complete suboptimal folding of RNA and the stability of secondary structures",
+        "classical baseline",
+        note=(
+            "Suboptimal/near-optimal DP folding; the classical counterpart to reading off "
+            "near-ground-state structures from a QUBO solution landscape."
+        ),
+    ),
+    Reference(
+        "rivaseddy1999",
+        "A dynamic programming algorithm for RNA structure prediction including pseudoknots",
+        "classical baseline",
+        note=(
+            "The strongest dynamic program that reaches some pseudoknots, restricted to a "
+            "limited class; the general case this project's QUBO route targets instead."
+        ),
+    ),
+    Reference(
         "farhi2014",
         "A Quantum Approximate Optimization Algorithm",
         "quantum method",
@@ -131,6 +161,29 @@ REFERENCES: list[Reference] = [
         "quantum method",
         doi="10.22331/q-2020-04-20-256",
         note="The CVaR objective variant this project tested against the plain expectation value.",
+    ),
+    Reference(
+        "mcclean2018",
+        "Barren plateaus in quantum neural network training landscapes",
+        "known limitation",
+        note=(
+            "A proposed theoretical reason shallow variational circuits like QAOA become hard "
+            "to train at scale; cited as context for this project's negative QAOA result."
+        ),
+    ),
+    Reference(
+        "kirkpatrick1983",
+        "Optimization by Simulated Annealing",
+        "classical baseline",
+        # Given explicitly: Crossref's bibliographic search ranks an unrelated book
+        # series called "Simulated Annealing" above this paper for the bare title, so
+        # title search alone would return the wrong DOI. Confirmed by fetching this DOI
+        # directly (title, container "Science", authors, and 1983 date all match).
+        doi="10.1126/science.220.4598.671",
+        note=(
+            "The thermal-annealing algorithm this project's classical annealing "
+            "solver directly implements."
+        ),
     ),
     Reference(
         "kadowaki1998",
@@ -200,6 +253,37 @@ REFERENCES: list[Reference] = [
         "Quantum Bridge Analytics I: a tutorial on formulating and using QUBO models",
         "formulation",
         note="Standard reference for QUBO formulation and penalty construction.",
+    ),
+    Reference(
+        "lucas2014",
+        "Ising formulations of many NP problems",
+        "formulation",
+        note=(
+            "The standard catalogue of QUBO/Ising encodings for NP-hard combinatorial "
+            "problems that this project's own penalty construction follows."
+        ),
+    ),
+    Reference(
+        "leppek2022",
+        (
+            "Combinatorial optimization of mRNA structure, stability, and translation for "
+            "RNA-based therapeutics"
+        ),
+        "motivating application",
+        note=(
+            "Shows mRNA secondary structure governs vaccine stability and translation "
+            "efficiency — the applied motivation (the 'Moderna challenge') behind reaching "
+            "pseudoknots that DP cannot represent."
+        ),
+    ),
+    Reference(
+        "gardnergiegerich2004",
+        "A comprehensive comparison of comparative RNA structure prediction approaches",
+        "evaluation metric",
+        note=(
+            "Source of the sensitivity/PPV-style base-pair accuracy metrics (precision, "
+            "recall, F1) this project reports when comparing predicted structures to ViennaRNA."
+        ),
     ),
 ]
 

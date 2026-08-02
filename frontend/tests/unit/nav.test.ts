@@ -4,6 +4,15 @@ import { NAV_SECTIONS } from "@/lib/nav";
 const all = NAV_SECTIONS.flatMap((s) => s.items);
 
 describe("navigation", () => {
+  it("organizes the site into the four reviewer-requested top-level sections", () => {
+    expect(NAV_SECTIONS.map((s) => s.label)).toEqual([
+      "Models",
+      "ML Workflow",
+      "Design Theory",
+      "Analysis & Data",
+    ]);
+  });
+
   it("covers every route group in the design", () => {
     const hrefs = all.map((i) => i.href);
     for (const href of [
@@ -13,6 +22,8 @@ describe("navigation", () => {
       "/analytics/energy",
       "/analytics/scaling",
       "/analytics/resources",
+      "/design-theory",
+      "/analytics/multivariate",
     ]) {
       expect(hrefs).toContain(href);
     }
@@ -35,8 +46,10 @@ describe("navigation", () => {
       "/analytics/scaling",
       "/analytics/resources",
       "/analytics/pseudoknots",
+      "/analytics/multivariate",
       "/structures",
       "/references",
+      "/design-theory",
     ];
     expect(all.map((i) => i.href).sort()).toEqual([...built].sort());
   });

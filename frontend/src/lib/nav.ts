@@ -12,32 +12,35 @@ export interface NavSection {
 
 export const NAV_SECTIONS: NavSection[] = [
   {
-    label: "Overview",
-    items: [{ href: "/dashboard", label: "Command Center" }],
+    label: "Models",
+    items: [
+      { href: "/analytics/energy", label: "Energy & Accuracy" },
+      { href: "/analytics/solver-performance", label: "Solver Performance" },
+      { href: "/analytics/resources", label: "Quantum Resources" },
+    ],
   },
   {
-    label: "FoldQ Studio",
+    label: "ML Workflow",
     items: [
       { href: "/foldq/new", label: "New Analysis" },
       { href: "/foldq/compare", label: "Compare Runs" },
+      { href: "/dashboard", label: "Command Center" },
     ],
   },
   {
-    label: "Analytics Lab",
+    label: "Design Theory",
     items: [
-      { href: "/analytics/solver-performance", label: "Solver Performance" },
-      { href: "/analytics/energy", label: "Energy & Accuracy" },
+      { href: "/design-theory", label: "Formulation" },
       { href: "/analytics/scaling", label: "Scaling & Encoding" },
-      { href: "/analytics/resources", label: "Quantum Resources" },
-      { href: "/analytics/pseudoknots", label: "Pseudoknots" },
     ],
   },
   {
-    label: "Evidence",
-    items: [{ href: "/references", label: "Reference Library" }],
-  },
-  {
-    label: "Structural Evidence",
-    items: [{ href: "/structures", label: "PDB Structures" }],
+    label: "Analysis & Data",
+    items: [
+      { href: "/analytics/multivariate", label: "Multivariate Analysis" },
+      { href: "/analytics/pseudoknots", label: "Pseudoknots" },
+      { href: "/references", label: "Reference Library" },
+      { href: "/structures", label: "PDB Structures" },
+    ],
   },
 ];
