@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Decidion FoldQ — frontend
 
-## Getting Started
+Next.js interface over the FoldQ pipeline.
 
-First, run the development server:
+## Running it
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+    # terminal 1 — the API (optional; analytics works without it)
+    uv pip install -e ".[dev,quantum,api]"
+    make api         # http://localhost:8010 -- 8000 is often occupied on dev machines
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+    # terminal 2 — the frontend
+    cd frontend && pnpm install && pnpm dev
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Open http://localhost:3000.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+By default the frontend talks to the API at `http://localhost:8010`. Override this with
+`NEXT_PUBLIC_API_URL` (see `.env.example`) if your API runs elsewhere.
 
-## Learn More
+## Where the numbers come from
 
-To learn more about Next.js, take a look at the following resources:
+Every figure in the Analytics Lab is computed at build time from the committed
+experiment output in `results/full/`. `scripts/bundle-results.mjs` converts those CSVs
+to JSON that ships inside the bundle, so the Analytics Lab, the dashboard and any
+saved report render with the API stopped. Only live folding and RCSB structure search
+need the backend.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+No figure is hard-coded. Each chart names the CSV it came from and offers the same
+numbers as a table.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Testing
 
-## Deploy on Vercel
+    pnpm test        # unit + component (Vitest)
+    pnpm lint        # eslint + tsc --noEmit
+    pnpm test:e2e    # Playwright, including axe-core WCAG 2.2 AA checks
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+`pnpm test:e2e` starts both the frontend (port 3000) and the API (port 8010) for you —
+see `playwright.config.ts` — so neither needs to be running first. The first run also
+needs the Chromium browser once:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+    pnpm exec playwright install chromium
+
+## Scope
+
+Built: shell, Analytics Lab, FoldQ Studio, Reports, and structural evidence (RCSB
+search at `/structures` and the Mol* 3D viewer at `/structures/[pdbId]`) — see
+`docs/plans/2026-08-01-frontend-structures.md`. Deliberately not built: the CQD
+material layer (no underlying data), the real-world-evidence/materials/targets routes
+that depended on it, 2D↔3D selection sync (RCSB's residue numbering does not map
+cleanly onto sequence position), and automated comparison of FoldQ output against
+experimental base pairs (RCSB serves no secondary-structure annotation) — see that
+plan's "Deliberately not built" section for the full list and reasoning. Any view added
+later against fixture data must carry a persistent `Demonstration data — not part of
+the challenge submission` badge.

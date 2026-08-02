@@ -8,8 +8,10 @@
     "prebuild": "node scripts/bundle-results.mjs",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint",
-    "pretest": "node scripts/bundle-results.mjs"
+    "lint": "eslint && tsc --noEmit",
+    "pretest": "node scripts/bundle-results.mjs",
+    "test": "vitest run",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.5.7",
@@ -30,6 +32,8 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
+    "@playwright/test": "^1.62.1",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^7.0.0",
     "@testing-library/react": "^16.3.2",

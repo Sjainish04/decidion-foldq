@@ -802,6 +802,19 @@ E3, E5) do not depend on it.
 
 ---
 
+## Frontend
+
+A Next.js interface renders the measured results and folds sequences live.
+
+    uv pip install -e ".[dev,quantum,api]"
+    make api        # http://localhost:8010 -- 8000 is often occupied on dev machines
+    make frontend   # http://localhost:3000
+
+The Analytics Lab reads the committed CSVs in `results/full/` bundled at build time,
+so it works with the API stopped. See `frontend/README.md`.
+
+---
+
 ## Testing
 
 267 tests across four categories, all passing:
