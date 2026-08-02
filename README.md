@@ -144,13 +144,20 @@ decision card's **Attribution** line and every experiment table's `attribution` 
 At the default configuration (`charge_refund` energy model, `immediate_only` nesting policy,
 adaptive overlap penalty):
 
-| Gate | Result |
-|---|---|
-| A — reference structure representable | 19/19 = 100% |
-| B — reference is the QUBO ground state | 17/19 = 89% |
-| **B conditional on A (formulation fidelity)** | **17/19 = 89%** |
-| D — mean base-pair F1 | 0.977 |
-| D — mean energy gap | +0.02 kcal/mol |
+| Gate | Result | 95% interval |
+|---|---|---|
+| A — reference structure representable | 19/19 = 100% | [83.2%, 100%] |
+| B — reference is the QUBO ground state | 17/19 = 89.5% | [68.6%, 97.1%] |
+| **B conditional on A (formulation fidelity)** | **17/19 = 89.5%** | **[68.6%, 97.1%]** |
+| D — mean base-pair F1 | 0.977 | [0.936, 1.000] |
+| D — mean energy gap | +0.016 kcal/mol | [0.000, 0.042] |
+
+Intervals are Wilson score intervals for the rates and percentile bootstrap
+intervals for the means (`foldq.analysis.uncertainty`, seeded, so a published
+interval does not move between runs). They are reported because **n = 19 is
+small and the point estimates alone invite over-reading**: a perfect 19/19 still
+only bounds Gate A at 83% or better, and Gate B's interval is wide enough that
+this sample cannot distinguish 89% from 70%.
 
 **Gate C is not measured by E1** — its table has no Gate-C column. Solver optimality is measured
 separately, at scale, by E3; see
@@ -304,20 +311,29 @@ same question of the gate-based method: does QAOA actually reach the ground stat
 heuristics reach 100% of the time? Noiseless expectation objective, by `reps` (99 rows,
 `results/full/e4_qaoa.csv`):
 
-| reps | logical qubits | circuit depth | 2-qubit gates | mean F1 | found optimum |
-|---|---|---|---|---|---|
-| 1 | 11.8 | 69 | 123.6 | 0.519 | 29.6% |
-| 2 | 11.8 | 123 | 247.1 | 0.405 | 40.7% |
-| 3 | 11.8 | 177 | 370.7 | 0.534 | 44.4% |
+| reps | logical qubits | circuit depth | 2-qubit gates | mean F1 | found optimum | 95% interval |
+|---|---|---|---|---|---|---|
+| 1 | 11.8 | 69 | 123.6 | 0.519 | 29.6% | [15.9%, 48.5%] |
+| 2 | 11.8 | 123 | 247.1 | 0.405 | 40.7% | [24.5%, 59.3%] |
+| 3 | 11.8 | 177 | 370.7 | 0.534 | 44.4% | [27.6%, 62.7%] |
+
+**Those three intervals overlap, so this table does not establish that deeper
+circuits help.** 27 circuits per row is not enough to separate 29.6% from 44.4%;
+the apparent trend is within sampling noise. Stated plainly because the ordered
+column invites the opposite reading.
 
 **The `reps` table above pools three shot budgets, and that hides the larger effect.** Split
 the same 81 noiseless rows by shot count instead:
 
-| shots | mean F1 | found optimum |
-|---|---|---|
-| 256 | 0.322 | 14.8% |
-| 1024 | 0.531 | 44.4% |
-| 4096 | 0.606 | 55.6% |
+| shots | mean F1 | found optimum | 95% interval |
+|---|---|---|---|
+| 256 | 0.322 | 14.8% | [5.9%, 32.5%] |
+| 1024 | 0.531 | 44.4% | [27.6%, 62.7%] |
+| 4096 | 0.606 | 55.6% | [37.3%, 72.4%] |
+
+**Unlike the `reps` table above, this separation is real:** the 256-shot and
+4096-shot intervals do not overlap. Where circuit depth cannot be shown to matter
+at this sample size, the sampling budget can.
 
 Sampling budget moves the result further than circuit depth does — 14.8% to 55.6% across
 shots, against 29.6% to 44.4% across `reps`. The full grid shows depth does not compensate for
@@ -377,6 +393,45 @@ All four cells above are printed directly by `scripts/probes/02_surrogate_fideli
 table, one row per length range per model (`30-100 nt stacking_only`, `30-100 nt charge_refund`,
 `30-60 nt stacking_only`, `30-60 nt charge_refund`); the script computes `charge_refund` from a
 `dangles=0` coefficient backend against the `dangles=2` reference fold, matching the pipeline.
+
+#### What that correlation cannot prove, and the analysis that can
+
+**A correlation pooled across sequences of different lengths is partly measuring
+length.** Longer RNAs have more stems, more base pairs and more negative total
+energies, so a high pooled r is compatible with the surrogate ordering candidate
+structures *within* one sequence no better than chance. The optimizer never
+chooses between sequences — it chooses among candidates for a single RNA — so
+within-sequence ordering is the property that actually matters.
+
+`foldq.experiments.e6_surrogate` measures it directly. For each sequence it
+samples a candidate ensemble from the QUBO, rescores every candidate with
+ViennaRNA, and compares the two orderings within that sequence
+(`results/full/e6_surrogate.csv`, 30 sequences at 30–80 nt):
+
+| measure | result |
+|---|---|
+| Median within-sequence Spearman | **0.952** [0.891, 0.973] |
+| Median within-sequence Kendall τ | 0.848 [0.764, 0.899] |
+| QUBO's pick is the best candidate (top-1) | **85.7%** [71.4%, 96.4%] |
+| Mean top-5 overlap | 0.900 [0.843, 0.950] |
+| Median regret | **0.00 kcal/mol** |
+| Mean regret | 0.136 [0.004, 0.307] kcal/mol |
+| Within 0.5 / 1.0 / 2.0 kcal/mol of the ensemble best | 93% / 93% / 100% |
+
+**Regret** is the most directly interpretable of these: how much worse, in
+kcal/mol, ViennaRNA scores the candidate the QUBO chose than the best candidate
+in the same ensemble. It isolates the surrogate's ranking error from the
+candidate generator's coverage, which Gate A measures separately.
+
+Two of the 30 sequences produced ensembles too small or too flat to rank — a
+correlation is undefined on a constant vector — and are reported as degenerate
+and excluded from the aggregates rather than silently counted as agreement.
+
+So the pooled correlation survives scrutiny, but the defensible statement is the
+narrower one: *the surrogate orders candidates within a sequence with median
+Spearman 0.95, picks the ensemble's best candidate 86% of the time, and when it
+misses, it is within 1 kcal/mol 93% of the time* — not merely that two energy
+scales correlate at 0.99 across a length range.
 
 The `stacking_only` column is kept as the ablation contrast, not the headline: it is the energy
 model without the charge-and-refund hairpin/interior-loop construction, and E1 shows exactly
