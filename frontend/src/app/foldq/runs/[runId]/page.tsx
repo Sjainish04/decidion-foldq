@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { GateLadder } from "@/components/foldq/GateLadder";
 import { RunSummary } from "@/components/foldq/RunSummary";
@@ -21,12 +22,19 @@ function cached(runId: string): FoldResponse | null {
 export default function RunPage() {
   const { runId } = useParams<{ runId: string }>();
   const workspace = useWorkspace();
-  const initial = cached(runId);
+
+  // Read the session cache after mount, never during render. There is no
+  // sessionStorage on the server, so reading it in the component body reports a
+  // miss on every server render — which here meant re-folding through the API on
+  // every navigation to a run we already had, and failing outright with the API
+  // down. `undefined` distinguishes "not looked yet" from "looked and found none".
+  const [initial, setInitial] = useState<FoldResponse | null | undefined>(undefined);
+  useEffect(() => setInitial(cached(runId)), [runId]);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["run", runId],
-    // A run identifier is a content hash, so a cache miss re-folds the same inputs
-    // and yields the same result — no persistence layer required.
+    // A run identifier is a content hash, so a genuine cache miss re-folds the same
+    // inputs and yields the same result — no persistence layer required.
     queryFn: () =>
       foldSequence({
         sequence: workspace.sequence,
@@ -38,6 +46,7 @@ export default function RunPage() {
     enabled: initial === null,
   });
 
+  if (initial === undefined) return <p role="status">Loading run…</p>;
   if (isLoading) return <p role="status">Loading run…</p>;
   if (error) return <p role="alert">{(error as Error).message}</p>;
   if (!data) return <p role="alert">This run is not available. Fold the sequence again.</p>;
