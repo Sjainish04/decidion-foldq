@@ -1,0 +1,19 @@
+# Keep pyproject.toml out of Vercel builds.
+#
+# Neither project needs it: the API entry point puts `src` on sys.path rather
+# than installing the package, and the frontend build only reads results/full.
+# Its presence, though, makes Vercel's Python builder switch to `uv lock`, which
+# then fails because this project pins requires-python to >=3.11,<3.12 while the
+# Vercel runtime is CPython 3.12. Excluding it keeps the builder on pip and
+# requirements.txt, which is the dependency set that was actually measured and
+# tested for this deployment.
+pyproject.toml
+
+# Not needed by either deployed project.
+.venv/
+tests/
+docs/
+presentation/
+deploy/
+scripts/
+.superpowers/

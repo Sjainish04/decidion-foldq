@@ -1,5 +1,13 @@
 # Deploying Decidion FoldQ on Vercel (free)
 
+**Live now:**
+
+| | URL |
+|---|---|
+| Site | <https://foldq-site.vercel.app> |
+| API | <https://foldq-api.vercel.app> |
+
+
 Both halves run on **Vercel Hobby**, as two projects from this one repository. No
 card, no other provider.
 
@@ -40,11 +48,18 @@ locally, and the Analytics Lab renders them from committed CSVs either way.
 
 ## 1. API project
 
+Deployed from the repository root, where `api/index.py`, `requirements.txt` and
+`vercel.json` live.
+
 1. <https://vercel.com/new> → import `Sjainish04/decidion-foldq`.
-2. **Project Name** `foldq-api` · **Root Directory** leave as the repository root
-   · **Framework Preset** *Other*.
-3. Deploy. Vercel finds `api/index.py`, installs `requirements.txt`, and reads
-   `vercel.json` for the function's memory and timeout.
+2. **Project Name** `foldq-api` · **Root Directory** the repository root.
+3. Deploy. Vercel detects the FastAPI app and routes every path to it.
+
+   **Do not add a `rewrites` rule for `/api/*`.** Vercel now routes backend
+   framework projects using the *rewritten destination* path, so a rewrite to
+   `/api/index` makes every request arrive at the app as `/api/index` and each
+   one 404s — including `/openapi.json`. Native detection already routes
+   correctly; the absence of a rewrite is the fix.
 4. Check it:
 
    ```bash
@@ -57,10 +72,16 @@ locally, and the Analytics Lab renders them from committed CSVs either way.
 ## 2. Frontend project
 
 1. <https://vercel.com/new> → import the **same repository** again.
-2. **Project Name** `foldq` · **Root Directory** → **`frontend`**. This is the one
-   setting that is not auto-detected and the one that breaks the build if missed.
-   Vercel still checks out the whole repository, which matters because the build
-   reads `results/full/*.csv` from two directories up.
+2. **Project Name** `foldq-site` · **Root Directory** → **`frontend`**.
+
+   The frontend is self-contained: `frontend/src/lib/results/data/*.json` is
+   committed, so the build does not need `results/` from the repository root.
+   `bundle-results.mjs` regenerates that JSON when the CSVs are present and keeps
+   the committed copy when they are not.
+
+   The repository root carries a `package.json` whose only job is to declare
+   `packageManager`, so Vercel resolves the same pnpm that wrote the lockfile.
+   Without it the build fails with "Ignoring not compatible lockfile".
 3. Framework preset should read *Next.js*. Leave the build command alone:
    `pnpm build` runs `prebuild`, which converts the committed experiment CSVs to
    JSON. That step is why the site shows real measured numbers with no API.

@@ -1,0 +1,6 @@
+{
+  "name": "decidion-foldq",
+  "private": true,
+  "packageManager": "pnpm@11.0.9",
+  "description": "Repository root. The application lives in frontend/; this file exists so the deploy toolchain resolves the same pnpm that wrote frontend/pnpm-lock.yaml."
+}

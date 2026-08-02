@@ -102,8 +102,16 @@ mkdirSync(target, { recursive: true });
 for (const name of EXPERIMENTS) {
   const path = join(source, `${name}.csv`);
   if (!existsSync(path)) {
+    // The generated JSON is committed, so the frontend builds from a checkout of
+    // frontend/ alone -- which is what lets it deploy without the Python side of
+    // the repository present. Regenerate by running this with results/full in
+    // place; only then is a missing CSV an error.
+    if (existsSync(join(target, `${name}.json`))) {
+      console.log(`kept committed ${name}.json (no CSV at ${path})`);
+      continue;
+    }
     throw new Error(
-      `Missing ${path}. Run \`make reproduce\` (or the quick sweep) before building.`
+      `Missing ${path} and no committed ${name}.json. Run \`make reproduce\` first.`
     );
   }
   const rows = parseCsv(readFileSync(path, "utf8"));

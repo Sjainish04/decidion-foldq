@@ -47,4 +47,3 @@ yarn-error.log*
 next-env.d.ts
 
 # generated at build time (see scripts/bundle-results.mjs)
-/src/lib/results/data/
