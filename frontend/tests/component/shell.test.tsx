@@ -13,7 +13,12 @@ describe("AppShell", () => {
 
   it("exposes navigation as a landmark", () => {
     render(<AppShell>x</AppShell>);
-    expect(screen.getByRole("navigation")).toBeInTheDocument();
+    // Queried by accessible name, not by role alone: the shell renders two nav
+    // landmarks (primary and footer). Both being labelled is the accessible
+    // outcome, so the assertion names the one under test rather than assuming
+    // there is only ever one.
+    expect(screen.getByRole("navigation", { name: /primary/i })).toBeInTheDocument();
+    expect(screen.getByRole("navigation", { name: /footer/i })).toBeInTheDocument();
     expect(screen.getByRole("main")).toBeInTheDocument();
   });
 

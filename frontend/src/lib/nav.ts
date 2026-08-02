@@ -33,6 +33,10 @@ export const NAV_SECTIONS: NavSection[] = [
     ],
   },
   {
+    label: "Evidence",
+    items: [{ href: "/references", label: "Reference Library" }],
+  },
+  {
     label: "Structural Evidence",
     items: [{ href: "/structures", label: "PDB Structures" }],
   },

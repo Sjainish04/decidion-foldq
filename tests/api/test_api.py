@@ -143,3 +143,72 @@ def test_qaoa_is_advertised_when_qiskit_is_present():
 
     assert "qaoa" in SOLVER_REGISTRY
     assert "cvar_qaoa" in SOLVER_REGISTRY
+
+
+def test_health_is_cheap_and_dependency_free(client):
+    body = client.get("/api/v1/health").json()
+    assert body["status"] == "ok"
+    assert body["version"]
+    assert body["uptime_seconds"] >= 0
+
+
+def test_capabilities_reports_this_deployment_not_the_codebase(client):
+    body = client.get("/api/v1/capabilities").json()
+    names = {s["name"] for s in body["solvers"]}
+    assert names == set(_registry_names())
+    # The quantum flag and the solver list must agree: a deployment without the
+    # extra must not advertise gate-based solvers it cannot run.
+    gate_based = {s["name"] for s in body["solvers"] if s["kind"] == "gate-based"}
+    assert bool(gate_based) == body["quantum_extra_installed"]
+
+
+def test_capabilities_surfaces_the_length_caps(client):
+    body = client.get("/api/v1/capabilities").json()
+    caps = {s["name"]: s["max_sequence_length"] for s in body["solvers"]}
+    assert caps["exact"] == 60
+    assert caps["simulated_annealing"] is None
+
+
+def test_preflight_estimates_size_without_folding(client):
+    body = client.post(
+        "/api/v1/preflight", json={"sequence": "GGGAAAUCCCU", "solver": "exact"}
+    ).json()
+    assert body["sequence_length"] == 11
+    assert body["estimated_variables"] > 0
+    assert body["exact_gates_available"] is True
+    assert body["within_limits"] is True
+    assert body["warnings"] == []
+
+
+def test_preflight_warns_before_the_gates_go_indeterminate(client):
+    # Long enough to exceed the exact solver's variable ceiling.
+    body = client.post(
+        "/api/v1/preflight",
+        json={
+            "sequence": "GCGCGCAAAAGCGCGCUUUUGCGCGCAAAAGCGCGCUUUUGCGCGCAAAAGCGCGC",
+            "solver": "simulated_annealing",
+        },
+    ).json()
+    assert body["exact_gates_available"] is False
+    assert any("indeterminate" in w for w in body["warnings"])
+
+
+def test_preflight_reports_rather_than_errors_on_a_bad_request(client):
+    # Asking what something costs is not itself an error, so this answers 200
+    # with the reason instead of a 4xx a client would have to special-case.
+    response = client.post("/api/v1/preflight", json={"sequence": "GGXAU"})
+    assert response.status_code == 200
+    assert response.json()["within_limits"] is False
+    assert any("invalid nucleotide" in w.lower() for w in response.json()["warnings"])
+
+
+def test_preflight_warns_when_a_solver_exceeds_its_cap(client):
+    body = client.post("/api/v1/preflight", json={"sequence": "GC" * 40, "solver": "exact"}).json()
+    assert body["within_limits"] is False
+    assert any("capped at 60" in w for w in body["warnings"])
+
+
+def _registry_names():
+    from foldq.pipeline import SOLVER_REGISTRY
+
+    return sorted(SOLVER_REGISTRY)

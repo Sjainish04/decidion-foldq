@@ -36,6 +36,7 @@ describe("navigation", () => {
       "/analytics/resources",
       "/analytics/pseudoknots",
       "/structures",
+      "/references",
     ];
     expect(all.map((i) => i.href).sort()).toEqual([...built].sort());
   });

@@ -1,4 +1,5 @@
 import { CommandPalette } from "./CommandPalette";
+import { Footer } from "./Footer";
 import { SideNav } from "./SideNav";
 import { TopBar } from "./TopBar";
 
@@ -17,6 +18,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <main id="main" className="min-w-0 flex-1 p-6">
           {children}
         </main>
+        <Footer />
       </div>
       <CommandPalette />
     </div>

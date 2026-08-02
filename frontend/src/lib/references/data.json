@@ -1,0 +1,255 @@
+{
+  "generated_by": "scripts/verify_references.py",
+  "verified_on": "2026-08-01",
+  "crossref_verified": 10,
+  "total": 15,
+  "references": [
+    {
+      "key": "lorenz2011",
+      "title": "ViennaRNA Package 2.0",
+      "role": "reference implementation",
+      "doi": "10.1186/1748-7188-6-26",
+      "url": "https://doi.org/10.1186/1748-7188-6-26",
+      "crossref_verified": true,
+      "resolved_title": "ViennaRNA Package 2.0",
+      "container": "Algorithms for Molecular Biology",
+      "year": 2011,
+      "authors": [
+        "Ronny Lorenz",
+        "Stephan H Bernhart",
+        "Christian H\u00f6ner zu Siederdissen",
+        "Hakim Tafer",
+        "Christoph Flamm",
+        "Peter F Stadler",
+        "Ivo L Hofacker"
+      ],
+      "verified_on": "2026-08-01",
+      "note": "Every energy coefficient in this project comes from this package's Turner primitives."
+    },
+    {
+      "key": "lyngso2000",
+      "title": "RNA Pseudoknot Prediction in Energy-Based Models",
+      "role": "complexity result",
+      "doi": "10.1089/106652700750050862",
+      "url": "https://doi.org/10.1089/106652700750050862",
+      "crossref_verified": true,
+      "resolved_title": "RNA Pseudoknot Prediction in Energy-Based Models",
+      "container": "Journal of Computational Biology",
+      "year": 2000,
+      "authors": [
+        "Rune B. Lyngs\u00f8",
+        "Christian N. S. Pedersen"
+      ],
+      "verified_on": "2026-08-01",
+      "note": "Establishes that pseudoknotted folding is NP-hard, which is why this project treats it as the interesting regime."
+    },
+    {
+      "key": "turner2010",
+      "title": "NNDB: the nearest neighbor parameter database for predicting stability of nucleic acid secondary structure",
+      "role": "energy model",
+      "doi": "10.1093/nar/gkp892",
+      "url": "https://doi.org/10.1093/nar/gkp892",
+      "crossref_verified": true,
+      "resolved_title": "NNDB: the nearest neighbor parameter database for predicting stability of nucleic acid secondary structure",
+      "container": "Nucleic Acids Research",
+      "year": 2010,
+      "authors": [
+        "Douglas H. Turner",
+        "David H. Mathews"
+      ],
+      "verified_on": "2026-08-01",
+      "note": "The nearest-neighbour parameters underlying the ViennaRNA energy model."
+    },
+    {
+      "key": "zuker1981",
+      "title": "Optimal computer folding of large RNA sequences using thermodynamics and auxiliary information",
+      "role": "classical baseline",
+      "doi": "10.1093/nar/9.1.133",
+      "url": "https://doi.org/10.1093/nar/9.1.133",
+      "crossref_verified": true,
+      "resolved_title": "Optimal computer folding of large RNA sequences using thermodynamics and auxiliary information",
+      "container": "Nucleic Acids Research",
+      "year": 1981,
+      "authors": [
+        "Michael Zuker",
+        "Patrick Stiegler"
+      ],
+      "verified_on": "2026-08-01",
+      "note": "The dynamic program this project measures itself against and does not claim to beat."
+    },
+    {
+      "key": "mccaskill1990",
+      "title": "The equilibrium partition function and base pair binding probabilities for RNA secondary structure",
+      "role": "classical baseline",
+      "doi": "10.1002/bip.360290621",
+      "url": "https://doi.org/10.1002/bip.360290621",
+      "crossref_verified": true,
+      "resolved_title": "The equilibrium partition function and base pair binding probabilities for RNA secondary structure",
+      "container": "Biopolymers",
+      "year": 1990,
+      "authors": [
+        "J. S. McCaskill"
+      ],
+      "verified_on": "2026-08-01",
+      "note": "Partition-function folding; the basis of the ensemble view ViennaRNA also exposes."
+    },
+    {
+      "key": "farhi2014",
+      "title": "A Quantum Approximate Optimization Algorithm",
+      "role": "quantum method",
+      "doi": null,
+      "url": "https://arxiv.org/abs/1411.4028",
+      "crossref_verified": false,
+      "resolved_title": null,
+      "container": null,
+      "year": null,
+      "authors": [],
+      "verified_on": null,
+      "note": "Preprint; QAOA as implemented here. Not indexed by Crossref."
+    },
+    {
+      "key": "barkoutsos2020",
+      "title": "Improving Variational Quantum Optimization using CVaR",
+      "role": "quantum method",
+      "doi": "10.22331/q-2020-04-20-256",
+      "url": "https://doi.org/10.22331/q-2020-04-20-256",
+      "crossref_verified": true,
+      "resolved_title": "Improving Variational Quantum Optimization using CVaR",
+      "container": "Quantum",
+      "year": 2020,
+      "authors": [
+        "Panagiotis Kl. Barkoutsos",
+        "Giacomo Nannicini",
+        "Anton Robert",
+        "Ivano Tavernelli",
+        "Stefan Woerner"
+      ],
+      "verified_on": "2026-08-01",
+      "note": "The CVaR objective variant this project tested against the plain expectation value."
+    },
+    {
+      "key": "kadowaki1998",
+      "title": "Quantum annealing in the transverse Ising model",
+      "role": "quantum-inspired method",
+      "doi": "10.1103/physreve.58.5355",
+      "url": "https://doi.org/10.1103/physreve.58.5355",
+      "crossref_verified": true,
+      "resolved_title": "Quantum annealing in the transverse Ising model",
+      "container": "Physical Review E",
+      "year": 1998,
+      "authors": [
+        "Tadashi Kadowaki",
+        "Hidetoshi Nishimori"
+      ],
+      "verified_on": "2026-08-01",
+      "note": "The basis of the path-integral simulated quantum annealing solver."
+    },
+    {
+      "key": "zaborniak2022",
+      "title": "A QUBO Model of the RNA Folding Problem Optimized by Variational Hybrid Quantum Annealing",
+      "role": "prior QUBO formulation",
+      "doi": null,
+      "url": "https://arxiv.org/abs/2208.04367",
+      "crossref_verified": false,
+      "resolved_title": null,
+      "container": null,
+      "year": null,
+      "authors": [],
+      "verified_on": null,
+      "note": "Preprint. Closest prior work on QUBO-encoded RNA folding."
+    },
+    {
+      "key": "jiang2023",
+      "title": "Predicting RNA Secondary Structure on Universal Quantum Computer",
+      "role": "prior QUBO formulation",
+      "doi": null,
+      "url": "https://arxiv.org/abs/2305.09561",
+      "crossref_verified": false,
+      "resolved_title": null,
+      "container": null,
+      "year": null,
+      "authors": [],
+      "verified_on": null,
+      "note": "Preprint."
+    },
+    {
+      "key": "alevras2024",
+      "title": "mRNA Secondary Structure Prediction Using Utility-Scale Quantum Computers",
+      "role": "prior QUBO formulation",
+      "doi": null,
+      "url": "https://arxiv.org/abs/2405.20328",
+      "crossref_verified": false,
+      "resolved_title": null,
+      "container": null,
+      "year": null,
+      "authors": [],
+      "verified_on": null,
+      "note": "Preprint."
+    },
+    {
+      "key": "kumar2025",
+      "title": "Towards Secondary Structure Prediction of Longer mRNA Sequences Using a Quantum-Centric Optimization Scheme",
+      "role": "prior QUBO formulation",
+      "doi": null,
+      "url": "https://arxiv.org/abs/2505.05782",
+      "crossref_verified": false,
+      "resolved_title": null,
+      "container": null,
+      "year": null,
+      "authors": [],
+      "verified_on": null,
+      "note": "Preprint."
+    },
+    {
+      "key": "berman2000",
+      "title": "The Protein Data Bank",
+      "role": "structural data",
+      "doi": "10.1093/nar/28.1.235",
+      "url": "https://doi.org/10.1093/nar/28.1.235",
+      "crossref_verified": true,
+      "resolved_title": "The Protein Data Bank",
+      "container": "Nucleic Acids Research",
+      "year": 2000,
+      "authors": [
+        "H. M. Berman"
+      ],
+      "verified_on": "2026-08-01",
+      "note": "The archive the structural-evidence layer queries; PDB 1EHZ is the tRNA benchmark's structure."
+    },
+    {
+      "key": "shi2000",
+      "title": "The crystal structure of yeast phenylalanine tRNA at 1.93 \u00c5 resolution: a classic structure revisited",
+      "role": "structural data",
+      "doi": "10.1017/s1355838200000364",
+      "url": "https://doi.org/10.1017/s1355838200000364",
+      "crossref_verified": true,
+      "resolved_title": "The crystal structure of yeast phenylalanine tRNA at 1.93 \u212b resolution: A classic structure revisited",
+      "container": "RNA",
+      "year": 2000,
+      "authors": [
+        "HUIJING SHI",
+        "PETER B. MOORE"
+      ],
+      "verified_on": "2026-08-01",
+      "note": "PDB 1EHZ. The experimental structure of this project's 76-nt benchmark sequence."
+    },
+    {
+      "key": "glover2019",
+      "title": "Quantum Bridge Analytics I: a tutorial on formulating and using QUBO models",
+      "role": "formulation",
+      "doi": "10.1007/s10288-019-00424-y",
+      "url": "https://doi.org/10.1007/s10288-019-00424-y",
+      "crossref_verified": true,
+      "resolved_title": "Quantum Bridge Analytics I: a tutorial on formulating and using QUBO models",
+      "container": "4OR",
+      "year": 2019,
+      "authors": [
+        "Fred Glover",
+        "Gary Kochenberger",
+        "Yu Du"
+      ],
+      "verified_on": "2026-08-01",
+      "note": "Standard reference for QUBO formulation and penalty construction."
+    }
+  ]
+}
