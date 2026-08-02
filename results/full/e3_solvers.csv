@@ -1,0 +1,451 @@
+sequence_id,length,solver,seed,num_variables,qubo_energy,vienna_energy,energy_gap,base_pair_f1,found_ground_state,was_repaired,attribution,runtime_seconds
+syn_20_000,20,random,42,10,1.6000000000000005,1.2999999523162842,4.3999998569488525,0.0,False,False,energy model: the reference structure is not the QUBO ground state,0.003194666001945734
+syn_20_000,20,random,43,10,0.10000000000000053,-0.5,2.5999999046325684,0.0,False,False,energy model: the reference structure is not the QUBO ground state,0.002738082781434059
+syn_20_000,20,random,44,10,-3.1,-2.9000000953674316,0.19999980926513672,0.888888888888889,True,False,energy model: the reference structure is not the QUBO ground state,0.002691625151783228
+syn_20_000,20,greedy,42,10,-3.1,-2.9000000953674316,0.19999980926513672,0.888888888888889,True,False,energy model: the reference structure is not the QUBO ground state,0.0006100409664213657
+syn_20_000,20,greedy,43,10,-3.1,-2.9000000953674316,0.19999980926513672,0.888888888888889,True,False,energy model: the reference structure is not the QUBO ground state,0.0005716658197343349
+syn_20_000,20,greedy,44,10,-3.1,-2.9000000953674316,0.19999980926513672,0.888888888888889,True,False,energy model: the reference structure is not the QUBO ground state,0.0005584163591265678
+syn_20_000,20,local_search,42,10,-3.1,-2.9000000953674316,0.19999980926513672,0.888888888888889,True,False,energy model: the reference structure is not the QUBO ground state,0.04914424987509847
+syn_20_000,20,local_search,43,10,-3.1,-2.9000000953674316,0.19999980926513672,0.888888888888889,True,False,energy model: the reference structure is not the QUBO ground state,0.051697416696697474
+syn_20_000,20,local_search,44,10,-3.1,-2.9000000953674316,0.19999980926513672,0.888888888888889,True,False,energy model: the reference structure is not the QUBO ground state,0.04753041686490178
+syn_20_000,20,simulated_annealing,42,10,-3.0999999999999943,-2.9000000953674316,0.19999980926513672,0.888888888888889,True,False,energy model: the reference structure is not the QUBO ground state,0.051795000210404396
+syn_20_000,20,simulated_annealing,43,10,-3.0999999999999943,-2.9000000953674316,0.19999980926513672,0.888888888888889,True,False,energy model: the reference structure is not the QUBO ground state,0.051596540957689285
+syn_20_000,20,simulated_annealing,44,10,-3.0999999999999943,-2.9000000953674316,0.19999980926513672,0.888888888888889,True,False,energy model: the reference structure is not the QUBO ground state,0.05122449994087219
+syn_20_000,20,tabu,42,10,-3.1,-2.9000000953674316,0.19999980926513672,0.888888888888889,True,False,energy model: the reference structure is not the QUBO ground state,10.50316687533632
+syn_20_000,20,tabu,43,10,-3.1,-2.9000000953674316,0.19999980926513672,0.888888888888889,True,False,energy model: the reference structure is not the QUBO ground state,10.504785375203937
+syn_20_000,20,tabu,44,10,-3.1,-2.9000000953674316,0.19999980926513672,0.888888888888889,True,False,energy model: the reference structure is not the QUBO ground state,10.503948875237256
+syn_20_000,20,path_integral_sqa,42,10,-3.0999999999999943,-2.9000000953674316,0.19999980926513672,0.888888888888889,True,False,energy model: the reference structure is not the QUBO ground state,0.99980204179883
+syn_20_000,20,path_integral_sqa,43,10,-3.0999999999999943,-2.9000000953674316,0.19999980926513672,0.888888888888889,True,False,energy model: the reference structure is not the QUBO ground state,0.9947572080418468
+syn_20_000,20,path_integral_sqa,44,10,-3.0999999999999943,-2.9000000953674316,0.19999980926513672,0.888888888888889,True,False,energy model: the reference structure is not the QUBO ground state,0.9971098331734538
+syn_20_001,20,random,42,13,17.8,-1.100000023841858,1.899999976158142,0.0,False,True,optimizer: the solver did not reach the QUBO ground state,0.003806749824434519
+syn_20_001,20,random,43,13,7.999999999999999,8.100000381469727,11.100000381469727,0.0,False,False,optimizer: the solver did not reach the QUBO ground state,0.0036095832474529743
+syn_20_001,20,random,44,13,2.9,2.299999952316284,5.299999952316284,0.0,False,False,optimizer: the solver did not reach the QUBO ground state,0.0035548750311136246
+syn_20_001,20,greedy,42,13,0.0,0.0,3.0,0.0,False,False,optimizer: the solver did not reach the QUBO ground state,0.0007924591191112995
+syn_20_001,20,greedy,43,13,0.0,0.0,3.0,0.0,False,False,optimizer: the solver did not reach the QUBO ground state,0.0007811249233782291
+syn_20_001,20,greedy,44,13,0.0,0.0,3.0,0.0,False,False,optimizer: the solver did not reach the QUBO ground state,0.0007742089219391346
+syn_20_001,20,local_search,42,13,-3.2,-3.0,0.0,1.0,True,False,no failure: all gates passed,0.0996874999254942
+syn_20_001,20,local_search,43,13,-3.2,-3.0,0.0,1.0,True,False,no failure: all gates passed,0.10098095797002316
+syn_20_001,20,local_search,44,13,-3.2,-3.0,0.0,1.0,True,False,no failure: all gates passed,0.09628325002267957
+syn_20_001,20,simulated_annealing,42,13,-3.1999999999986244,-3.0,0.0,1.0,True,False,no failure: all gates passed,0.05321983294561505
+syn_20_001,20,simulated_annealing,43,13,-3.1999999999986244,-3.0,0.0,1.0,True,False,no failure: all gates passed,0.05245162500068545
+syn_20_001,20,simulated_annealing,44,13,-3.1999999999986244,-3.0,0.0,1.0,True,False,no failure: all gates passed,0.05278162471950054
+syn_20_001,20,tabu,42,13,-3.2,-3.0,0.0,1.0,True,False,no failure: all gates passed,10.504096291959286
+syn_20_001,20,tabu,43,13,-3.2,-3.0,0.0,1.0,True,False,no failure: all gates passed,10.503797709010541
+syn_20_001,20,tabu,44,13,-3.2,-3.0,0.0,1.0,True,False,no failure: all gates passed,10.503845708910376
+syn_20_001,20,path_integral_sqa,42,13,-3.1999999999986244,-3.0,0.0,1.0,True,False,no failure: all gates passed,1.5142640839330852
+syn_20_001,20,path_integral_sqa,43,13,-3.1999999999986244,-3.0,0.0,1.0,True,False,no failure: all gates passed,1.4951677499338984
+syn_20_001,20,path_integral_sqa,44,13,-3.1999999999986244,-3.0,0.0,1.0,True,False,no failure: all gates passed,1.5097854998894036
+syn_20_002,20,random,42,18,49.4,9.399999618530273,13.399999618530273,0.4444444444444445,False,True,optimizer: the solver did not reach the QUBO ground state,0.008752167224884033
+syn_20_002,20,random,43,18,31.0,5.900000095367432,9.900000095367432,0.0,False,True,optimizer: the solver did not reach the QUBO ground state,0.008523417171090841
+syn_20_002,20,random,44,18,17.2,-4.0,0.0,1.0,False,True,optimizer: the solver did not reach the QUBO ground state,0.008498915936797857
+syn_20_002,20,greedy,42,18,-2.7,-3.4000000953674316,0.5999999046325684,0.7499999999999999,False,False,optimizer: the solver did not reach the QUBO ground state,0.004369750153273344
+syn_20_002,20,greedy,43,18,-2.7,-3.4000000953674316,0.5999999046325684,0.7499999999999999,False,False,optimizer: the solver did not reach the QUBO ground state,0.004384417086839676
+syn_20_002,20,greedy,44,18,-2.7,-3.4000000953674316,0.5999999046325684,0.7499999999999999,False,False,optimizer: the solver did not reach the QUBO ground state,0.004337250255048275
+syn_20_002,20,local_search,42,18,-4.0,-4.0,0.0,1.0,True,False,no failure: all gates passed,0.30456366715952754
+syn_20_002,20,local_search,43,18,-4.0,-4.0,0.0,1.0,True,False,no failure: all gates passed,0.3044283748604357
+syn_20_002,20,local_search,44,18,-4.0,-4.0,0.0,1.0,True,False,no failure: all gates passed,0.29942158283665776
+syn_20_002,20,simulated_annealing,42,18,-3.9999999999997726,-4.0,0.0,1.0,True,False,no failure: all gates passed,0.06844066688790917
+syn_20_002,20,simulated_annealing,43,18,-3.9999999999997726,-4.0,0.0,1.0,True,False,no failure: all gates passed,0.06800908409059048
+syn_20_002,20,simulated_annealing,44,18,-3.9999999999997726,-4.0,0.0,1.0,True,False,no failure: all gates passed,0.06871037511155009
+syn_20_002,20,tabu,42,18,-4.0,-4.0,0.0,1.0,True,False,no failure: all gates passed,10.50840008398518
+syn_20_002,20,tabu,43,18,-4.0,-4.0,0.0,1.0,True,False,no failure: all gates passed,10.507761165965348
+syn_20_002,20,tabu,44,18,-4.0,-4.0,0.0,1.0,True,False,no failure: all gates passed,10.507527125068009
+syn_20_002,20,path_integral_sqa,42,18,-3.9999999999997726,-4.0,0.0,1.0,True,False,no failure: all gates passed,2.875767624936998
+syn_20_002,20,path_integral_sqa,43,18,-3.9999999999997726,-4.0,0.0,1.0,True,False,no failure: all gates passed,2.886146916076541
+syn_20_002,20,path_integral_sqa,44,18,-3.9999999999997726,-4.0,0.0,1.0,True,False,no failure: all gates passed,2.884037250187248
+syn_20_003,20,random,42,17,48.900000000000006,0.5,5.5,0.0,False,True,optimizer: the solver did not reach the QUBO ground state,0.007006084080785513
+syn_20_003,20,random,43,17,17.0,0.5,5.5,0.0,False,True,optimizer: the solver did not reach the QUBO ground state,0.0066697499714791775
+syn_20_003,20,random,44,17,51.800000000000004,2.200000047683716,7.200000047683716,0.0,False,True,optimizer: the solver did not reach the QUBO ground state,0.006607375107705593
+syn_20_003,20,greedy,42,17,-3.7,-5.0,0.0,1.0,True,False,no failure: all gates passed,0.002850916236639023
+syn_20_003,20,greedy,43,17,-3.7,-5.0,0.0,1.0,True,False,no failure: all gates passed,0.002758875023573637
+syn_20_003,20,greedy,44,17,-3.7,-5.0,0.0,1.0,True,False,no failure: all gates passed,0.002708583138883114
+syn_20_003,20,local_search,42,17,-3.7,-5.0,0.0,1.0,True,False,no failure: all gates passed,0.29283791594207287
+syn_20_003,20,local_search,43,17,-3.7,-5.0,0.0,1.0,True,False,no failure: all gates passed,0.29505904112011194
+syn_20_003,20,local_search,44,17,-3.7,-5.0,0.0,1.0,True,False,no failure: all gates passed,0.2805707501247525
+syn_20_003,20,simulated_annealing,42,17,-3.699999999996237,-5.0,0.0,1.0,True,False,no failure: all gates passed,0.06513524986803532
+syn_20_003,20,simulated_annealing,43,17,-3.699999999996237,-5.0,0.0,1.0,True,False,no failure: all gates passed,0.06569404201582074
+syn_20_003,20,simulated_annealing,44,17,-3.699999999996237,-5.0,0.0,1.0,True,False,no failure: all gates passed,0.06531045818701386
+syn_20_003,20,tabu,42,17,-3.7,-5.0,0.0,1.0,True,False,no failure: all gates passed,10.506337833125144
+syn_20_003,20,tabu,43,17,-3.7,-5.0,0.0,1.0,True,False,no failure: all gates passed,10.505777124781162
+syn_20_003,20,tabu,44,17,-3.7,-5.0,0.0,1.0,True,False,no failure: all gates passed,10.505773958284408
+syn_20_003,20,path_integral_sqa,42,17,-3.699999999996237,-5.0,0.0,1.0,True,False,no failure: all gates passed,2.649410208221525
+syn_20_003,20,path_integral_sqa,43,17,-3.699999999996237,-5.0,0.0,1.0,True,False,no failure: all gates passed,2.631984249688685
+syn_20_003,20,path_integral_sqa,44,17,-3.699999999996237,-5.0,0.0,1.0,True,False,no failure: all gates passed,2.6252220002934337
+syn_20_004,20,random,42,5,-2.1999999999999993,-3.5,0.0,1.0,True,False,no failure: all gates passed,0.0016667922027409077
+syn_20_004,20,random,43,5,-2.1999999999999993,-3.5,0.0,1.0,True,False,no failure: all gates passed,0.0015423749573528767
+syn_20_004,20,random,44,5,-2.1999999999999993,-3.5,0.0,1.0,True,False,no failure: all gates passed,0.0015323329716920853
+syn_20_004,20,greedy,42,5,-2.1999999999999993,-3.5,0.0,1.0,True,False,no failure: all gates passed,0.00037558330222964287
+syn_20_004,20,greedy,43,5,-2.1999999999999993,-3.5,0.0,1.0,True,False,no failure: all gates passed,0.00036466633901000023
+syn_20_004,20,greedy,44,5,-2.1999999999999993,-3.5,0.0,1.0,True,False,no failure: all gates passed,0.0003592907451093197
+syn_20_004,20,local_search,42,5,-2.1999999999999993,-3.5,0.0,1.0,True,False,no failure: all gates passed,0.008892042096704245
+syn_20_004,20,local_search,43,5,-2.1999999999999993,-3.5,0.0,1.0,True,False,no failure: all gates passed,0.0086755002848804
+syn_20_004,20,local_search,44,5,-2.1999999999999993,-3.5,0.0,1.0,True,False,no failure: all gates passed,0.008623333182185888
+syn_20_004,20,simulated_annealing,42,5,-2.1999999999999815,-3.5,0.0,1.0,True,False,no failure: all gates passed,0.022224292159080505
+syn_20_004,20,simulated_annealing,43,5,-2.1999999999999815,-3.5,0.0,1.0,True,False,no failure: all gates passed,0.022516958881169558
+syn_20_004,20,simulated_annealing,44,5,-2.1999999999999815,-3.5,0.0,1.0,True,False,no failure: all gates passed,0.022239041980355978
+syn_20_004,20,tabu,42,5,-2.1999999999999993,-3.5,0.0,1.0,True,False,no failure: all gates passed,10.50235466612503
+syn_20_004,20,tabu,43,5,-2.1999999999999993,-3.5,0.0,1.0,True,False,no failure: all gates passed,10.502761750016361
+syn_20_004,20,tabu,44,5,-2.1999999999999993,-3.5,0.0,1.0,True,False,no failure: all gates passed,10.502809832803905
+syn_20_004,20,path_integral_sqa,42,5,-2.1999999999999815,-3.5,0.0,1.0,True,False,no failure: all gates passed,0.3141693747602403
+syn_20_004,20,path_integral_sqa,43,5,-2.1999999999999815,-3.5,0.0,1.0,True,False,no failure: all gates passed,0.3126449999399483
+syn_20_004,20,path_integral_sqa,44,5,-2.1999999999999815,-3.5,0.0,1.0,True,False,no failure: all gates passed,0.3137463750317693
+syn_25_000,25,random,42,20,74.69999999999999,-3.9000000953674316,0.0,1.0,False,True,energy model: the reference structure is not the QUBO ground state,0.019180208910256624
+syn_25_000,25,random,43,20,73.0,-3.9000000953674316,0.0,1.0,False,True,energy model: the reference structure is not the QUBO ground state,0.018235541880130768
+syn_25_000,25,random,44,20,87.7,4.699999809265137,8.599999904632568,0.0,False,True,energy model: the reference structure is not the QUBO ground state,0.01805154187604785
+syn_25_000,25,greedy,42,20,-3.3000000000000007,-3.9000000953674316,0.0,1.0,False,False,energy model: the reference structure is not the QUBO ground state,0.013872832991182804
+syn_25_000,25,greedy,43,20,-3.3000000000000007,-3.9000000953674316,0.0,1.0,False,False,energy model: the reference structure is not the QUBO ground state,0.014037749730050564
+syn_25_000,25,greedy,44,20,-3.3000000000000007,-3.9000000953674316,0.0,1.0,False,False,energy model: the reference structure is not the QUBO ground state,0.014067166950553656
+syn_25_000,25,local_search,42,20,-4.0,-3.700000047683716,0.20000004768371582,0.8333333333333333,True,False,energy model: the reference structure is not the QUBO ground state,0.46275499975308776
+syn_25_000,25,local_search,43,20,-4.0,-3.700000047683716,0.20000004768371582,0.8333333333333333,True,False,energy model: the reference structure is not the QUBO ground state,0.46193424984812737
+syn_25_000,25,local_search,44,20,-4.0,-3.700000047683716,0.20000004768371582,0.8333333333333333,True,False,energy model: the reference structure is not the QUBO ground state,0.45998316584154963
+syn_25_000,25,simulated_annealing,42,20,-3.9999999999957936,-3.700000047683716,0.20000004768371582,0.8333333333333333,True,False,energy model: the reference structure is not the QUBO ground state,0.08292537508532405
+syn_25_000,25,simulated_annealing,43,20,-3.9999999999957936,-3.700000047683716,0.20000004768371582,0.8333333333333333,True,False,energy model: the reference structure is not the QUBO ground state,0.08258274989202619
+syn_25_000,25,simulated_annealing,44,20,-3.9999999999957936,-3.700000047683716,0.20000004768371582,0.8333333333333333,True,False,energy model: the reference structure is not the QUBO ground state,0.08252337481826544
+syn_25_000,25,tabu,42,20,-4.0,-3.700000047683716,0.20000004768371582,0.8333333333333333,True,False,energy model: the reference structure is not the QUBO ground state,10.517720749601722
+syn_25_000,25,tabu,43,20,-4.0,-3.700000047683716,0.20000004768371582,0.8333333333333333,True,False,energy model: the reference structure is not the QUBO ground state,10.51718325028196
+syn_25_000,25,tabu,44,20,-4.0,-3.700000047683716,0.20000004768371582,0.8333333333333333,True,False,energy model: the reference structure is not the QUBO ground state,10.517267290968448
+syn_25_000,25,path_integral_sqa,42,20,-3.9999999999957936,-3.700000047683716,0.20000004768371582,0.8333333333333333,True,False,energy model: the reference structure is not the QUBO ground state,3.504467540886253
+syn_25_000,25,path_integral_sqa,43,20,-3.9999999999957936,-3.700000047683716,0.20000004768371582,0.8333333333333333,True,False,energy model: the reference structure is not the QUBO ground state,3.536028000060469
+syn_25_000,25,path_integral_sqa,44,20,-3.9999999999957936,-3.700000047683716,0.20000004768371582,0.8333333333333333,True,False,energy model: the reference structure is not the QUBO ground state,3.5255943331867456
+syn_25_001,25,random,42,17,35.39999999999999,-0.4000000059604645,3.900000184774399,0.0,False,True,optimizer: the solver did not reach the QUBO ground state,0.007465416099876165
+syn_25_001,25,random,43,17,12.799999999999999,-0.4000000059604645,3.900000184774399,0.0,False,True,optimizer: the solver did not reach the QUBO ground state,0.007414832711219788
+syn_25_001,25,random,44,17,17.099999999999998,2.700000047683716,7.000000238418579,0.0,False,True,optimizer: the solver did not reach the QUBO ground state,0.0073412503115832806
+syn_25_001,25,greedy,42,17,-4.1,-4.300000190734863,0.0,1.0,True,False,no failure: all gates passed,0.003400624729692936
+syn_25_001,25,greedy,43,17,-4.1,-4.300000190734863,0.0,1.0,True,False,no failure: all gates passed,0.003321208991110325
+syn_25_001,25,greedy,44,17,-4.1,-4.300000190734863,0.0,1.0,True,False,no failure: all gates passed,0.003342708107084036
+syn_25_001,25,local_search,42,17,-4.1,-4.300000190734863,0.0,1.0,True,False,no failure: all gates passed,0.2333915838971734
+syn_25_001,25,local_search,43,17,-4.1,-4.300000190734863,0.0,1.0,True,False,no failure: all gates passed,0.23338408302515745
+syn_25_001,25,local_search,44,17,-4.1,-4.300000190734863,0.0,1.0,True,False,no failure: all gates passed,0.22480195807293057
+syn_25_001,25,simulated_annealing,42,17,-4.099999999998374,-4.300000190734863,0.0,1.0,True,False,no failure: all gates passed,0.06530091725289822
+syn_25_001,25,simulated_annealing,43,17,-4.099999999998374,-4.300000190734863,0.0,1.0,True,False,no failure: all gates passed,0.06456795893609524
+syn_25_001,25,simulated_annealing,44,17,-4.099999999998374,-4.300000190734863,0.0,1.0,True,False,no failure: all gates passed,0.06426825001835823
+syn_25_001,25,tabu,42,17,-4.1,-4.300000190734863,0.0,1.0,True,False,no failure: all gates passed,10.507478666957468
+syn_25_001,25,tabu,43,17,-4.1,-4.300000190734863,0.0,1.0,True,False,no failure: all gates passed,10.506830959115177
+syn_25_001,25,tabu,44,17,-4.1,-4.300000190734863,0.0,1.0,True,False,no failure: all gates passed,10.506652625277638
+syn_25_001,25,path_integral_sqa,42,17,-4.099999999998374,-4.300000190734863,0.0,1.0,True,False,no failure: all gates passed,2.6144908340647817
+syn_25_001,25,path_integral_sqa,43,17,-4.099999999998374,-4.300000190734863,0.0,1.0,True,False,no failure: all gates passed,2.616250750143081
+syn_25_001,25,path_integral_sqa,44,17,-4.099999999998374,-4.300000190734863,0.0,1.0,True,False,no failure: all gates passed,2.6563717499375343
+syn_25_002,25,random,42,14,18.700000000000003,0.8999999761581421,4.9999998807907104,0.0,False,True,optimizer: the solver did not reach the QUBO ground state,0.004080167040228844
+syn_25_002,25,random,43,14,2.5,2.200000047683716,6.299999952316284,0.0,False,False,optimizer: the solver did not reach the QUBO ground state,0.0038857082836329937
+syn_25_002,25,random,44,14,1.0,0.8999999761581421,4.9999998807907104,0.0,False,False,optimizer: the solver did not reach the QUBO ground state,0.0038688331842422485
+syn_25_002,25,greedy,42,14,-3.8,-4.099999904632568,0.0,1.0,True,False,no failure: all gates passed,0.0009357077069580555
+syn_25_002,25,greedy,43,14,-3.8,-4.099999904632568,0.0,1.0,True,False,no failure: all gates passed,0.0009186249226331711
+syn_25_002,25,greedy,44,14,-3.8,-4.099999904632568,0.0,1.0,True,False,no failure: all gates passed,0.0008787498809397221
+syn_25_002,25,local_search,42,14,-3.8,-4.099999904632568,0.0,1.0,True,False,no failure: all gates passed,0.1227439590729773
+syn_25_002,25,local_search,43,14,-3.8,-4.099999904632568,0.0,1.0,True,False,no failure: all gates passed,0.12306695803999901
+syn_25_002,25,local_search,44,14,-3.8,-4.099999904632568,0.0,1.0,True,False,no failure: all gates passed,0.11760008381679654
+syn_25_002,25,simulated_annealing,42,14,-3.7999999999981355,-4.099999904632568,0.0,1.0,True,False,no failure: all gates passed,0.06121166702359915
+syn_25_002,25,simulated_annealing,43,14,-3.7999999999981355,-4.099999904632568,0.0,1.0,True,False,no failure: all gates passed,0.06034712539985776
+syn_25_002,25,simulated_annealing,44,14,-3.7999999999981355,-4.099999904632568,0.0,1.0,True,False,no failure: all gates passed,0.060326583217829466
+syn_25_002,25,tabu,42,14,-3.8,-4.099999904632568,0.0,1.0,True,False,no failure: all gates passed,10.504502333234996
+syn_25_002,25,tabu,43,14,-3.8,-4.099999904632568,0.0,1.0,True,False,no failure: all gates passed,10.504006874747574
+syn_25_002,25,tabu,44,14,-3.8,-4.099999904632568,0.0,1.0,True,False,no failure: all gates passed,10.504784832708538
+syn_25_002,25,path_integral_sqa,42,14,-3.7999999999981355,-4.099999904632568,0.0,1.0,True,False,no failure: all gates passed,1.6636231248266995
+syn_25_002,25,path_integral_sqa,43,14,-3.7999999999981355,-4.099999904632568,0.0,1.0,True,False,no failure: all gates passed,1.6525952918455005
+syn_25_002,25,path_integral_sqa,44,14,-3.7999999999981355,-4.099999904632568,0.0,1.0,True,False,no failure: all gates passed,1.6787284589372575
+syn_25_003,25,random,42,16,10.9,-6.0,0.0,1.0,False,True,optimizer: the solver did not reach the QUBO ground state,0.004880291875451803
+syn_25_003,25,random,43,16,20.4,3.5999999046325684,9.599999904632568,0.0,False,True,optimizer: the solver did not reach the QUBO ground state,0.0047587500885128975
+syn_25_003,25,random,44,16,12.500000000000002,-3.4000000953674316,2.5999999046325684,0.0,False,True,optimizer: the solver did not reach the QUBO ground state,0.00473354198038578
+syn_25_003,25,greedy,42,16,-5.9,-6.0,0.0,1.0,True,False,no failure: all gates passed,0.0012463750317692757
+syn_25_003,25,greedy,43,16,-5.9,-6.0,0.0,1.0,True,False,no failure: all gates passed,0.0012655002065002918
+syn_25_003,25,greedy,44,16,-5.9,-6.0,0.0,1.0,True,False,no failure: all gates passed,0.0012491247616708279
+syn_25_003,25,local_search,42,16,-5.9,-6.0,0.0,1.0,True,False,no failure: all gates passed,0.18958116695284843
+syn_25_003,25,local_search,43,16,-5.9,-6.0,0.0,1.0,True,False,no failure: all gates passed,0.18951749987900257
+syn_25_003,25,local_search,44,16,-5.9,-6.0,0.0,1.0,True,False,no failure: all gates passed,0.18317295890301466
+syn_25_003,25,simulated_annealing,42,16,-5.900000000000205,-6.0,0.0,1.0,True,False,no failure: all gates passed,0.053828292060643435
+syn_25_003,25,simulated_annealing,43,16,-5.900000000000205,-6.0,0.0,1.0,True,False,no failure: all gates passed,0.0537066669203341
+syn_25_003,25,simulated_annealing,44,16,-5.900000000000205,-6.0,0.0,1.0,True,False,no failure: all gates passed,0.053216084372252226
+syn_25_003,25,tabu,42,16,-5.9,-6.0,0.0,1.0,True,False,no failure: all gates passed,10.504090582951903
+syn_25_003,25,tabu,43,16,-5.9,-6.0,0.0,1.0,True,False,no failure: all gates passed,10.504822874907404
+syn_25_003,25,tabu,44,16,-5.9,-6.0,0.0,1.0,True,False,no failure: all gates passed,10.504844792187214
+syn_25_003,25,path_integral_sqa,42,16,-5.900000000000205,-6.0,0.0,1.0,True,False,no failure: all gates passed,2.0908922497183084
+syn_25_003,25,path_integral_sqa,43,16,-5.900000000000205,-6.0,0.0,1.0,True,False,no failure: all gates passed,2.074740083422512
+syn_25_003,25,path_integral_sqa,44,16,-5.900000000000205,-6.0,0.0,1.0,True,False,no failure: all gates passed,2.0939845419488847
+syn_25_004,25,random,42,22,52.3,-1.7999999523162842,2.1000001430511475,0.6666666666666665,False,True,energy model: the reference structure is not the QUBO ground state,0.022673791740089655
+syn_25_004,25,random,43,22,36.1,2.9000000953674316,6.800000190734863,0.0,False,True,energy model: the reference structure is not the QUBO ground state,0.022465083748102188
+syn_25_004,25,random,44,22,83.5,0.10000000149011612,4.000000096857548,0.0,False,True,energy model: the reference structure is not the QUBO ground state,0.022624040953814983
+syn_25_004,25,greedy,42,22,-0.40000000000000036,-1.7999999523162842,2.1000001430511475,0.6666666666666665,False,False,energy model: the reference structure is not the QUBO ground state,0.01682095928117633
+syn_25_004,25,greedy,43,22,-0.40000000000000036,-1.7999999523162842,2.1000001430511475,0.6666666666666665,False,False,energy model: the reference structure is not the QUBO ground state,0.016665833070874214
+syn_25_004,25,greedy,44,22,-0.40000000000000036,-1.7999999523162842,2.1000001430511475,0.6666666666666665,False,False,energy model: the reference structure is not the QUBO ground state,0.016719416715204716
+syn_25_004,25,local_search,42,22,-2.3,-3.4000000953674316,0.5,0.0,True,False,energy model: the reference structure is not the QUBO ground state,0.6776871252804995
+syn_25_004,25,local_search,43,22,-2.3,-3.799999952316284,0.10000014305114746,0.9090909090909091,True,False,energy model: the reference structure is not the QUBO ground state,0.6891548749990761
+syn_25_004,25,local_search,44,22,-2.3,-3.799999952316284,0.10000014305114746,0.9090909090909091,True,False,energy model: the reference structure is not the QUBO ground state,0.6582685420289636
+syn_25_004,25,simulated_annealing,42,22,-2.3000000000006366,-3.4000000953674316,0.5,0.0,True,False,energy model: the reference structure is not the QUBO ground state,0.09300158405676484
+syn_25_004,25,simulated_annealing,43,22,-2.3000000000006366,-3.4000000953674316,0.5,0.0,True,False,energy model: the reference structure is not the QUBO ground state,0.09240408428013325
+syn_25_004,25,simulated_annealing,44,22,-2.3000000000006366,-3.4000000953674316,0.5,0.0,True,False,energy model: the reference structure is not the QUBO ground state,0.09310408309102058
+syn_25_004,25,tabu,42,22,-2.3,-3.799999952316284,0.10000014305114746,0.9090909090909091,True,False,energy model: the reference structure is not the QUBO ground state,10.514482082799077
+syn_25_004,25,tabu,43,22,-2.3,-3.799999952316284,0.10000014305114746,0.9090909090909091,True,False,energy model: the reference structure is not the QUBO ground state,10.512440042104572
+syn_25_004,25,tabu,44,22,-2.3,-3.799999952316284,0.10000014305114746,0.9090909090909091,True,False,energy model: the reference structure is not the QUBO ground state,10.517269333358854
+syn_25_004,25,path_integral_sqa,42,22,-2.3000000000006366,-3.4000000953674316,0.5,0.0,True,False,energy model: the reference structure is not the QUBO ground state,4.110140624921769
+syn_25_004,25,path_integral_sqa,43,22,-2.3000000000006366,-3.4000000953674316,0.5,0.0,True,False,energy model: the reference structure is not the QUBO ground state,4.027831541839987
+syn_25_004,25,path_integral_sqa,44,22,-2.3000000000006366,-3.799999952316284,0.10000014305114746,0.9090909090909091,True,False,energy model: the reference structure is not the QUBO ground state,4.035814291331917
+syn_30_000,30,random,42,34,224.49999999999991,-2.4000000953674316,2.9000000953674316,0.0,,True,indeterminate: instance too large for exact ground truth,0.011736250016838312
+syn_30_000,30,random,43,34,314.6999999999999,1.2999999523162842,6.6000001430511475,0.0,,True,indeterminate: instance too large for exact ground truth,0.011610916815698147
+syn_30_000,30,random,44,34,360.4999999999999,-4.900000095367432,0.40000009536743164,0.0,,True,indeterminate: instance too large for exact ground truth,0.0116569590754807
+syn_30_000,30,greedy,42,34,-3.5,-4.900000095367432,0.40000009536743164,0.0,,False,indeterminate: instance too large for exact ground truth,0.0017554578371345997
+syn_30_000,30,greedy,43,34,-3.5,-4.900000095367432,0.40000009536743164,0.0,,False,indeterminate: instance too large for exact ground truth,0.0016756672412157059
+syn_30_000,30,greedy,44,34,-3.5,-4.900000095367432,0.40000009536743164,0.0,,False,indeterminate: instance too large for exact ground truth,0.0015932084061205387
+syn_30_000,30,local_search,42,34,-4.2,-4.099999904632568,1.200000286102295,0.0,,False,indeterminate: instance too large for exact ground truth,3.055862333625555
+syn_30_000,30,local_search,43,34,-4.2,-4.099999904632568,1.200000286102295,0.0,,False,indeterminate: instance too large for exact ground truth,3.0468564587645233
+syn_30_000,30,local_search,44,34,-4.2,-4.099999904632568,1.200000286102295,0.0,,False,indeterminate: instance too large for exact ground truth,3.0465300832875073
+syn_30_000,30,simulated_annealing,42,34,-4.199999999922966,-4.099999904632568,1.200000286102295,0.0,,False,indeterminate: instance too large for exact ground truth,0.13205466698855162
+syn_30_000,30,simulated_annealing,43,34,-4.199999999922966,-4.099999904632568,1.200000286102295,0.0,,False,indeterminate: instance too large for exact ground truth,0.13157391594722867
+syn_30_000,30,simulated_annealing,44,34,-4.199999999922966,-4.099999904632568,1.200000286102295,0.0,,False,indeterminate: instance too large for exact ground truth,0.1310793748125434
+syn_30_000,30,tabu,42,34,-4.2,-4.099999904632568,1.200000286102295,0.0,,False,indeterminate: instance too large for exact ground truth,10.506275708321482
+syn_30_000,30,tabu,43,34,-4.2,-4.099999904632568,1.200000286102295,0.0,,False,indeterminate: instance too large for exact ground truth,10.513816082850099
+syn_30_000,30,tabu,44,34,-4.2,-4.099999904632568,1.200000286102295,0.0,,False,indeterminate: instance too large for exact ground truth,10.514032167382538
+syn_30_000,30,path_integral_sqa,42,34,-4.199999999922966,-4.099999904632568,1.200000286102295,0.0,,False,indeterminate: instance too large for exact ground truth,8.982068874873221
+syn_30_000,30,path_integral_sqa,43,34,-4.199999999922966,-4.099999904632568,1.200000286102295,0.0,,False,indeterminate: instance too large for exact ground truth,8.986994249746203
+syn_30_000,30,path_integral_sqa,44,34,-4.199999999922966,-4.099999904632568,1.200000286102295,0.0,,False,indeterminate: instance too large for exact ground truth,8.97138400003314
+syn_30_001,30,random,42,40,413.90000000000003,-4.400000095367432,4.099999904632568,0.0,,True,indeterminate: instance too large for exact ground truth,0.015024000313133001
+syn_30_001,30,random,43,40,681.2,-0.30000001192092896,8.199999988079071,0.0,,True,indeterminate: instance too large for exact ground truth,0.015377332922071218
+syn_30_001,30,random,44,40,606.5000000000001,1.7000000476837158,10.200000047683716,0.0,,True,indeterminate: instance too large for exact ground truth,0.015053791925311089
+syn_30_001,30,greedy,42,40,-5.199999999999999,-6.400000095367432,2.0999999046325684,0.0,,False,indeterminate: instance too large for exact ground truth,0.0022947918623685837
+syn_30_001,30,greedy,43,40,-5.199999999999999,-6.400000095367432,2.0999999046325684,0.0,,False,indeterminate: instance too large for exact ground truth,0.0023086247965693474
+syn_30_001,30,greedy,44,40,-5.199999999999999,-6.400000095367432,2.0999999046325684,0.0,,False,indeterminate: instance too large for exact ground truth,0.0023532910272479057
+syn_30_001,30,local_search,42,40,-8.5,-8.199999809265137,0.3000001907348633,0.9411764705882353,,False,indeterminate: instance too large for exact ground truth,5.221711417194456
+syn_30_001,30,local_search,43,40,-8.5,-8.199999809265137,0.3000001907348633,0.9411764705882353,,False,indeterminate: instance too large for exact ground truth,5.225476291030645
+syn_30_001,30,local_search,44,40,-8.5,-8.199999809265137,0.3000001907348633,0.9411764705882353,,False,indeterminate: instance too large for exact ground truth,5.187137125059962
+syn_30_001,30,simulated_annealing,42,40,-8.49999999999909,-8.199999809265137,0.3000001907348633,0.9411764705882353,,False,indeterminate: instance too large for exact ground truth,0.16021579084917903
+syn_30_001,30,simulated_annealing,43,40,-8.49999999999909,-8.199999809265137,0.3000001907348633,0.9411764705882353,,False,indeterminate: instance too large for exact ground truth,0.15907729184255004
+syn_30_001,30,simulated_annealing,44,40,-8.49999999999909,-8.199999809265137,0.3000001907348633,0.9411764705882353,,False,indeterminate: instance too large for exact ground truth,0.15882837492972612
+syn_30_001,30,tabu,42,40,-8.5,-8.199999809265137,0.3000001907348633,0.9411764705882353,,False,indeterminate: instance too large for exact ground truth,10.508772416040301
+syn_30_001,30,tabu,43,40,-8.5,-8.199999809265137,0.3000001907348633,0.9411764705882353,,False,indeterminate: instance too large for exact ground truth,10.508504041004926
+syn_30_001,30,tabu,44,40,-8.5,-8.199999809265137,0.3000001907348633,0.9411764705882353,,False,indeterminate: instance too large for exact ground truth,10.508840416092426
+syn_30_001,30,path_integral_sqa,42,40,-8.49999999999909,-8.199999809265137,0.3000001907348633,0.9411764705882353,,False,indeterminate: instance too large for exact ground truth,11.9212896656245
+syn_30_001,30,path_integral_sqa,43,40,-8.49999999999909,-8.199999809265137,0.3000001907348633,0.9411764705882353,,False,indeterminate: instance too large for exact ground truth,11.873882874846458
+syn_30_001,30,path_integral_sqa,44,40,-8.49999999999909,-8.199999809265137,0.3000001907348633,0.9411764705882353,,False,indeterminate: instance too large for exact ground truth,11.90876679122448
+syn_30_002,30,random,42,25,125.90000000000002,-7.5,0.19999980926513672,0.9090909090909091,,True,indeterminate: instance too large for exact ground truth,0.007089625112712383
+syn_30_002,30,random,43,25,117.4,-7.5,0.19999980926513672,0.9090909090909091,,True,indeterminate: instance too large for exact ground truth,0.006923583801835775
+syn_30_002,30,random,44,25,90.3,1.2999999523162842,8.999999761581421,0.0,,True,indeterminate: instance too large for exact ground truth,0.006904332898557186
+syn_30_002,30,greedy,42,25,-7.7,-7.5,0.19999980926513672,0.9090909090909091,,False,indeterminate: instance too large for exact ground truth,0.0010483753867447376
+syn_30_002,30,greedy,43,25,-7.7,-7.5,0.19999980926513672,0.9090909090909091,,False,indeterminate: instance too large for exact ground truth,0.0010547908022999763
+syn_30_002,30,greedy,44,25,-7.7,-7.5,0.19999980926513672,0.9090909090909091,,False,indeterminate: instance too large for exact ground truth,0.0010368330404162407
+syn_30_002,30,local_search,42,25,-7.7,-7.5,0.19999980926513672,0.9090909090909091,,False,indeterminate: instance too large for exact ground truth,0.841482000425458
+syn_30_002,30,local_search,43,25,-7.7,-7.5,0.19999980926513672,0.9090909090909091,,False,indeterminate: instance too large for exact ground truth,0.8447441668249667
+syn_30_002,30,local_search,44,25,-7.7,-7.5,0.19999980926513672,0.9090909090909091,,False,indeterminate: instance too large for exact ground truth,0.8456118749454618
+syn_30_002,30,simulated_annealing,42,25,-7.700000000017894,-7.5,0.19999980926513672,0.9090909090909091,,False,indeterminate: instance too large for exact ground truth,0.08788866689428687
+syn_30_002,30,simulated_annealing,43,25,-7.700000000017894,-7.5,0.19999980926513672,0.9090909090909091,,False,indeterminate: instance too large for exact ground truth,0.08700333256274462
+syn_30_002,30,simulated_annealing,44,25,-7.700000000017894,-7.5,0.19999980926513672,0.9090909090909091,,False,indeterminate: instance too large for exact ground truth,0.08745149988681078
+syn_30_002,30,tabu,42,25,-7.7,-7.5,0.19999980926513672,0.9090909090909091,,False,indeterminate: instance too large for exact ground truth,10.530922916717827
+syn_30_002,30,tabu,43,25,-7.7,-7.5,0.19999980926513672,0.9090909090909091,,False,indeterminate: instance too large for exact ground truth,10.518075250089169
+syn_30_002,30,tabu,44,25,-7.7,-7.5,0.19999980926513672,0.9090909090909091,,False,indeterminate: instance too large for exact ground truth,10.519012207631022
+syn_30_002,30,path_integral_sqa,42,25,-7.700000000017894,-7.5,0.19999980926513672,0.9090909090909091,,False,indeterminate: instance too large for exact ground truth,4.432768582832068
+syn_30_002,30,path_integral_sqa,43,25,-7.700000000017894,-7.5,0.19999980926513672,0.9090909090909091,,False,indeterminate: instance too large for exact ground truth,4.4768989169970155
+syn_30_002,30,path_integral_sqa,44,25,-7.700000000017894,-7.5,0.19999980926513672,0.9090909090909091,,False,indeterminate: instance too large for exact ground truth,4.44833437493071
+syn_30_003,30,random,42,23,127.5,1.0,6.5,0.0,,True,indeterminate: instance too large for exact ground truth,0.006696207914501429
+syn_30_003,30,random,43,23,77.5,2.0999999046325684,7.599999904632568,0.0,,True,indeterminate: instance too large for exact ground truth,0.006547332741320133
+syn_30_003,30,random,44,23,77.1,3.4000000953674316,8.900000095367432,0.0,,True,indeterminate: instance too large for exact ground truth,0.006619540974497795
+syn_30_003,30,greedy,42,23,-4.799999999999999,-5.5,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,0.0009641251526772976
+syn_30_003,30,greedy,43,23,-4.799999999999999,-5.5,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,0.0009051668457686901
+syn_30_003,30,greedy,44,23,-4.799999999999999,-5.5,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,0.001074375119060278
+syn_30_003,30,local_search,42,23,-4.799999999999999,-5.5,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,0.7414929997175932
+syn_30_003,30,local_search,43,23,-4.799999999999999,-5.5,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,0.7429452501237392
+syn_30_003,30,local_search,44,23,-4.799999999999999,-5.5,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,0.7460083332844079
+syn_30_003,30,simulated_annealing,42,23,-4.799999999999841,-5.5,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,0.08946604188531637
+syn_30_003,30,simulated_annealing,43,23,-4.799999999999841,-5.5,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,0.08273445814847946
+syn_30_003,30,simulated_annealing,44,23,-4.799999999999841,-5.5,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,0.08308333298191428
+syn_30_003,30,tabu,42,23,-4.799999999999999,-5.5,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,10.510428958106786
+syn_30_003,30,tabu,43,23,-4.799999999999999,-5.5,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,10.597129500005394
+syn_30_003,30,tabu,44,23,-4.799999999999999,-5.5,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,10.566290916875005
+syn_30_003,30,path_integral_sqa,42,23,-4.799999999999841,-5.5,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,7.5665172496810555
+syn_30_003,30,path_integral_sqa,43,23,-4.799999999999841,-5.5,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,7.916068208869547
+syn_30_003,30,path_integral_sqa,44,23,-4.799999999999841,-5.5,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,7.663816834334284
+syn_30_004,30,random,42,28,173.99999999999994,-1.399999976158142,3.7999998331069946,0.0,,True,candidate generation: the reference structure is not in the candidate set (only 83% of its pairs are reachable),0.01987783284857869
+syn_30_004,30,random,43,28,149.4,0.5,5.699999809265137,0.0,,True,candidate generation: the reference structure is not in the candidate set (only 83% of its pairs are reachable),0.014263874851167202
+syn_30_004,30,random,44,28,150.20000000000002,3.0,8.199999809265137,0.0,,True,candidate generation: the reference structure is not in the candidate set (only 83% of its pairs are reachable),0.017467083409428596
+syn_30_004,30,greedy,42,28,-2.3,-2.5999999046325684,2.5999999046325684,0.9090909090909091,,False,candidate generation: the reference structure is not in the candidate set (only 83% of its pairs are reachable),0.002855916041880846
+syn_30_004,30,greedy,43,28,-2.3,-2.5999999046325684,2.5999999046325684,0.9090909090909091,,False,candidate generation: the reference structure is not in the candidate set (only 83% of its pairs are reachable),0.0028231660835444927
+syn_30_004,30,greedy,44,28,-2.3,-2.5999999046325684,2.5999999046325684,0.9090909090909091,,False,candidate generation: the reference structure is not in the candidate set (only 83% of its pairs are reachable),0.002893374767154455
+syn_30_004,30,local_search,42,28,-2.6,-3.200000047683716,1.999999761581421,0.0,,False,candidate generation: the reference structure is not in the candidate set (only 83% of its pairs are reachable),2.743963709101081
+syn_30_004,30,local_search,43,28,-2.6,-3.200000047683716,1.999999761581421,0.0,,False,candidate generation: the reference structure is not in the candidate set (only 83% of its pairs are reachable),2.664565290790051
+syn_30_004,30,local_search,44,28,-2.6,-3.200000047683716,1.999999761581421,0.0,,False,candidate generation: the reference structure is not in the candidate set (only 83% of its pairs are reachable),2.6355317500419915
+syn_30_004,30,simulated_annealing,42,28,-2.600000000012642,-3.200000047683716,1.999999761581421,0.0,,False,candidate generation: the reference structure is not in the candidate set (only 83% of its pairs are reachable),0.137167708016932
+syn_30_004,30,simulated_annealing,43,28,-2.600000000012642,-3.200000047683716,1.999999761581421,0.0,,False,candidate generation: the reference structure is not in the candidate set (only 83% of its pairs are reachable),0.13778116693720222
+syn_30_004,30,simulated_annealing,44,28,-2.600000000012642,-3.200000047683716,1.999999761581421,0.0,,False,candidate generation: the reference structure is not in the candidate set (only 83% of its pairs are reachable),0.13850395800545812
+syn_30_004,30,tabu,42,28,-2.6,-3.200000047683716,1.999999761581421,0.0,,False,candidate generation: the reference structure is not in the candidate set (only 83% of its pairs are reachable),10.585231124889106
+syn_30_004,30,tabu,43,28,-2.6,-3.200000047683716,1.999999761581421,0.0,,False,candidate generation: the reference structure is not in the candidate set (only 83% of its pairs are reachable),10.563300957903266
+syn_30_004,30,tabu,44,28,-2.6,-3.200000047683716,1.999999761581421,0.0,,False,candidate generation: the reference structure is not in the candidate set (only 83% of its pairs are reachable),10.605861166026443
+syn_30_004,30,path_integral_sqa,42,28,-2.600000000012642,-3.200000047683716,1.999999761581421,0.0,,False,candidate generation: the reference structure is not in the candidate set (only 83% of its pairs are reachable),8.546475416049361
+syn_30_004,30,path_integral_sqa,43,28,-2.600000000012642,-3.200000047683716,1.999999761581421,0.0,,False,candidate generation: the reference structure is not in the candidate set (only 83% of its pairs are reachable),7.638443625066429
+syn_30_004,30,path_integral_sqa,44,28,-2.600000000012642,-3.200000047683716,1.999999761581421,0.0,,False,candidate generation: the reference structure is not in the candidate set (only 83% of its pairs are reachable),6.4793871669098735
+syn_40_000,40,random,42,66,1749.9000000000033,-8.600000381469727,2.3999996185302734,0.0,,True,indeterminate: instance too large for exact ground truth,0.03678604168817401
+syn_40_000,40,random,43,66,1729.7000000000032,-1.899999976158142,9.100000023841858,0.0,,True,indeterminate: instance too large for exact ground truth,0.03530733287334442
+syn_40_000,40,random,44,66,1943.600000000004,-6.0,5.0,0.0,,True,indeterminate: instance too large for exact ground truth,0.03619583323597908
+syn_40_000,40,greedy,42,66,-9.499999999999998,-10.5,0.5,0.888888888888889,,False,indeterminate: instance too large for exact ground truth,0.006209458224475384
+syn_40_000,40,greedy,43,66,-9.499999999999998,-10.5,0.5,0.888888888888889,,False,indeterminate: instance too large for exact ground truth,0.006141750141978264
+syn_40_000,40,greedy,44,66,-9.499999999999998,-10.5,0.5,0.888888888888889,,False,indeterminate: instance too large for exact ground truth,0.010157875251024961
+syn_40_000,40,local_search,42,66,-10.0,-11.0,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,35.166045541875064
+syn_40_000,40,local_search,43,66,-10.0,-11.0,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,34.76217854162678
+syn_40_000,40,local_search,44,66,-10.0,-11.0,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,34.79004962509498
+syn_40_000,40,simulated_annealing,42,66,-10.000000000188265,-11.0,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,0.3107314999215305
+syn_40_000,40,simulated_annealing,43,66,-10.000000000188265,-11.0,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,0.30903770914301276
+syn_40_000,40,simulated_annealing,44,66,-10.000000000188265,-11.0,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,0.31007775012403727
+syn_40_000,40,tabu,42,66,-9.999999999999998,-11.0,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,10.515198666136712
+syn_40_000,40,tabu,43,66,-9.999999999999998,-11.0,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,10.517679791897535
+syn_40_000,40,tabu,44,66,-9.999999999999998,-11.0,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,10.514624333940446
+syn_40_000,40,path_integral_sqa,42,66,-10.000000000188265,-11.0,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,28.992701374925673
+syn_40_000,40,path_integral_sqa,43,66,-10.000000000188265,-11.0,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,29.205605749972165
+syn_40_000,40,path_integral_sqa,44,66,-10.000000000188265,-11.0,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,31.467209707945585
+syn_40_001,40,random,42,37,209.99999999999997,-2.799999952316284,6.8999998569488525,0.7058823529411764,,True,candidate generation: the reference structure is not in the candidate set (only 91% of its pairs are reachable),0.020940457936376333
+syn_40_001,40,random,43,37,432.09999999999985,-1.399999976158142,8.299999833106995,0.0,,True,candidate generation: the reference structure is not in the candidate set (only 91% of its pairs are reachable),0.013083499856293201
+syn_40_001,40,random,44,37,245.69999999999996,1.2000000476837158,10.899999856948853,0.0,,True,candidate generation: the reference structure is not in the candidate set (only 91% of its pairs are reachable),0.012804583180695772
+syn_40_001,40,greedy,42,37,-0.8999999999999995,-1.100000023841858,8.599999785423279,0.5333333333333333,,False,candidate generation: the reference structure is not in the candidate set (only 91% of its pairs are reachable),0.002012750133872032
+syn_40_001,40,greedy,43,37,-0.8999999999999995,-1.100000023841858,8.599999785423279,0.5333333333333333,,False,candidate generation: the reference structure is not in the candidate set (only 91% of its pairs are reachable),0.0020543341524899006
+syn_40_001,40,greedy,44,37,-0.8999999999999995,-1.100000023841858,8.599999785423279,0.5333333333333333,,False,candidate generation: the reference structure is not in the candidate set (only 91% of its pairs are reachable),0.00202754233032465
+syn_40_001,40,local_search,42,37,-7.899999999999999,-9.5,0.19999980926513672,0.9523809523809523,,False,candidate generation: the reference structure is not in the candidate set (only 91% of its pairs are reachable),3.6307587497867644
+syn_40_001,40,local_search,43,37,-7.899999999999999,-9.5,0.19999980926513672,0.9523809523809523,,False,candidate generation: the reference structure is not in the candidate set (only 91% of its pairs are reachable),3.671677582897246
+syn_40_001,40,local_search,44,37,-7.899999999999999,-9.5,0.19999980926513672,0.9523809523809523,,False,candidate generation: the reference structure is not in the candidate set (only 91% of its pairs are reachable),3.625019666273147
+syn_40_001,40,simulated_annealing,42,37,-7.899999999932561,-9.5,0.19999980926513672,0.9523809523809523,,False,candidate generation: the reference structure is not in the candidate set (only 91% of its pairs are reachable),0.15305395796895027
+syn_40_001,40,simulated_annealing,43,37,-7.899999999932561,-9.5,0.19999980926513672,0.9523809523809523,,False,candidate generation: the reference structure is not in the candidate set (only 91% of its pairs are reachable),0.1407445832155645
+syn_40_001,40,simulated_annealing,44,37,-7.899999999932561,-9.5,0.19999980926513672,0.9523809523809523,,False,candidate generation: the reference structure is not in the candidate set (only 91% of its pairs are reachable),0.1421978329308331
+syn_40_001,40,tabu,42,37,-7.899999999999999,-9.5,0.19999980926513672,0.9523809523809523,,False,candidate generation: the reference structure is not in the candidate set (only 91% of its pairs are reachable),10.513116083107889
+syn_40_001,40,tabu,43,37,-7.899999999999999,-9.5,0.19999980926513672,0.9523809523809523,,False,candidate generation: the reference structure is not in the candidate set (only 91% of its pairs are reachable),10.50909800035879
+syn_40_001,40,tabu,44,37,-7.899999999999999,-9.5,0.19999980926513672,0.9523809523809523,,False,candidate generation: the reference structure is not in the candidate set (only 91% of its pairs are reachable),10.507788375020027
+syn_40_001,40,path_integral_sqa,42,37,-7.899999999932561,-9.5,0.19999980926513672,0.9523809523809523,,False,candidate generation: the reference structure is not in the candidate set (only 91% of its pairs are reachable),9.963555625174195
+syn_40_001,40,path_integral_sqa,43,37,-7.899999999932561,-9.5,0.19999980926513672,0.9523809523809523,,False,candidate generation: the reference structure is not in the candidate set (only 91% of its pairs are reachable),9.658511166926473
+syn_40_001,40,path_integral_sqa,44,37,-7.899999999932561,-9.5,0.19999980926513672,0.9523809523809523,,False,candidate generation: the reference structure is not in the candidate set (only 91% of its pairs are reachable),9.69470970891416
+syn_40_002,40,random,42,72,2406.4799999999987,-1.7999999523162842,7.099999666213989,0.0,,True,indeterminate: instance too large for exact ground truth,0.039723833091557026
+syn_40_002,40,random,43,72,3012.8599999999938,-2.299999952316284,6.599999666213989,0.0,,True,indeterminate: instance too large for exact ground truth,0.04074991587549448
+syn_40_002,40,random,44,72,2366.659999999999,-0.20000000298023224,8.699999615550041,0.0,,True,indeterminate: instance too large for exact ground truth,0.03853804199025035
+syn_40_002,40,greedy,42,72,-8.200000000000001,-8.199999809265137,0.6999998092651367,0.7368421052631579,,False,indeterminate: instance too large for exact ground truth,0.0070657082833349705
+syn_40_002,40,greedy,43,72,-8.200000000000001,-8.199999809265137,0.6999998092651367,0.7368421052631579,,False,indeterminate: instance too large for exact ground truth,0.007053375244140625
+syn_40_002,40,greedy,44,72,-8.200000000000001,-8.199999809265137,0.6999998092651367,0.7368421052631579,,False,indeterminate: instance too large for exact ground truth,0.006987291853874922
+syn_40_002,40,local_search,42,72,-8.700000000000001,-8.899999618530273,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,44.38993408391252
+syn_40_002,40,local_search,43,72,-8.700000000000001,-8.899999618530273,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,44.468686582986265
+syn_40_002,40,local_search,44,72,-8.700000000000001,-8.899999618530273,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,45.779327583964914
+syn_40_002,40,simulated_annealing,42,72,-8.699999999322245,-8.899999618530273,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,0.3547339579090476
+syn_40_002,40,simulated_annealing,43,72,-8.699999999322245,-8.899999618530273,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,0.3485014997422695
+syn_40_002,40,simulated_annealing,44,72,-8.699999999322245,-8.899999618530273,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,0.34534529224038124
+syn_40_002,40,tabu,42,72,-8.700000000000001,-8.899999618530273,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,10.519056792370975
+syn_40_002,40,tabu,43,72,-8.700000000000001,-8.899999618530273,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,10.51878674980253
+syn_40_002,40,tabu,44,72,-8.700000000000001,-8.899999618530273,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,10.528262875042856
+syn_40_002,40,path_integral_sqa,42,72,-8.699999999322245,-8.899999618530273,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,32.058956208173186
+syn_40_002,40,path_integral_sqa,43,72,-8.699999999322245,-8.899999618530273,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,32.00190616725013
+syn_40_002,40,path_integral_sqa,44,72,-8.699999999322245,-8.899999618530273,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,31.738269291818142
+syn_40_003,40,random,42,51,613.9,-1.2999999523162842,8.899999856948853,0.0,,True,indeterminate: instance too large for exact ground truth,0.021996208000928164
+syn_40_003,40,random,43,51,767.3000000000001,-3.5,6.699999809265137,0.0,,True,indeterminate: instance too large for exact ground truth,0.021894916892051697
+syn_40_003,40,random,44,51,674.9,-3.299999952316284,6.8999998569488525,0.6666666666666666,,True,indeterminate: instance too large for exact ground truth,0.02143804170191288
+syn_40_003,40,greedy,42,51,-5.5,-6.900000095367432,3.299999713897705,0.0,,False,indeterminate: instance too large for exact ground truth,0.0035962918773293495
+syn_40_003,40,greedy,43,51,-5.5,-6.900000095367432,3.299999713897705,0.0,,False,indeterminate: instance too large for exact ground truth,0.0035829171538352966
+syn_40_003,40,greedy,44,51,-5.5,-6.900000095367432,3.299999713897705,0.0,,False,indeterminate: instance too large for exact ground truth,0.0035503339022397995
+syn_40_003,40,local_search,42,51,-9.099999999999998,-10.199999809265137,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,12.105764249805361
+syn_40_003,40,local_search,43,51,-9.099999999999998,-10.199999809265137,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,12.225769917014986
+syn_40_003,40,local_search,44,51,-9.099999999999998,-10.199999809265137,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,11.876945792231709
+syn_40_003,40,simulated_annealing,42,51,-9.099999999999454,-10.199999809265137,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,0.22236204240471125
+syn_40_003,40,simulated_annealing,43,51,-9.099999999999454,-10.199999809265137,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,0.22130054095759988
+syn_40_003,40,simulated_annealing,44,51,-9.099999999999454,-10.199999809265137,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,0.22089225007221103
+syn_40_003,40,tabu,42,51,-9.099999999999998,-10.199999809265137,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,10.511489250231534
+syn_40_003,40,tabu,43,51,-9.099999999999998,-10.199999809265137,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,10.51093495823443
+syn_40_003,40,tabu,44,51,-9.099999999999998,-10.199999809265137,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,10.511422125156969
+syn_40_003,40,path_integral_sqa,42,51,-9.099999999999454,-10.199999809265137,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,17.08404262503609
+syn_40_003,40,path_integral_sqa,43,51,-9.099999999999454,-10.199999809265137,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,17.169884459115565
+syn_40_003,40,path_integral_sqa,44,51,-9.099999999999454,-10.199999809265137,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,17.56678233295679
+syn_40_004,40,random,42,54,626.4000000000001,-2.0,4.400000095367432,0.2222222222222222,,True,indeterminate: instance too large for exact ground truth,0.02392108365893364
+syn_40_004,40,random,43,54,1162.9499999999978,-3.4000000953674316,3.0,0.0,,True,indeterminate: instance too large for exact ground truth,0.02422974957153201
+syn_40_004,40,random,44,54,1068.6799999999987,3.5,9.900000095367432,0.0,,True,indeterminate: instance too large for exact ground truth,0.023852459155023098
+syn_40_004,40,greedy,42,54,-1.9000000000000004,-2.9000000953674316,3.5,0.0,,False,indeterminate: instance too large for exact ground truth,0.003929833881556988
+syn_40_004,40,greedy,43,54,-1.9000000000000004,-2.9000000953674316,3.5,0.0,,False,indeterminate: instance too large for exact ground truth,0.003922458738088608
+syn_40_004,40,greedy,44,54,-1.9000000000000004,-2.9000000953674316,3.5,0.0,,False,indeterminate: instance too large for exact ground truth,0.003932583145797253
+syn_40_004,40,local_search,42,54,-6.099999999999998,-6.300000190734863,0.09999990463256836,0.9090909090909091,,False,indeterminate: instance too large for exact ground truth,14.899867875035852
+syn_40_004,40,local_search,43,54,-6.099999999999998,-6.300000190734863,0.09999990463256836,0.9090909090909091,,False,indeterminate: instance too large for exact ground truth,15.020016917027533
+syn_40_004,40,local_search,44,54,-6.099999999999998,-6.300000190734863,0.09999990463256836,0.9090909090909091,,False,indeterminate: instance too large for exact ground truth,14.70404537487775
+syn_40_004,40,simulated_annealing,42,54,-6.100000000233194,-6.300000190734863,0.09999990463256836,0.9090909090909091,,False,indeterminate: instance too large for exact ground truth,0.23668733332306147
+syn_40_004,40,simulated_annealing,43,54,-6.100000000233194,-6.300000190734863,0.09999990463256836,0.9090909090909091,,False,indeterminate: instance too large for exact ground truth,0.23290066700428724
+syn_40_004,40,simulated_annealing,44,54,-6.100000000233194,-6.300000190734863,0.09999990463256836,0.9090909090909091,,False,indeterminate: instance too large for exact ground truth,0.23129245778545737
+syn_40_004,40,tabu,42,54,-6.1,-6.300000190734863,0.09999990463256836,0.9090909090909091,,False,indeterminate: instance too large for exact ground truth,10.51307945838198
+syn_40_004,40,tabu,43,54,-6.1,-6.300000190734863,0.09999990463256836,0.9090909090909091,,False,indeterminate: instance too large for exact ground truth,10.512240666430444
+syn_40_004,40,tabu,44,54,-6.1,-6.300000190734863,0.09999990463256836,0.9090909090909091,,False,indeterminate: instance too large for exact ground truth,10.51276862481609
+syn_40_004,40,path_integral_sqa,42,54,-6.100000000233194,-6.300000190734863,0.09999990463256836,0.9090909090909091,,False,indeterminate: instance too large for exact ground truth,19.91293341713026
+syn_40_004,40,path_integral_sqa,43,54,-6.100000000233194,-6.300000190734863,0.09999990463256836,0.9090909090909091,,False,indeterminate: instance too large for exact ground truth,19.545104042161256
+syn_40_004,40,path_integral_sqa,44,54,-6.100000000233194,-6.300000190734863,0.09999990463256836,0.9090909090909091,,False,indeterminate: instance too large for exact ground truth,18.98514795769006
+syn_50_000,50,random,42,89,5013.130000000006,-0.6000000238418579,9.299999594688416,0.0,,True,indeterminate: instance too large for exact ground truth,0.06402562512084842
+syn_50_000,50,random,43,89,5384.010000000015,-6.400000095367432,3.499999523162842,0.923076923076923,,True,indeterminate: instance too large for exact ground truth,0.06448824983090162
+syn_50_000,50,random,44,89,4500.7499999999945,-5.400000095367432,4.499999523162842,0.0,,True,indeterminate: instance too large for exact ground truth,0.09206495760008693
+syn_50_000,50,greedy,42,89,-3.5999999999999996,-3.9000000953674316,5.999999523162842,0.0,,False,indeterminate: instance too large for exact ground truth,0.011275624856352806
+syn_50_000,50,greedy,43,89,-3.5999999999999996,-3.9000000953674316,5.999999523162842,0.0,,False,indeterminate: instance too large for exact ground truth,0.011205124668776989
+syn_50_000,50,greedy,44,89,-3.5999999999999996,-3.9000000953674316,5.999999523162842,0.0,,False,indeterminate: instance too large for exact ground truth,0.011065292172133923
+syn_50_000,50,local_search,42,89,-9.2,-9.899999618530273,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,107.13881916599348
+syn_50_000,50,local_search,43,89,-9.2,-9.899999618530273,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,108.88555362494662
+syn_50_000,50,local_search,44,89,-9.2,-9.899999618530273,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,106.20239208312705
+syn_50_000,50,simulated_annealing,42,89,-9.199999999344072,-9.899999618530273,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,0.42604637518525124
+syn_50_000,50,simulated_annealing,43,89,-9.199999999344072,-9.899999618530273,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,0.42327925004065037
+syn_50_000,50,simulated_annealing,44,89,-9.199999999344072,-9.899999618530273,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,0.4234302081167698
+syn_50_000,50,tabu,42,89,-9.2,-9.899999618530273,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,10.52324266685173
+syn_50_000,50,tabu,43,89,-9.2,-9.899999618530273,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,10.524274582974613
+syn_50_000,50,tabu,44,89,-9.2,-9.899999618530273,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,10.52708337502554
+syn_50_000,50,path_integral_sqa,42,89,-9.199999999344072,-9.899999618530273,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,49.72067674994469
+syn_50_000,50,path_integral_sqa,43,89,-9.199999999344072,-9.899999618530273,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,49.562020416837186
+syn_50_000,50,path_integral_sqa,44,89,-9.199999999344072,-9.899999618530273,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,49.997139665763825
+syn_50_001,50,random,42,102,6506.990000000048,-1.5,8.100000381469727,0.3333333333333333,,True,indeterminate: instance too large for exact ground truth,0.08018733281642199
+syn_50_001,50,random,43,102,7933.200000000063,-4.400000095367432,5.200000286102295,0.0,,True,indeterminate: instance too large for exact ground truth,0.08399600023403764
+syn_50_001,50,random,44,102,6331.910000000047,-4.400000095367432,5.200000286102295,0.5217391304347826,,True,indeterminate: instance too large for exact ground truth,0.08072612481191754
+syn_50_001,50,greedy,42,102,-5.8999999999999995,-7.099999904632568,2.500000476837158,0.5,,False,indeterminate: instance too large for exact ground truth,0.01437554182484746
+syn_50_001,50,greedy,43,102,-5.8999999999999995,-7.099999904632568,2.500000476837158,0.5,,False,indeterminate: instance too large for exact ground truth,0.014351374935358763
+syn_50_001,50,greedy,44,102,-5.8999999999999995,-7.099999904632568,2.500000476837158,0.5,,False,indeterminate: instance too large for exact ground truth,0.014142749831080437
+syn_50_001,50,local_search,42,102,-8.1,-9.600000381469727,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,176.55386391701177
+syn_50_001,50,local_search,43,102,-8.1,-9.600000381469727,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,276.518307375256
+syn_50_001,50,local_search,44,102,-8.1,-9.600000381469727,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,198.72546125017107
+syn_50_001,50,simulated_annealing,42,102,-8.100000004180401,-9.600000381469727,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,0.545988708268851
+syn_50_001,50,simulated_annealing,43,102,-8.100000004180401,-9.600000381469727,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,0.5432233749888837
+syn_50_001,50,simulated_annealing,44,102,-8.100000004180401,-9.600000381469727,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,0.5459607923403382
+syn_50_001,50,tabu,42,102,-8.1,-9.600000381469727,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,10.536663791164756
+syn_50_001,50,tabu,43,102,-8.1,-9.600000381469727,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,10.533477833960205
+syn_50_001,50,tabu,44,102,-8.1,-9.600000381469727,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,10.529450417030603
+syn_50_001,50,path_integral_sqa,42,102,-8.100000004180401,-9.600000381469727,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,60.6952908327803
+syn_50_001,50,path_integral_sqa,43,102,-8.100000004180401,-9.600000381469727,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,60.75624329224229
+syn_50_001,50,path_integral_sqa,44,102,-8.100000004180401,-9.600000381469727,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,61.11124487500638
+syn_50_002,50,random,42,74,2339.0399999999995,-4.800000190734863,5.5,0.0,,True,candidate generation: the reference structure is not in the candidate set (only 92% of its pairs are reachable),0.04292358411476016
+syn_50_002,50,random,43,74,2328.2200000000007,-2.0,8.300000190734863,0.4,,True,candidate generation: the reference structure is not in the candidate set (only 92% of its pairs are reachable),0.04171795770525932
+syn_50_002,50,random,44,74,1952.520000000004,-4.199999809265137,6.100000381469727,0.0,,True,candidate generation: the reference structure is not in the candidate set (only 92% of its pairs are reachable),0.042506832629442215
+syn_50_002,50,greedy,42,74,-4.799999999999999,-6.300000190734863,4.0,0.0,,False,candidate generation: the reference structure is not in the candidate set (only 92% of its pairs are reachable),0.007876083254814148
+syn_50_002,50,greedy,43,74,-4.799999999999999,-6.300000190734863,4.0,0.0,,False,candidate generation: the reference structure is not in the candidate set (only 92% of its pairs are reachable),0.007680041715502739
+syn_50_002,50,greedy,44,74,-4.799999999999999,-6.300000190734863,4.0,0.0,,False,candidate generation: the reference structure is not in the candidate set (only 92% of its pairs are reachable),0.007815500255674124
+syn_50_002,50,local_search,42,74,-8.200000000000003,-9.699999809265137,0.6000003814697266,0.9600000000000001,,False,candidate generation: the reference structure is not in the candidate set (only 92% of its pairs are reachable),49.26391512528062
+syn_50_002,50,local_search,43,74,-8.200000000000003,-9.699999809265137,0.6000003814697266,0.9600000000000001,,False,candidate generation: the reference structure is not in the candidate set (only 92% of its pairs are reachable),49.168216874822974
+syn_50_002,50,local_search,44,74,-8.200000000000003,-9.699999809265137,0.6000003814697266,0.9600000000000001,,False,candidate generation: the reference structure is not in the candidate set (only 92% of its pairs are reachable),48.41886624973267
+syn_50_002,50,simulated_annealing,42,74,-8.200000000587352,-9.699999809265137,0.6000003814697266,0.9600000000000001,,False,candidate generation: the reference structure is not in the candidate set (only 92% of its pairs are reachable),0.34338250011205673
+syn_50_002,50,simulated_annealing,43,74,-8.200000000587352,-9.699999809265137,0.6000003814697266,0.9600000000000001,,False,candidate generation: the reference structure is not in the candidate set (only 92% of its pairs are reachable),0.3400448332540691
+syn_50_002,50,simulated_annealing,44,74,-8.200000000587352,-9.699999809265137,0.6000003814697266,0.9600000000000001,,False,candidate generation: the reference structure is not in the candidate set (only 92% of its pairs are reachable),0.361522207967937
+syn_50_002,50,tabu,42,74,-8.200000000000001,-9.699999809265137,0.6000003814697266,0.9600000000000001,,False,candidate generation: the reference structure is not in the candidate set (only 92% of its pairs are reachable),10.522491708397865
+syn_50_002,50,tabu,43,74,-8.200000000000001,-9.699999809265137,0.6000003814697266,0.9600000000000001,,False,candidate generation: the reference structure is not in the candidate set (only 92% of its pairs are reachable),10.5198198328726
+syn_50_002,50,tabu,44,74,-8.200000000000001,-9.699999809265137,0.6000003814697266,0.9600000000000001,,False,candidate generation: the reference structure is not in the candidate set (only 92% of its pairs are reachable),10.520169333089143
+syn_50_002,50,path_integral_sqa,42,74,-8.200000000587352,-9.699999809265137,0.6000003814697266,0.9600000000000001,,False,candidate generation: the reference structure is not in the candidate set (only 92% of its pairs are reachable),34.1375774173066
+syn_50_002,50,path_integral_sqa,43,74,-8.200000000587352,-9.699999809265137,0.6000003814697266,0.9600000000000001,,False,candidate generation: the reference structure is not in the candidate set (only 92% of its pairs are reachable),34.20659108273685
+syn_50_002,50,path_integral_sqa,44,74,-8.200000000587352,-9.699999809265137,0.6000003814697266,0.9600000000000001,,False,candidate generation: the reference structure is not in the candidate set (only 92% of its pairs are reachable),34.08558016596362
+syn_50_003,50,random,42,106,7300.110000000047,-5.5,5.0,0.0,,True,indeterminate: instance too large for exact ground truth,0.08464379236102104
+syn_50_003,50,random,43,106,7831.800000000057,-6.5,4.0,0.3,,True,indeterminate: instance too large for exact ground truth,0.08824529219418764
+syn_50_003,50,random,44,106,7648.090000000055,-2.799999952316284,7.700000047683716,0.0,,True,indeterminate: instance too large for exact ground truth,0.0846257908269763
+syn_50_003,50,greedy,42,106,-4.8999999999999995,-5.5,5.0,0.0,,False,indeterminate: instance too large for exact ground truth,0.015576583333313465
+syn_50_003,50,greedy,43,106,-4.8999999999999995,-5.5,5.0,0.0,,False,indeterminate: instance too large for exact ground truth,0.015294292010366917
+syn_50_003,50,greedy,44,106,-4.8999999999999995,-5.5,5.0,0.0,,False,indeterminate: instance too large for exact ground truth,0.015171125065535307
+syn_50_003,50,local_search,42,106,-9.5,-10.5,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,185.93146712472662
+syn_50_003,50,local_search,43,106,-9.5,-10.5,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,186.25622862484306
+syn_50_003,50,local_search,44,106,-9.5,-10.5,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,184.32064787484705
+syn_50_003,50,simulated_annealing,42,106,-9.499999994450263,-10.5,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,0.5246092081069946
+syn_50_003,50,simulated_annealing,43,106,-9.499999994450263,-10.5,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,0.5265727918595076
+syn_50_003,50,simulated_annealing,44,106,-9.499999994450263,-10.5,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,0.5249748327769339
+syn_50_003,50,tabu,42,106,-9.5,-10.5,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,10.537181457970291
+syn_50_003,50,tabu,43,106,-9.5,-10.5,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,10.532170167192817
+syn_50_003,50,tabu,44,106,-9.5,-10.5,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,10.533875583671033
+syn_50_003,50,path_integral_sqa,42,106,-9.499999994450263,-10.5,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,115.75382245797664
+syn_50_003,50,path_integral_sqa,43,106,-9.499999994450263,-10.5,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,148.24292383296415
+syn_50_003,50,path_integral_sqa,44,106,-9.499999994450263,-10.5,0.0,1.0,,False,indeterminate: instance too large for exact ground truth,120.64045266713947
+syn_50_004,50,random,42,93,5047.3699999999935,-7.800000190734863,1.8000001907348633,0.9090909090909091,,True,indeterminate: instance too large for exact ground truth,0.17083062510937452
+syn_50_004,50,random,43,93,6255.490000000009,-4.199999809265137,5.40000057220459,0.0,,True,indeterminate: instance too large for exact ground truth,0.19038845784962177
+syn_50_004,50,random,44,93,4625.869999999986,-2.9000000953674316,6.700000286102295,0.16666666666666666,,True,indeterminate: instance too large for exact ground truth,0.1881195418536663
+syn_50_004,50,greedy,42,93,-6.699999999999999,-8.399999618530273,1.2000007629394531,0.5217391304347826,,False,indeterminate: instance too large for exact ground truth,0.02681879187002778
+syn_50_004,50,greedy,43,93,-6.699999999999999,-8.399999618530273,1.2000007629394531,0.5217391304347826,,False,indeterminate: instance too large for exact ground truth,0.02607341716066003
+syn_50_004,50,greedy,44,93,-6.699999999999999,-8.399999618530273,1.2000007629394531,0.5217391304347826,,False,indeterminate: instance too large for exact ground truth,0.02252575010061264
+syn_50_004,50,local_search,42,93,-8.099999999999998,-8.5,1.1000003814697266,0.5217391304347826,,False,indeterminate: instance too large for exact ground truth,181.56777616683394
+syn_50_004,50,local_search,43,93,-8.099999999999998,-8.5,1.1000003814697266,0.5217391304347826,,False,indeterminate: instance too large for exact ground truth,132.53783150017262
+syn_50_004,50,local_search,44,93,-8.099999999999998,-8.5,1.1000003814697266,0.5217391304347826,,False,indeterminate: instance too large for exact ground truth,116.31343825021759
+syn_50_004,50,simulated_annealing,42,93,-8.09999999883803,-8.5,1.1000003814697266,0.5217391304347826,,False,indeterminate: instance too large for exact ground truth,0.4680474167689681
+syn_50_004,50,simulated_annealing,43,93,-8.09999999883803,-8.5,1.1000003814697266,0.5217391304347826,,False,indeterminate: instance too large for exact ground truth,0.4553408338688314
+syn_50_004,50,simulated_annealing,44,93,-8.09999999883803,-8.5,1.1000003814697266,0.5217391304347826,,False,indeterminate: instance too large for exact ground truth,0.46089270897209644
+syn_50_004,50,tabu,42,93,-8.099999999999998,-8.5,1.1000003814697266,0.5217391304347826,,False,indeterminate: instance too large for exact ground truth,10.523585749790072
+syn_50_004,50,tabu,43,93,-8.099999999999998,-8.5,1.1000003814697266,0.5217391304347826,,False,indeterminate: instance too large for exact ground truth,10.527101624757051
+syn_50_004,50,tabu,44,93,-8.099999999999998,-8.5,1.1000003814697266,0.5217391304347826,,False,indeterminate: instance too large for exact ground truth,10.526762874796987
+syn_50_004,50,path_integral_sqa,42,93,-8.09999999883803,-8.5,1.1000003814697266,0.5217391304347826,,False,indeterminate: instance too large for exact ground truth,50.58894525002688
+syn_50_004,50,path_integral_sqa,43,93,-8.09999999883803,-8.5,1.1000003814697266,0.5217391304347826,,False,indeterminate: instance too large for exact ground truth,50.64284362504259
+syn_50_004,50,path_integral_sqa,44,93,-8.09999999883803,-8.5,1.1000003814697266,0.5217391304347826,,False,indeterminate: instance too large for exact ground truth,51.25343370810151

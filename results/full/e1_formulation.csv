@@ -1,0 +1,172 @@
+sequence_id,length,energy_model,nesting_policy,overlap_penalty,num_variables,qubo_density,coefficient_range,condition_ratio,representable,representable_fraction,is_qubo_ground_state,optimum_is_valid,base_pair_f1,energy_gap,attribution
+syn_20_000,20,stacking_only,all_nestable,adaptive,10,0.9777777777777777,13.7,11.538461538461538,True,1.0,False,True,0.888888888888889,0.19999980926513672,energy model: the reference structure is not the QUBO ground state
+syn_20_000,20,stacking_only,all_nestable,5.0,10,0.9777777777777777,5.7,5.384615384615384,True,1.0,False,True,0.888888888888889,0.19999980926513672,energy model: the reference structure is not the QUBO ground state
+syn_20_000,20,stacking_only,all_nestable,20.0,10,0.9777777777777777,18.7,15.384615384615383,True,1.0,False,True,0.888888888888889,0.19999980926513672,energy model: the reference structure is not the QUBO ground state
+syn_20_000,20,charge_refund,all_nestable,adaptive,10,0.9777777777777777,14.3,143.99999999999923,True,1.0,False,True,0.888888888888889,0.19999980926513672,energy model: the reference structure is not the QUBO ground state
+syn_20_000,20,charge_refund,all_nestable,5.0,10,0.9777777777777777,6.6,66.99999999999964,True,1.0,False,True,0.888888888888889,0.19999980926513672,energy model: the reference structure is not the QUBO ground state
+syn_20_000,20,charge_refund,all_nestable,20.0,10,0.9777777777777777,19.9,199.99999999999895,True,1.0,False,True,0.888888888888889,0.19999980926513672,energy model: the reference structure is not the QUBO ground state
+syn_20_000,20,charge_refund,immediate_only,adaptive,10,0.9777777777777777,14.3,143.99999999999923,True,1.0,False,True,0.888888888888889,0.19999980926513672,energy model: the reference structure is not the QUBO ground state
+syn_20_000,20,charge_refund,immediate_only,5.0,10,0.9777777777777777,6.6,66.99999999999964,True,1.0,False,True,0.888888888888889,0.19999980926513672,energy model: the reference structure is not the QUBO ground state
+syn_20_000,20,charge_refund,immediate_only,20.0,10,0.9777777777777777,19.9,199.99999999999895,True,1.0,False,True,0.888888888888889,0.19999980926513672,energy model: the reference structure is not the QUBO ground state
+syn_20_001,20,stacking_only,all_nestable,adaptive,13,0.9102564102564102,8.200000000000001,14.666666666666668,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_001,20,stacking_only,all_nestable,5.0,13,0.9102564102564102,4.4,8.333333333333334,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_001,20,stacking_only,all_nestable,20.0,13,0.9102564102564102,19.4,33.333333333333336,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_001,20,charge_refund,all_nestable,adaptive,13,0.9358974358974359,13.9,28.799999999999976,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_001,20,charge_refund,all_nestable,5.0,13,0.9358974358974359,6.199999999999999,13.399999999999988,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_001,20,charge_refund,all_nestable,20.0,13,0.9358974358974359,19.5,39.999999999999964,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_001,20,charge_refund,immediate_only,adaptive,13,0.9358974358974359,13.9,28.799999999999976,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_001,20,charge_refund,immediate_only,5.0,13,0.9358974358974359,6.199999999999999,13.399999999999988,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_001,20,charge_refund,immediate_only,20.0,13,0.9358974358974359,19.5,39.999999999999964,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_002,20,stacking_only,all_nestable,adaptive,18,0.7973856209150327,11.8,60.0,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_002,20,stacking_only,all_nestable,5.0,18,0.7973856209150327,5.3,27.5,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_002,20,stacking_only,all_nestable,20.0,18,0.7973856209150327,19.8,100.0,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_002,20,charge_refund,all_nestable,adaptive,18,0.9869281045751634,16.8,84.99999999999993,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_002,20,charge_refund,all_nestable,5.0,18,0.9869281045751634,7.8,39.999999999999964,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_002,20,charge_refund,all_nestable,20.0,18,0.9869281045751634,19.8,99.99999999999991,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_002,20,charge_refund,immediate_only,adaptive,18,0.9607843137254902,16.8,84.99999999999993,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_002,20,charge_refund,immediate_only,5.0,18,0.9607843137254902,7.8,39.999999999999964,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_002,20,charge_refund,immediate_only,20.0,18,0.9607843137254902,19.8,99.99999999999991,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_003,20,stacking_only,all_nestable,adaptive,17,0.9191176470588235,17.5,59.333333333333336,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_003,20,stacking_only,all_nestable,5.0,17,0.9191176470588235,8.1,28.000000000000004,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_003,20,stacking_only,all_nestable,20.0,17,0.9191176470588235,19.7,66.66666666666667,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_003,20,charge_refund,all_nestable,adaptive,17,0.9779411764705882,13.0,33.49999999999997,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_003,20,charge_refund,all_nestable,5.0,17,0.9779411764705882,5.8,15.499999999999988,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_003,20,charge_refund,all_nestable,20.0,17,0.9779411764705882,19.6,49.99999999999996,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_003,20,charge_refund,immediate_only,adaptive,17,0.9779411764705882,13.0,33.49999999999997,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_003,20,charge_refund,immediate_only,5.0,17,0.9779411764705882,5.8,15.499999999999988,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_003,20,charge_refund,immediate_only,20.0,17,0.9779411764705882,19.6,49.99999999999996,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_004,20,stacking_only,all_nestable,adaptive,5,1.0,15.2,16.2,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_004,20,stacking_only,all_nestable,5.0,5,1.0,6.6,7.6,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_004,20,stacking_only,all_nestable,20.0,5,1.0,19.0,20.0,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_004,20,charge_refund,all_nestable,adaptive,5,1.0,11.200000000000001,19.666666666666664,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_004,20,charge_refund,all_nestable,5.0,5,1.0,4.800000000000001,9.0,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_004,20,charge_refund,all_nestable,20.0,5,1.0,19.4,33.33333333333333,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_004,20,charge_refund,immediate_only,adaptive,5,1.0,11.200000000000001,19.666666666666664,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_004,20,charge_refund,immediate_only,5.0,5,1.0,4.800000000000001,9.0,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_004,20,charge_refund,immediate_only,20.0,5,1.0,19.4,33.33333333333333,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_005,20,stacking_only,all_nestable,adaptive,7,1.0,15.6,12.142857142857144,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_005,20,stacking_only,all_nestable,5.0,7,1.0,6.6,5.714285714285714,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_005,20,stacking_only,all_nestable,20.0,7,1.0,18.6,14.285714285714286,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_005,20,charge_refund,all_nestable,adaptive,7,1.0,11.299999999999999,113.99999999999989,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_005,20,charge_refund,all_nestable,5.0,7,1.0,5.1,51.99999999999995,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_005,20,charge_refund,all_nestable,20.0,7,1.0,19.9,199.99999999999983,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_005,20,charge_refund,immediate_only,adaptive,7,1.0,11.299999999999999,113.99999999999989,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_005,20,charge_refund,immediate_only,5.0,7,1.0,5.1,51.99999999999995,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_20_005,20,charge_refund,immediate_only,20.0,7,1.0,19.9,199.99999999999983,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_000,25,stacking_only,all_nestable,adaptive,12,0.8333333333333334,21.8,22.8,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_000,25,stacking_only,all_nestable,5.0,12,0.8333333333333334,9.9,10.9,True,1.0,False,False,1.0,0.0,energy model: the reference structure is not the QUBO ground state
+syn_25_000,25,stacking_only,all_nestable,20.0,12,0.8333333333333334,19.0,20.0,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_000,25,charge_refund,all_nestable,adaptive,12,0.9090909090909091,11.5,24.0,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_000,25,charge_refund,all_nestable,5.0,12,0.9090909090909091,5.0,11.0,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_000,25,charge_refund,all_nestable,20.0,12,0.9090909090909091,19.5,40.0,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_000,25,charge_refund,immediate_only,adaptive,12,0.9090909090909091,11.5,24.0,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_000,25,charge_refund,immediate_only,5.0,12,0.9090909090909091,5.0,11.0,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_000,25,charge_refund,immediate_only,20.0,12,0.9090909090909091,19.5,40.0,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_001,25,stacking_only,all_nestable,adaptive,15,0.8285714285714286,11.6,12.6,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_001,25,stacking_only,all_nestable,5.0,15,0.8285714285714286,4.8,5.8,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_001,25,stacking_only,all_nestable,20.0,15,0.8285714285714286,19.0,20.0,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_001,25,charge_refund,all_nestable,adaptive,15,0.9714285714285714,15.5,155.99999999999918,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_001,25,charge_refund,all_nestable,5.0,15,0.9714285714285714,7.2,72.99999999999962,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_001,25,charge_refund,all_nestable,20.0,15,0.9714285714285714,19.9,199.99999999999895,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_001,25,charge_refund,immediate_only,adaptive,15,0.9523809523809523,15.5,155.99999999999918,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_001,25,charge_refund,immediate_only,5.0,15,0.9523809523809523,7.2,72.99999999999962,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_001,25,charge_refund,immediate_only,20.0,15,0.9523809523809523,19.9,199.99999999999895,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_002,25,stacking_only,all_nestable,adaptive,17,0.7647058823529411,15.1,51.333333333333336,True,1.0,False,True,0.4615384615384615,5.100000083446503,energy model: the reference structure is not the QUBO ground state
+syn_25_002,25,stacking_only,all_nestable,5.0,17,0.7647058823529411,6.9,24.0,True,1.0,False,False,0.0,2.3000001907348633,energy model: the reference structure is not the QUBO ground state
+syn_25_002,25,stacking_only,all_nestable,20.0,17,0.7647058823529411,19.7,66.66666666666667,True,1.0,False,True,0.4615384615384615,5.100000083446503,energy model: the reference structure is not the QUBO ground state
+syn_25_002,25,charge_refund,all_nestable,adaptive,17,0.9264705882352942,14.1,141.99999999999986,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_002,25,charge_refund,all_nestable,5.0,17,0.9264705882352942,6.5,65.99999999999994,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_002,25,charge_refund,all_nestable,20.0,17,0.9264705882352942,19.9,199.99999999999983,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_002,25,charge_refund,immediate_only,adaptive,17,0.9264705882352942,14.1,141.99999999999986,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_002,25,charge_refund,immediate_only,5.0,17,0.9264705882352942,6.5,65.99999999999994,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_002,25,charge_refund,immediate_only,20.0,17,0.9264705882352942,19.9,199.99999999999983,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_003,25,stacking_only,all_nestable,adaptive,15,0.9428571428571428,22.2,111.99999999999999,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_003,25,stacking_only,all_nestable,5.0,15,0.9428571428571428,10.5,53.49999999999999,True,1.0,False,False,1.0,0.0,energy model: the reference structure is not the QUBO ground state
+syn_25_003,25,stacking_only,all_nestable,20.0,15,0.9428571428571428,19.8,100.0,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_003,25,charge_refund,all_nestable,adaptive,15,1.0,11.3,13.555555555555562,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_003,25,charge_refund,all_nestable,5.0,15,1.0,4.7,6.222222222222226,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_003,25,charge_refund,all_nestable,20.0,15,1.0,19.1,22.222222222222236,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_003,25,charge_refund,immediate_only,adaptive,15,1.0,11.3,13.555555555555562,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_003,25,charge_refund,immediate_only,5.0,15,1.0,4.7,6.222222222222226,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_003,25,charge_refund,immediate_only,20.0,15,1.0,19.1,22.222222222222236,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_004,25,stacking_only,all_nestable,adaptive,9,1.0,12.9,9.6,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_004,25,stacking_only,all_nestable,5.0,9,1.0,5.2,4.466666666666667,True,1.0,False,False,1.0,0.0,energy model: the reference structure is not the QUBO ground state
+syn_25_004,25,stacking_only,all_nestable,20.0,9,1.0,18.5,13.333333333333334,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_004,25,charge_refund,all_nestable,adaptive,9,1.0,10.6,18.666666666666675,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_004,25,charge_refund,all_nestable,5.0,9,1.0,4.5,8.500000000000005,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_004,25,charge_refund,all_nestable,20.0,9,1.0,19.4,33.33333333333335,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_004,25,charge_refund,immediate_only,adaptive,9,1.0,10.6,18.666666666666675,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_004,25,charge_refund,immediate_only,5.0,9,1.0,4.5,8.500000000000005,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_004,25,charge_refund,immediate_only,20.0,9,1.0,19.4,33.33333333333335,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_25_005,25,stacking_only,all_nestable,adaptive,13,0.8717948717948718,16.5,19.333333333333332,True,1.0,False,True,0.6666666666666665,0.09999990463256836,energy model: the reference structure is not the QUBO ground state
+syn_25_005,25,stacking_only,all_nestable,5.0,13,0.8717948717948718,7.299999999999999,9.11111111111111,True,1.0,False,False,0.6666666666666665,0.09999990463256836,energy model: the reference structure is not the QUBO ground state
+syn_25_005,25,stacking_only,all_nestable,20.0,13,0.8717948717948718,19.1,22.22222222222222,True,1.0,False,True,0.6666666666666665,0.09999990463256836,energy model: the reference structure is not the QUBO ground state
+syn_25_005,25,charge_refund,all_nestable,adaptive,13,0.8846153846153846,10.2,20.4,True,1.0,False,True,0.6666666666666665,0.09999990463256836,energy model: the reference structure is not the QUBO ground state
+syn_25_005,25,charge_refund,all_nestable,5.0,13,0.8846153846153846,5.0,10.0,True,1.0,False,True,0.6666666666666665,0.09999990463256836,energy model: the reference structure is not the QUBO ground state
+syn_25_005,25,charge_refund,all_nestable,20.0,13,0.8846153846153846,20.0,40.0,True,1.0,False,True,0.6666666666666665,0.09999990463256836,energy model: the reference structure is not the QUBO ground state
+syn_25_005,25,charge_refund,immediate_only,adaptive,13,0.8846153846153846,10.2,20.4,True,1.0,False,True,0.6666666666666665,0.09999990463256836,energy model: the reference structure is not the QUBO ground state
+syn_25_005,25,charge_refund,immediate_only,5.0,13,0.8846153846153846,5.0,10.0,True,1.0,False,True,0.6666666666666665,0.09999990463256836,energy model: the reference structure is not the QUBO ground state
+syn_25_005,25,charge_refund,immediate_only,20.0,13,0.8846153846153846,20.0,40.0,True,1.0,False,True,0.6666666666666665,0.09999990463256836,energy model: the reference structure is not the QUBO ground state
+syn_30_000,30,stacking_only,all_nestable,adaptive,17,0.7132352941176471,15.799999999999999,27.333333333333332,True,1.0,False,True,0.0,3.2000001668930054,energy model: the reference structure is not the QUBO ground state
+syn_30_000,30,stacking_only,all_nestable,5.0,17,0.7132352941176471,7.1000000000000005,12.833333333333334,True,1.0,False,False,0.0,1.200000286102295,energy model: the reference structure is not the QUBO ground state
+syn_30_000,30,stacking_only,all_nestable,20.0,17,0.7132352941176471,19.4,33.333333333333336,True,1.0,False,True,0.0,3.2000001668930054,energy model: the reference structure is not the QUBO ground state
+syn_30_000,30,charge_refund,all_nestable,adaptive,17,0.8897058823529411,14.2,47.33333333333336,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_000,30,charge_refund,all_nestable,5.0,17,0.8897058823529411,6.6,22.00000000000001,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_000,30,charge_refund,all_nestable,20.0,17,0.8897058823529411,20.0,66.6666666666667,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_000,30,charge_refund,immediate_only,adaptive,17,0.875,14.2,47.33333333333336,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_000,30,charge_refund,immediate_only,5.0,17,0.875,6.6,22.00000000000001,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_000,30,charge_refund,immediate_only,20.0,17,0.875,20.0,66.6666666666667,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_001,30,stacking_only,all_nestable,adaptive,18,0.7516339869281046,18.3,62.00000000000001,True,1.0,False,True,0.6666666666666666,3.0999999046325684,energy model: the reference structure is not the QUBO ground state
+syn_30_001,30,stacking_only,all_nestable,5.0,18,0.7516339869281046,8.5,29.333333333333336,True,1.0,False,False,0.7272727272727273,0.5,energy model: the reference structure is not the QUBO ground state
+syn_30_001,30,stacking_only,all_nestable,20.0,18,0.7516339869281046,19.7,66.66666666666667,True,1.0,False,True,0.6666666666666666,3.0999999046325684,energy model: the reference structure is not the QUBO ground state
+syn_30_001,30,charge_refund,all_nestable,adaptive,18,0.8954248366013072,12.8,65.00000000000023,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_001,30,charge_refund,all_nestable,5.0,18,0.8954248366013072,5.800000000000001,30.000000000000107,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_001,30,charge_refund,all_nestable,20.0,18,0.8954248366013072,19.8,100.00000000000036,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_001,30,charge_refund,immediate_only,adaptive,18,0.8562091503267973,12.5,26.0,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_001,30,charge_refund,immediate_only,5.0,18,0.8562091503267973,5.5,12.0,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_001,30,charge_refund,immediate_only,20.0,18,0.8562091503267973,19.5,40.0,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_002,30,stacking_only,all_nestable,adaptive,17,0.6470588235294118,18.4,31.666666666666668,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_002,30,stacking_only,all_nestable,5.0,17,0.6470588235294118,8.4,15.0,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_002,30,stacking_only,all_nestable,20.0,17,0.6470588235294118,19.4,33.333333333333336,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_002,30,charge_refund,all_nestable,adaptive,17,0.8823529411764706,13.8,138.0000000000005,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_002,30,charge_refund,all_nestable,5.0,17,0.8823529411764706,6.4,64.00000000000023,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_002,30,charge_refund,all_nestable,20.0,17,0.8823529411764706,20.0,200.0000000000007,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_002,30,charge_refund,immediate_only,adaptive,17,0.8308823529411765,13.8,138.0000000000005,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_002,30,charge_refund,immediate_only,5.0,17,0.8308823529411765,6.4,64.00000000000023,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_002,30,charge_refund,immediate_only,20.0,17,0.8308823529411765,20.0,200.0000000000007,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_003,30,stacking_only,all_nestable,adaptive,16,0.7333333333333333,19.5,10.285714285714286,True,1.0,False,True,0.8333333333333333,0.8000001907348633,energy model: the reference structure is not the QUBO ground state
+syn_30_003,30,stacking_only,all_nestable,5.0,16,0.7333333333333333,8.200000000000001,4.904761904761905,True,1.0,False,True,0.8333333333333333,0.8000001907348633,energy model: the reference structure is not the QUBO ground state
+syn_30_003,30,stacking_only,all_nestable,20.0,16,0.7333333333333333,17.9,9.523809523809524,True,1.0,False,True,0.8333333333333333,0.8000001907348633,energy model: the reference structure is not the QUBO ground state
+syn_30_003,30,charge_refund,all_nestable,adaptive,16,0.925,13.300000000000002,134.0000000000005,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_003,30,charge_refund,all_nestable,5.0,16,0.925,6.100000000000001,62.000000000000234,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_003,30,charge_refund,all_nestable,20.0,16,0.925,19.9,200.0000000000007,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_003,30,charge_refund,immediate_only,adaptive,16,0.8916666666666667,13.300000000000002,134.0000000000005,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_003,30,charge_refund,immediate_only,5.0,16,0.8916666666666667,6.100000000000001,62.000000000000234,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_003,30,charge_refund,immediate_only,20.0,16,0.8916666666666667,19.9,200.0000000000007,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_004,30,stacking_only,all_nestable,adaptive,17,0.8014705882352942,19.099999999999998,64.66666666666667,True,1.0,False,True,0.8,3.6999998092651367,energy model: the reference structure is not the QUBO ground state
+syn_30_004,30,stacking_only,all_nestable,5.0,17,0.8014705882352942,8.899999999999999,30.666666666666664,True,1.0,False,True,0.8,3.6999998092651367,energy model: the reference structure is not the QUBO ground state
+syn_30_004,30,stacking_only,all_nestable,20.0,17,0.8014705882352942,19.7,66.66666666666667,True,1.0,False,True,0.8,3.6999998092651367,energy model: the reference structure is not the QUBO ground state
+syn_30_004,30,charge_refund,all_nestable,adaptive,17,0.8970588235294118,13.0,65.99999999999994,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_004,30,charge_refund,all_nestable,5.0,17,0.8970588235294118,5.8999999999999995,30.49999999999997,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_004,30,charge_refund,all_nestable,20.0,17,0.8970588235294118,19.8,99.99999999999991,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_004,30,charge_refund,immediate_only,adaptive,17,0.8970588235294118,13.0,65.99999999999994,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_004,30,charge_refund,immediate_only,5.0,17,0.8970588235294118,5.8999999999999995,30.49999999999997,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_004,30,charge_refund,immediate_only,20.0,17,0.8970588235294118,19.8,99.99999999999991,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_005,30,stacking_only,all_nestable,adaptive,18,0.7777777777777778,17.8,13.714285714285715,True,1.0,False,True,0.0,1.700000286102295,energy model: the reference structure is not the QUBO ground state
+syn_30_005,30,stacking_only,all_nestable,5.0,18,0.7777777777777778,7.699999999999999,6.5,True,1.0,False,False,0.0,0.20000028610229492,energy model: the reference structure is not the QUBO ground state
+syn_30_005,30,stacking_only,all_nestable,20.0,18,0.7777777777777778,18.6,14.285714285714286,True,1.0,False,True,0.0,1.700000286102295,energy model: the reference structure is not the QUBO ground state
+syn_30_005,30,charge_refund,all_nestable,adaptive,18,0.9215686274509803,9.4,16.666666666666664,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_005,30,charge_refund,all_nestable,5.0,18,0.9215686274509803,4.4,8.333333333333332,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_005,30,charge_refund,all_nestable,20.0,18,0.9215686274509803,19.4,33.33333333333333,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_005,30,charge_refund,immediate_only,adaptive,18,0.8954248366013072,9.4,16.666666666666664,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_005,30,charge_refund,immediate_only,5.0,18,0.8954248366013072,4.4,8.333333333333332,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_30_005,30,charge_refund,immediate_only,20.0,18,0.8954248366013072,19.4,33.33333333333333,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_35_000,35,stacking_only,all_nestable,adaptive,18,0.8758169934640523,21.2,22.2,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_35_000,35,stacking_only,all_nestable,5.0,18,0.8758169934640523,9.6,10.6,True,1.0,False,False,1.0,0.0,energy model: the reference structure is not the QUBO ground state
+syn_35_000,35,stacking_only,all_nestable,20.0,18,0.8758169934640523,19.0,20.0,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_35_000,35,charge_refund,all_nestable,adaptive,18,0.9803921568627451,14.099999999999998,48.00000000000002,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_35_000,35,charge_refund,all_nestable,5.0,18,0.9803921568627451,6.3999999999999995,22.333333333333343,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_35_000,35,charge_refund,all_nestable,20.0,18,0.9803921568627451,19.7,66.6666666666667,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_35_000,35,charge_refund,immediate_only,adaptive,18,0.9673202614379085,14.099999999999998,48.00000000000002,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_35_000,35,charge_refund,immediate_only,5.0,18,0.9673202614379085,6.3999999999999995,22.333333333333343,True,1.0,True,True,1.0,0.0,no failure: all gates passed
+syn_35_000,35,charge_refund,immediate_only,20.0,18,0.9673202614379085,19.7,66.6666666666667,True,1.0,True,True,1.0,0.0,no failure: all gates passed

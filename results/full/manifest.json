@@ -1,0 +1,114 @@
+{
+  "git_commit": "f130d699f91bee91b8cb770dd1dbfa772c5f9b36",
+  "python_version": "3.11.14",
+  "platform": "macOS-26.5.1-arm64-arm-64bit",
+  "seed": 42,
+  "quick": false,
+  "experiments": {
+    "e1_formulation": {
+      "rows": 171,
+      "columns": [
+        "sequence_id",
+        "length",
+        "energy_model",
+        "nesting_policy",
+        "overlap_penalty",
+        "num_variables",
+        "qubo_density",
+        "coefficient_range",
+        "condition_ratio",
+        "representable",
+        "representable_fraction",
+        "is_qubo_ground_state",
+        "optimum_is_valid",
+        "base_pair_f1",
+        "energy_gap",
+        "attribution"
+      ]
+    },
+    "e2_encoding": {
+      "rows": 280,
+      "columns": [
+        "sequence_id",
+        "length",
+        "encoding",
+        "stem_mode",
+        "min_stem_length",
+        "num_variables",
+        "num_quadratic_terms",
+        "qubo_density",
+        "representable",
+        "representable_fraction",
+        "mfe_energy"
+      ]
+    },
+    "e3_solvers": {
+      "rows": 450,
+      "columns": [
+        "sequence_id",
+        "length",
+        "solver",
+        "seed",
+        "num_variables",
+        "qubo_energy",
+        "vienna_energy",
+        "energy_gap",
+        "base_pair_f1",
+        "found_ground_state",
+        "was_repaired",
+        "attribution",
+        "runtime_seconds"
+      ]
+    },
+    "e4_qaoa": {
+      "rows": 99,
+      "columns": [
+        "sequence_id",
+        "length",
+        "reps",
+        "objective",
+        "shots",
+        "noise_backend",
+        "logical_qubits",
+        "hamiltonian_terms",
+        "qubo_density",
+        "circuit_depth",
+        "transpiled_depth",
+        "one_qubit_gates",
+        "two_qubit_gates",
+        "multi_qubit_gates",
+        "swap_gates",
+        "optimizer_iterations",
+        "circuit_evaluations",
+        "best_qubo_energy",
+        "found_ground_state",
+        "base_pair_f1",
+        "energy_gap",
+        "runtime_seconds"
+      ]
+    },
+    "e5_pseudoknot": {
+      "rows": 8,
+      "columns": [
+        "sequence_id",
+        "length",
+        "has_pseudoknot",
+        "source",
+        "forbid_crossing",
+        "num_variables",
+        "qubo_density",
+        "representable_against_reference",
+        "representable_fraction",
+        "base_pair_f1_vs_reference",
+        "base_pair_precision",
+        "base_pair_recall",
+        "candidate_is_pseudoknotted",
+        "candidate_vienna_energy",
+        "vienna_structure",
+        "vienna_energy",
+        "vienna_recovers_crossing_pairs",
+        "num_crossing_pairs_in_reference"
+      ]
+    }
+  }
+}

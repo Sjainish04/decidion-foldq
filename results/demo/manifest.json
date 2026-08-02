@@ -1,0 +1,42 @@
+{
+  "sequence": "GGGGAAAAGCGCAAAACCCCAAAAGCGC",
+  "sequence_checksum": "02fcea4185c57cb2",
+  "python_version": "3.11.14",
+  "platform": "macOS-26.5.1-arm64-arm-64bit",
+  "config": {
+    "seed": 42,
+    "temperature_celsius": 37.0,
+    "allow_wobble": true,
+    "min_hairpin": 3,
+    "min_stem_length": 2,
+    "expand_substems": false,
+    "energy_model": "charge_refund",
+    "nesting_policy": "immediate_only",
+    "forbid_crossing": false,
+    "overlap_penalty": null,
+    "crossing_penalty": null,
+    "num_reads": 200,
+    "repair_invalid": true,
+    "exact_max_variables": 22,
+    "no_lonely_pairs": false,
+    "dangles": 2,
+    "energy_dangles": 0
+  },
+  "solver": "simulated_annealing",
+  "num_variables": 8,
+  "qubo_density": 0.39285714285714285,
+  "reference_structure": "((((............))))........",
+  "reference_energy": -6.0,
+  "predicted_structure": "............................",
+  "predicted_energy": NaN,
+  "gates": {
+    "representable": true,
+    "representable_fraction": 1.0,
+    "is_qubo_ground_state": false,
+    "solver_found_ground_state": true,
+    "energy_gap": NaN,
+    "base_pair_f1": 0.6666666666666666,
+    "attribution": "pseudoknotted candidate: the selected structure contains crossing pairs, which ViennaRNA cannot represent or score. The reference fold can hold at most one of any two crossing helices, so precision against it is capped even when the structure is correct. Divergence from the nested reference is expected here, not a failure"
+  },
+  "runtime_seconds": 0.027481290977448225
+}
