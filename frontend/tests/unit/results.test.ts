@@ -2,14 +2,22 @@ import { describe, expect, it } from "vitest";
 import { EXPERIMENTS, loadExperiment } from "@/lib/results";
 
 describe("bundled experiment results", () => {
-  it("exposes all five experiments", () => {
+  it("exposes every committed experiment", () => {
     expect(EXPERIMENTS).toEqual([
       "e1_formulation",
       "e2_encoding",
       "e3_solvers",
       "e4_qaoa",
       "e5_pseudoknot",
+      "e6_surrogate",
     ]);
+  });
+
+  it("loads e6 with the row count the manifest declares", () => {
+    const rows = loadExperiment("e6_surrogate");
+    expect(rows.length).toBe(30);
+    expect(rows[0]).toHaveProperty("spearman");
+    expect(rows[0]).toHaveProperty("regret_kcal_mol");
   });
 
   it("loads e3 with the expected row count and columns", () => {

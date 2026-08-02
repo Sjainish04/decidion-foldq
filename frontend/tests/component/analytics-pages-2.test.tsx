@@ -42,7 +42,10 @@ describe("resources page", () => {
   it("shows the shot budget as an axis, not only circuit depth", () => {
     render(<ResourcesPage />);
     expect(screen.getAllByText(/shots/i).length).toBeGreaterThan(0);
-    expect(screen.getByText(/sampling budget/i)).toBeInTheDocument();
+    // getAllBy, not getBy: the page now states the finding in the prose and again
+    // in the separability banner beneath the table. More than one mention is the
+    // point being made twice, not an ambiguous query.
+    expect(screen.getAllByText(/sampling budget/i).length).toBeGreaterThan(0);
   });
 
   it("states the configuration CVaR was compared at", () => {
@@ -76,5 +79,21 @@ describe("pseudoknots page", () => {
   it("reports the tRNA limitation alongside the wins", () => {
     render(<PseudoknotsPage />);
     expect(screen.getAllByText(/trna/i).length).toBeGreaterThan(0);
+  });
+});
+
+describe("resources page — statistical qualification", () => {
+  it("says plainly that the reps table does not establish a trend", () => {
+    // The site must not contradict the README, which states the reps intervals
+    // overlap at n=27 and the apparent trend is within sampling noise.
+    render(<ResourcesPage />);
+    expect(
+      screen.getByText(/does not establish that\s+deeper circuits help/i),
+    ).toBeInTheDocument();
+  });
+
+  it("shows a 95% interval beside every QAOA rate", () => {
+    render(<ResourcesPage />);
+    expect(screen.getAllByText(/95% interval/i).length).toBeGreaterThan(0);
   });
 });

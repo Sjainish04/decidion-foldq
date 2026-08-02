@@ -14,6 +14,7 @@ const EXPERIMENTS = [
   "e3_solvers",
   "e4_qaoa",
   "e5_pseudoknot",
+  "e6_surrogate",
 ];
 
 /** Coerce one CSV cell to a JS value.

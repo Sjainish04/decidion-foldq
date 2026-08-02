@@ -11,6 +11,7 @@ import {
   qaoaGrid,
   solverSummary,
 } from "@/lib/charts/transforms";
+import { formatInterval, overlaps, wilsonCi } from "@/lib/charts/uncertainty";
 
 const pct = (value: number) => `${(value * 100).toFixed(1)}%`;
 const fixed1 = (value: number) => value.toFixed(1);
@@ -25,6 +26,14 @@ export default function ResourcesPage() {
   const objective = objectiveComparison();
   const byLength = qaoaByLength();
   const { noiseless, noisy } = noiseComparison();
+
+  // Intervals, not bare rates. The README qualifies every headline rate this way
+  // and a page showing point estimates alone would invite precisely the
+  // over-reading the intervals exist to prevent.
+  const repsCi = qaoa.map((r) => wilsonCi(Math.round(r.groundStateRate * r.circuits), r.circuits));
+  const shotsCi = shots.map((r) => wilsonCi(Math.round(r.groundStateRate * r.circuits), r.circuits));
+  const repsSeparable = !overlaps(repsCi[0], repsCi[repsCi.length - 1]);
+  const shotsSeparable = !overlaps(shotsCi[0], shotsCi[shotsCi.length - 1]);
   const classical = solverSummary();
 
   return (
@@ -55,9 +64,10 @@ export default function ResourcesPage() {
             { key: "meanTwoQubitGates", label: "Two-qubit gates", format: fixed1 },
             { key: "meanF1", label: "Mean F1", format: fixed3 },
             { key: "groundStateRate", label: "Reached ground state", format: pct },
+            { key: "interval", label: "95% interval" },
             { key: "circuits", label: "Circuits" },
           ],
-          rows: qaoa,
+          rows: qaoa.map((r, i) => ({ ...r, interval: formatInterval(repsCi[i]) })),
         }}
       >
         <BarChart
@@ -81,8 +91,9 @@ export default function ResourcesPage() {
             { key: "circuits", label: "Circuits" },
             { key: "meanF1", label: "Mean F1", format: fixed3 },
             { key: "groundStateRate", label: "Reached ground state", format: pct },
+            { key: "interval", label: "95% interval" },
           ],
-          rows: shots,
+          rows: shots.map((r, i) => ({ ...r, interval: formatInterval(shotsCi[i]) })),
         }}
       >
         <BarChart
@@ -94,6 +105,15 @@ export default function ResourcesPage() {
           yMax={1}
         />
       </ChartCard>
+
+      {!repsSeparable && (
+        <p className="rounded border border-[var(--warning)]/40 bg-[var(--warning)]/10 p-3 text-sm">
+          <strong>Those intervals overlap, so the table above does not establish that
+          deeper circuits help.</strong> At {qaoa[0].circuits} circuits per row the
+          apparent trend is within sampling noise. Stated because an ordered column
+          invites the opposite reading.
+        </p>
+      )}
 
       <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
         <h2 className="text-base font-semibold">Depth does not compensate for a thin sample</h2>
@@ -124,6 +144,14 @@ export default function ResourcesPage() {
           }))}
         />
       </section>
+
+      {shotsSeparable && (
+        <p className="rounded border border-[var(--reference)]/40 bg-[var(--reference)]/10 p-3 text-sm">
+          <strong>Unlike the reps table, this separation is real:</strong> the smallest
+          and largest shot budgets have non-overlapping intervals. Where circuit depth
+          cannot be shown to matter at this sample size, the sampling budget can.
+        </p>
+      )}
 
       <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
         <h2 className="text-base font-semibold">CVaR against the expectation objective</h2>

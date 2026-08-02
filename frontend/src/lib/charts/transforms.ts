@@ -341,3 +341,77 @@ export function scalingByLength(): ScalingRow[] {
     }))
     .sort((a, b) => a.length - b.length);
 }
+
+export interface SurrogateFidelityRow {
+  sequenceId: string;
+  length: number;
+  candidateCount: number;
+  spearman: number;
+  kendall: number;
+  top1Match: boolean;
+  top5Overlap: number;
+  regret: number;
+}
+
+export interface SurrogateSummary {
+  sequences: number;
+  degenerate: number;
+  medianSpearman: number;
+  medianKendall: number;
+  top1Successes: number;
+  medianRegret: number;
+  meanRegret: number;
+  withinHalf: number;
+  withinOne: number;
+  withinTwo: number;
+  rows: SurrogateFidelityRow[];
+}
+
+const median = (values: number[]): number => {
+  if (values.length === 0) return NaN;
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+};
+
+/** Within-sequence agreement between the QUBO surrogate and ViennaRNA (E6).
+ *
+ *  This is the statistic the pooled cross-sequence correlation cannot supply.
+ *  Longer RNAs have more stems and more negative energies, so a correlation
+ *  taken across lengths is partly measuring length; the optimizer only ever
+ *  ranks candidates *within* one sequence.
+ *
+ *  Sequences whose ensemble was too small or too flat to rank yield an
+ *  undefined correlation. They are counted as degenerate and excluded, never
+ *  folded into the aggregate as agreement. */
+export function surrogateFidelity(): SurrogateSummary {
+  const all = loadExperiment("e6_surrogate").map((r) => ({
+    sequenceId: String(r.sequence_id),
+    length: num(r, "sequence_length"),
+    candidateCount: num(r, "candidate_count"),
+    spearman: num(r, "spearman"),
+    kendall: num(r, "kendall_tau"),
+    top1Match: r.top1_match === true,
+    top5Overlap: num(r, "top5_overlap"),
+    regret: num(r, "regret_kcal_mol"),
+  }));
+
+  const usable = all.filter((r) => r.candidateCount >= 3 && Number.isFinite(r.spearman));
+  const regrets = usable.map((r) => r.regret);
+  const within = (limit: number) =>
+    regrets.length === 0 ? 0 : regrets.filter((g) => g <= limit).length / regrets.length;
+
+  return {
+    sequences: usable.length,
+    degenerate: all.length - usable.length,
+    medianSpearman: median(usable.map((r) => r.spearman)),
+    medianKendall: median(usable.map((r) => r.kendall)),
+    top1Successes: usable.filter((r) => r.top1Match).length,
+    medianRegret: median(regrets),
+    meanRegret: mean(regrets),
+    withinHalf: within(0.5),
+    withinOne: within(1.0),
+    withinTwo: within(2.0),
+    rows: usable.sort((a, b) => b.spearman - a.spearman),
+  };
+}

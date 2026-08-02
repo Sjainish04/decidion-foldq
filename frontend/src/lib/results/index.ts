@@ -3,6 +3,7 @@ import e2 from "./data/e2_encoding.json";
 import e3 from "./data/e3_solvers.json";
 import e4 from "./data/e4_qaoa.json";
 import e5 from "./data/e5_pseudoknot.json";
+import e6 from "./data/e6_surrogate.json";
 
 export const EXPERIMENTS = [
   "e1_formulation",
@@ -10,6 +11,7 @@ export const EXPERIMENTS = [
   "e3_solvers",
   "e4_qaoa",
   "e5_pseudoknot",
+  "e6_surrogate",
 ] as const;
 
 export type ExperimentName = (typeof EXPERIMENTS)[number];
@@ -24,6 +26,7 @@ const DATA: Record<ExperimentName, Row[]> = {
   e3_solvers: e3 as Row[],
   e4_qaoa: e4 as Row[],
   e5_pseudoknot: e5 as Row[],
+  e6_surrogate: e6 as Row[],
 };
 
 export function loadExperiment(name: ExperimentName): Row[] {
