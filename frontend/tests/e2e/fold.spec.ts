@@ -21,6 +21,17 @@ test("folds a sequence end to end and exports the decision card", async ({ page 
 
 test("shows the pseudoknot caveat when crossings are allowed", async ({ page }) => {
   await page.goto("/foldq/new");
-  await page.getByLabel(/allow pseudoknots/i).check();
+
+  // Wait for the page to be interactive before toggling anything. The solver
+  // options are fetched client-side, so their presence means React has hydrated
+  // and the checkbox's onChange is attached. Clicking earlier flips the DOM
+  // checkbox without updating the store, so the caveat never renders -- which is
+  // why this passed alone and failed in a full run, where the dev server is busy
+  // compiling other routes and hydration lands later.
+  await expect(page.getByRole("option", { name: "exact" })).toBeAttached();
+
+  const toggle = page.getByLabel(/allow pseudoknots/i);
+  await toggle.check();
+  await expect(toggle).toBeChecked();
   await expect(page.getByText(/precision against a nested reference is capped/i)).toBeVisible();
 });
