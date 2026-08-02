@@ -112,3 +112,40 @@ def test_allowed_origins_never_silently_becomes_a_wildcard(monkeypatch):
     monkeypatch.setenv("FOLDQ_ALLOWED_ORIGINS", "   ")
     assert allowed_origins() == ["http://localhost:3000"]
     assert "*" not in allowed_origins()
+
+
+def test_qaoa_is_not_advertised_without_the_quantum_extra(monkeypatch):
+    """The registry must not offer a solver the deployment cannot run.
+
+    Guards a real deployment case: a size-constrained host installs the API
+    without the quantum extra, and every qiskit import in the solver modules is
+    deferred into a function body, so importing them succeeds regardless.
+    """
+    import importlib
+    import importlib.util
+
+    real_find_spec = importlib.util.find_spec
+
+    def without_qiskit(name, package=None):
+        if name in {"qiskit", "qiskit_aer"}:
+            return None
+        return real_find_spec(name, package)
+
+    monkeypatch.setattr(importlib.util, "find_spec", without_qiskit)
+    pipeline = importlib.reload(importlib.import_module("foldq.pipeline"))
+    try:
+        assert "qaoa" not in pipeline.SOLVER_REGISTRY
+        assert "cvar_qaoa" not in pipeline.SOLVER_REGISTRY
+        # the classical solvers must all survive
+        assert "simulated_annealing" in pipeline.SOLVER_REGISTRY
+        assert "exact" in pipeline.SOLVER_REGISTRY
+    finally:
+        monkeypatch.undo()
+        importlib.reload(pipeline)
+
+
+def test_qaoa_is_advertised_when_qiskit_is_present():
+    from foldq.pipeline import SOLVER_REGISTRY
+
+    assert "qaoa" in SOLVER_REGISTRY
+    assert "cvar_qaoa" in SOLVER_REGISTRY

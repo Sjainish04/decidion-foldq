@@ -34,11 +34,31 @@ SOLVER_REGISTRY: dict[str, Callable[[], FoldSolver]] = {
 
 
 def _register_quantum_solvers() -> None:
-    """QAOA needs the optional quantum extra; register it only if importable."""
+    """Register the QAOA solvers only where the quantum extra is actually present.
+
+    Availability is probed with `find_spec` as well as guarded by a try/except.
+    The try/except alone reads like it would work and cannot: every
+    qiskit import in `foldq.solvers.qaoa` and `foldq.qubo.ising` sits inside a
+    function body, so the module imports cleanly with no qiskit installed and the
+    ImportError never fires. The registry would then advertise `qaoa` and
+    `cvar_qaoa` on a deployment that cannot run them, and the failure would
+    surface only once a user picked one.
+
+    Both guards below are load-bearing and neither replaces the other: the probe
+    catches a missing extra, the try/except catches the solver module failing to
+    import for any other reason.
+    """
+    from importlib.util import find_spec
+
+    for module in ("qiskit", "qiskit_aer"):
+        if find_spec(module) is None:
+            return
+
     try:
         from foldq.solvers.qaoa import QAOASolver
     except ImportError:
         return
+
     SOLVER_REGISTRY["qaoa"] = QAOASolver
     SOLVER_REGISTRY["cvar_qaoa"] = lambda: QAOASolver(objective="cvar")
 
