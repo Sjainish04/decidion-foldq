@@ -83,3 +83,32 @@ def test_pseudoknot_mode_flags_the_candidate(client):
     ).json()
     assert body["candidate"]["is_pseudoknotted"] is True
     assert "pseudoknot" in body["gates"]["attribution"].lower()
+
+
+def test_allowed_origins_defaults_to_local_development(monkeypatch):
+    from foldq.api.app import allowed_origins
+
+    monkeypatch.delenv("FOLDQ_ALLOWED_ORIGINS", raising=False)
+    assert allowed_origins() == ["http://localhost:3000"]
+
+
+def test_allowed_origins_reads_a_comma_separated_list(monkeypatch):
+    from foldq.api.app import allowed_origins
+
+    monkeypatch.setenv(
+        "FOLDQ_ALLOWED_ORIGINS",
+        "https://foldq.vercel.app, https://preview.vercel.app ",
+    )
+    assert allowed_origins() == [
+        "https://foldq.vercel.app",
+        "https://preview.vercel.app",
+    ]
+
+
+def test_allowed_origins_never_silently_becomes_a_wildcard(monkeypatch):
+    # A blank value must fall back to the explicit default, not to "*".
+    from foldq.api.app import allowed_origins
+
+    monkeypatch.setenv("FOLDQ_ALLOWED_ORIGINS", "   ")
+    assert allowed_origins() == ["http://localhost:3000"]
+    assert "*" not in allowed_origins()
