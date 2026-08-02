@@ -36,6 +36,9 @@ dev = [
 # suite. A judged submission has to install the same way months from now, so this
 # extra is bounded like `viennarna` and `qiskit` are.
 api = ["fastapi>=0.115,<1", "uvicorn[standard]>=0.32,<1", "httpx>=0.27,<1"]
+# Statistical analysis of the project's own results. Kept out of the `api` extra
+# on purpose: the deployed function has a size limit and never runs this code.
+analysis = ["scikit-learn>=1.5,<2"]
 
 [project.scripts]
 foldq = "foldq.cli:app"
@@ -58,6 +61,12 @@ select = ["E", "F", "I", "N", "UP", "B", "SIM"]
 # typer requires Option()/Argument() calls as parameter defaults; B008 does not
 # apply to this idiom.
 "src/foldq/cli.py" = ["B008"]
+# Capital X for a design matrix and lowercase y for a target is the universal
+# convention in statistics and is what scikit-learn's own API uses. Renaming
+# these to satisfy a Python naming rule would make the linear algebra harder to
+# follow, not easier.
+"src/foldq/analysis/drivers.py" = ["N806"]
+"src/foldq/analysis/multivariate.py" = ["N806"]
 
 [tool.mypy]
 python_version = "3.11"

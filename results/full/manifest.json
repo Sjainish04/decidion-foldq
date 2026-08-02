@@ -136,5 +136,12 @@
     "resource_scaling.png",
     "solver_comparison.png",
     "variable_scaling.png"
-  ]
+  ],
+  "derived": {
+    "e7_analysis.json": {
+      "git_commit": "1928deb4d434ea336917fbb8e075d31d8f3f58b6",
+      "generated_on": "2026-08-02",
+      "note": "Computed FROM the CSVs in this directory rather than from a new sweep, so it carries no sequences of its own. Deterministic: re-running reproduces it byte-for-byte."
+    }
+  }
 }
