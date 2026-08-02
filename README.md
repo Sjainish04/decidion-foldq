@@ -1,5 +1,11 @@
 # Decidion FoldQ
 
+[![Quality](https://github.com/Sjainish04/decidion-foldq/actions/workflows/quality.yml/badge.svg)](https://github.com/Sjainish04/decidion-foldq/actions/workflows/quality.yml)
+[![Scientific smoke](https://github.com/Sjainish04/decidion-foldq/actions/workflows/scientific-smoke.yml/badge.svg)](https://github.com/Sjainish04/decidion-foldq/actions/workflows/scientific-smoke.yml)
+[![Frontend](https://github.com/Sjainish04/decidion-foldq/actions/workflows/frontend.yml/badge.svg)](https://github.com/Sjainish04/decidion-foldq/actions/workflows/frontend.yml)
+[![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](pyproject.toml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
 ## Explainable Hybrid Quantum-Classical Optimization for mRNA Secondary-Structure Prediction
 
 > A reproducible research platform that formulates RNA secondary-structure prediction as a

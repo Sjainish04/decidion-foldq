@@ -1,0 +1,44 @@
+name: Quality
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python:
+    name: Python ${{ matrix.python }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 3.11 only, on purpose. pyproject pins requires-python to >=3.11,<3.12
+        # because the scientific stack is what the published results were produced
+        # with; testing another interpreter would test a configuration this project
+        # does not claim to support.
+        python: ["3.11"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install the locked environment
+        run: uv sync --frozen --extra dev --extra quantum --extra api
+
+      - name: Lint
+        run: uv run ruff check src tests
+
+      - name: Format check
+        run: uv run ruff format --check src tests
+
+      - name: Types
+        run: uv run mypy src
+
+      - name: Tests
+        run: uv run pytest tests -q
