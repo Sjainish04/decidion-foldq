@@ -21,6 +21,19 @@
 
   --classical: #0ea5e9;
   --quantum-inspired: #8b5cf6;
+
+  /* --quantum-inspired is a CHART colour and must not be used for text.
+     Against every surface in either theme it lands between 3.87:1 and 4.35:1 —
+     fine for a non-text graphic (WCAG 1.4.11 asks 3:1) but short of the 4.5:1
+     that WCAG 1.4.3 AA requires of body text. axe caught two such uses; a
+     contrast sweep found the token fails as text on all four surfaces.
+
+     No single value can serve as text in both themes — verified by search, not
+     assumed — because it must darken against white and lighten against near
+     black. Hence a per-theme text accent, plus one fixed strong tone dark
+     enough to carry white text on a filled control. */
+  --accent-text: #733eef; /* on light surfaces: min 5.23:1 */
+  --accent-strong: #7049ca; /* white text on it: 6.01:1 */
   --quantum: #d946ef;
   --reference: #10b981;
   --warning: #f59e0b;
@@ -34,6 +47,9 @@
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
   --border: #22304a;
+  /* Lighter than the light-theme accent, for the same reason in reverse:
+     on #0d1422 / #121c2d this reaches min 5.13:1. */
+  --accent-text: #9c76f4;
 }
 
 body {

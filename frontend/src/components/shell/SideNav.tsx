@@ -10,7 +10,7 @@ export function SideNav() {
   return (
     <nav aria-label="Primary" className="w-60 shrink-0 border-r border-[var(--border)] p-4">
       <Link href="/" className="mb-6 block text-lg font-semibold">
-        Decidion <span className="text-[var(--quantum-inspired)]">FoldQ</span>
+        Decidion <span className="text-[var(--accent-text)]">FoldQ</span>
       </Link>
       {NAV_SECTIONS.map((section) => (
         <div key={section.label} className="mb-5">

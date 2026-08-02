@@ -14,7 +14,7 @@ export function StructureCard({
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <Link
           href={`/structures/${structure.pdb_id}`}
-          className="font-mono text-sm font-semibold text-[var(--quantum-inspired)]"
+          className="font-mono text-sm font-semibold text-[var(--accent-text)]"
         >
           {structure.pdb_id}
         </Link>

@@ -65,7 +65,7 @@ export default function DashboardPage() {
         </p>
         <Link
           href="/foldq/new"
-          className="mt-3 inline-block rounded bg-[var(--quantum-inspired)] px-4 py-2 text-sm font-medium text-white"
+          className="mt-3 inline-block rounded bg-[var(--accent-strong)] px-4 py-2 text-sm font-medium text-white"
         >
           New analysis
         </Link>

@@ -41,7 +41,7 @@ export function GateLegend() {
             className="rounded border border-[var(--border)] bg-[var(--surface-elevated)] p-3"
           >
             <p className="text-sm font-medium">
-              <span className="mr-2 text-[var(--quantum-inspired)]">Gate {gate.id}</span>
+              <span className="mr-2 text-[var(--accent-text)]">Gate {gate.id}</span>
               {gate.name}
             </p>
             <p className="mt-1 text-xs text-[var(--text-secondary)]">{gate.question}</p>

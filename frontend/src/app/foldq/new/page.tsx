@@ -37,7 +37,7 @@ export default function NewAnalysisPage() {
         <button
           disabled={invalid || mutation.isPending}
           onClick={() => mutation.mutate()}
-          className="rounded bg-[var(--quantum-inspired)] px-4 py-2 text-sm font-medium text-white disabled:opacity-40"
+          className="rounded bg-[var(--accent-strong)] px-4 py-2 text-sm font-medium text-white disabled:opacity-40"
         >
           {mutation.isPending ? "Folding…" : "Fold sequence"}
         </button>
