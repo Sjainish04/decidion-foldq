@@ -1,60 +1,98 @@
 @import "tailwindcss";
 
-/* Tailwind v4 uses CSS-first config: this makes `dark:` utilities key off the
-   `.dark` class on <html> (set in layout.tsx) instead of the OS-level
-   prefers-color-scheme media query, matching the class-driven token
-   overrides below. See https://tailwindcss.com/docs/dark-mode */
+/* Dark mode is class-driven off `.dark` on <html> rather than the OS media
+   query, so the theme toggle wins in both directions. */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Typography: Times New Roman, per the project owners.
+   Times is present on macOS and Windows; Liberation Serif and Tinos are the
+   metric-compatible substitutes shipped on most Linux distributions, so the
+   line lengths a reviewer sees stay close to the ones we laid out.
+
+   Palette from Decidion AI (decidion-ai.vercel.app): ink, clinical, bone, sand,
+   line, muted, terracotta, cyan.
+   
+   Light is the default because that is Decidion's own look. Two values are
+   deliberately NOT the brand hex: terracotta reaches only 2.6-3.1:1 as text on
+   these warm backgrounds, and muted only 2.3-2.7:1 as text on the dark ones,
+   both short of the 4.5:1 WCAG 1.4.3 AA requires. Each is darkened or lightened
+   by the minimum needed to pass, so the hue stays recognisable. The brand
+   terracotta itself is kept for charts and borders, where 3:1 is the bar.
+
+   One :root block on purpose: a second one would shadow this in any lookup that
+   matches the first it finds. */
 :root {
-  --background: #f8fafc;
+  --font-body: "Times New Roman", Times, "Liberation Serif", Tinos, serif;
+  /* Numbers stay in a mono face. A serif's proportional digits make columns of
+     measurements ragged, and nearly every number here sits in a table meant to
+     be compared down the column. */
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+
+  --background: #faf7f2;        /* bone */
   --surface: #ffffff;
-  --surface-elevated: #f1f5f9;
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --border: #dbe4ee;
+  --surface-elevated: #efe9df;  /* sand */
+  --text-primary: #0a1628;      /* ink */
+  --text-secondary: #5c6678;    /* muted — 4.80:1 on sand */
+  --border: #d6d2c8;            /* line */
 
-  --rna-a: #16a34a;
-  --rna-u: #f59e0b;
-  --rna-c: #2563eb;
-  --rna-g: #dc2626;
+  --brand: #d97757;             /* terracotta, charts and borders only */
+  --brand-cyan: #7bb8c9;
+  --accent-text: #af4928;       /* 4.57:1 on the lightest surface */
+  --accent-strong: #c3512c;     /* white text on it: 4.63:1 */
 
-  --classical: #0ea5e9;
-  --quantum-inspired: #8b5cf6;
+  /* Nucleotides. Distinct in hue AND lightness so the encoding survives
+     greyscale printing and the common forms of colour blindness. */
+  --rna-a: #1f7a4d;
+  --rna-u: #b8791c;
+  --rna-c: #2563a8;
+  --rna-g: #b03a2e;
 
-  /* --quantum-inspired is a CHART colour and must not be used for text.
-     Against every surface in either theme it lands between 3.87:1 and 4.35:1 —
-     fine for a non-text graphic (WCAG 1.4.11 asks 3:1) but short of the 4.5:1
-     that WCAG 1.4.3 AA requires of body text. axe caught two such uses; a
-     contrast sweep found the token fails as text on all four surfaces.
-
-     No single value can serve as text in both themes — verified by search, not
-     assumed — because it must darken against white and lighten against near
-     black. Hence a per-theme text accent, plus one fixed strong tone dark
-     enough to carry white text on a filled control. */
-  --accent-text: #733eef; /* on light surfaces: min 5.23:1 */
-  --accent-strong: #7049ca; /* white text on it: 6.01:1 */
-  --quantum: #d946ef;
-  --reference: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
+  /* Solver classes, drawn toward the Decidion palette. */
+  --classical: #3a7d95;
+  --quantum-inspired: #d97757;
+  --quantum: #9b5aa8;
+  --reference: #1f7a4d;
+  --warning: #b8791c;
+  --danger: #b03a2e;
 }
 
 .dark {
-  --background: #070b14;
-  --surface: #0d1422;
-  --surface-elevated: #121c2d;
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --border: #22304a;
-  /* Lighter than the light-theme accent, for the same reason in reverse:
-     on #0d1422 / #121c2d this reaches min 5.13:1. */
-  --accent-text: #9c76f4;
+  --background: #0a1628;        /* ink */
+  --surface: #0f2540;           /* clinical */
+  --surface-elevated: #16304f;
+  --text-primary: #faf7f2;      /* bone */
+  --text-secondary: #8e98a9;    /* lightened muted — 4.60:1 on the elevated surface */
+  --border: #294260;
+
+  --accent-text: #db7f61;       /* lightened terracotta — 4.60:1 on the elevated surface */
+  --accent-strong: #c3512c;
+
+  --rna-a: #4ac27e;
+  --rna-u: #e0a34a;
+  --rna-c: #6aa9e8;
+  --rna-g: #e8736a;
+
+  --classical: #7bb8c9;         /* brand cyan */
+  --quantum-inspired: #d97757;  /* brand terracotta */
+  --quantum: #c48ad0;
+  --reference: #4ac27e;
+  --warning: #e0a34a;
+  --danger: #e8736a;
 }
 
 body {
   background: var(--background);
   color: var(--text-primary);
+  font-family: var(--font-body);
+}
+
+code,
+kbd,
+pre,
+samp,
+.tabular-nums,
+[class*="font-mono"] {
+  font-family: var(--font-mono);
 }
 
 @media (prefers-reduced-motion: reduce) {

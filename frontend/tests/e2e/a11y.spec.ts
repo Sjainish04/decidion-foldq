@@ -27,3 +27,18 @@ for (const route of ROUTES) {
     expect(results.violations).toEqual([]);
   });
 }
+
+// The palette defines both themes and the toggle switches between them, so a
+// sweep of the default theme alone leaves half the tokens untested. The two
+// contrast violations found in review were dark-mode ones, invisible to a
+// light-only run.
+for (const route of ROUTES) {
+  test(`${route} has no WCAG 2.2 AA violations in dark mode`, async ({ page }) => {
+    await page.goto(route);
+    await page.evaluate(() => document.documentElement.classList.add("dark"));
+    const results = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
+      .analyze();
+    expect(results.violations).toEqual([]);
+  });
+}

@@ -41,4 +41,37 @@ describe("design tokens", () => {
     expect(value(dark)).toBeDefined();
     expect(value(light)).not.toBe(value(dark));
   });
+
+  it("uses the Decidion palette", () => {
+    // Brand values from decidion-ai.vercel.app, so a reviewer can check them
+    // against the source rather than take the resemblance on trust.
+    for (const [name, hex] of [
+      ["ink", "#0a1628"],
+      ["clinical", "#0f2540"],
+      ["bone", "#faf7f2"],
+      ["sand", "#efe9df"],
+      ["line", "#d6d2c8"],
+      ["muted", "#5c6678"],
+      ["terracotta", "#d97757"],
+      ["cyan", "#7bb8c9"],
+    ]) {
+      expect(css, `${name} (${hex}) missing`).toContain(hex);
+    }
+  });
+
+  it("sets Times New Roman for body text and keeps numbers monospaced", () => {
+    expect(css).toMatch(/--font-body:\s*"Times New Roman"/);
+    // Serif proportional digits make a column of measurements ragged, and almost
+    // every number on this site sits in a table meant to be read down.
+    expect(css).toMatch(/--font-mono:/);
+    expect(css).toMatch(/\.tabular-nums[\s\S]*?font-family:\s*var\(--font-mono\)/);
+  });
+
+  it("does not use raw terracotta for text", () => {
+    // #d97757 reaches only 2.6-3.1:1 on these warm backgrounds. It stays a chart
+    // colour; --accent-text is the darkened variant that passes 4.5:1.
+    const light = css.match(/:root\s*\{[\s\S]*?\}/)![0];
+    expect(light).toMatch(/--accent-text:\s*#af4928/);
+    expect(light).not.toMatch(/--accent-text:\s*#d97757/);
+  });
 });
