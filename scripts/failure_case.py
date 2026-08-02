@@ -134,8 +134,11 @@ def main() -> None:
         "## Stems",
         "",
         f"- Candidate stems generated: **{len(candidate_stems)}**",
-        f"- Stems that could have supplied the missed pairs: "
-        f"{', '.join(stems_covering(false_negative, candidate_stems)) or '_none — those pairs were never available_'}",
+        "- Stems that could have supplied the missed pairs: "
+        + (
+            ", ".join(stems_covering(false_negative, candidate_stems))
+            or "_none — those pairs were never available_"
+        ),
         f"- Stems selected that contributed wrong pairs: "
         f"{', '.join(stems_covering(false_positive, candidate_stems)) or '_none_'}",
         "",

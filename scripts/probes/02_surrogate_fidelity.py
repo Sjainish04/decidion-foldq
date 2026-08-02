@@ -12,6 +12,7 @@ two length ranges README RQ4 quotes.
 """
 
 import random
+import statistics as st_
 
 import RNA
 
@@ -67,8 +68,8 @@ def stacking_only(seq, stem):
     tot = 0.0
     for a in range(len(stem) - 1):
         i, j = stem[a]
-        k, l = stem[a + 1]
-        tot += fc.eval_int_loop(i + 1, j + 1, k + 1, l + 1) / 100.0
+        k, length = stem[a + 1]
+        tot += fc.eval_int_loop(i + 1, j + 1, k + 1, length + 1) / 100.0
     return tot
 
 
@@ -132,12 +133,11 @@ for n in (30, 40, 50, 60, 80, 100):
             )
 
 # correlation across all samples
-import statistics as st_
 
 
 def corr(xs, ys):
     mx, my = st_.mean(xs), st_.mean(ys)
-    num = sum((a - mx) * (b - my) for a, b in zip(xs, ys))
+    num = sum((a - mx) * (b - my) for a, b in zip(xs, ys, strict=False))
     den = (sum((a - mx) ** 2 for a in xs) * sum((b - my) ** 2 for b in ys)) ** 0.5
     return num / den if den else float("nan")
 
@@ -150,18 +150,25 @@ print()
 print(f"samples: {len(rows)}")
 print(f"Pearson r  (sum isolated-stem energy)  vs ViennaRNA : {corr(iso, vien):.4f}")
 print(f"Pearson r  (pure stacking sum)         vs ViennaRNA : {corr(stk, vien):.4f}")
-print(f"mean signed error iso   : {st_.mean([a - b for a, b in zip(iso, vien)]):+.2f} kcal/mol")
+
+
+def _mean_error(predicted, reference, absolute=False):
+    deltas = [abs(a - b) if absolute else a - b for a, b in zip(predicted, reference, strict=True)]
+    return st_.mean(deltas)
+
+
+print(f"mean signed error iso   : {_mean_error(iso, vien):+.2f} kcal/mol")
 print(f"Pearson r  (stacking + hairpin closure) vs ViennaRNA : {corr(sph, vien):.4f}")
-print(f"mean signed error stack : {st_.mean([a - b for a, b in zip(stk, vien)]):+.2f} kcal/mol")
-print(f"mean signed error stk+hp: {st_.mean([a - b for a, b in zip(sph, vien)]):+.2f} kcal/mol")
-print(f"mean |err| stk+hp       : {st_.mean([abs(a - b) for a, b in zip(sph, vien)]):.2f} kcal/mol")
+print(f"mean signed error stack : {_mean_error(stk, vien):+.2f} kcal/mol")
+print(f"mean signed error stk+hp: {_mean_error(sph, vien):+.2f} kcal/mol")
+print(f"mean |err| stk+hp       : {_mean_error(sph, vien, absolute=True):.2f} kcal/mol")
 
 cr_all = [r[4] for r in rows]
 lengths = [r[5] for r in rows]
 
 
 def mae(xs, ys):
-    return st_.mean([abs(a - b) for a, b in zip(xs, ys)])
+    return st_.mean([abs(a - b) for a, b in zip(xs, ys, strict=False)])
 
 
 print()

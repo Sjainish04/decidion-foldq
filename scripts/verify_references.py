@@ -30,7 +30,10 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 API = "https://api.crossref.org/works"
-UA = "decidion-foldq/0.1 (https://github.com/Sjainish04/decidion-foldq; mailto:jainish.solanki@mail.utoronto.ca)"
+UA = (
+    "decidion-foldq/0.1 (https://github.com/Sjainish04/decidion-foldq; "
+    "mailto:jainish.solanki@mail.utoronto.ca)"
+)
 OUTPUT = Path("docs/references.json")
 
 
@@ -74,29 +77,43 @@ REFERENCES: list[Reference] = [
         "ViennaRNA Package 2.0",
         "reference implementation",
         doi="10.1186/1748-7188-6-26",
-        note="Every energy coefficient in this project comes from this package's Turner primitives.",
+        note=(
+            "Every energy coefficient in this project comes from this package's Turner primitives."
+        ),
     ),
     Reference(
         "lyngso2000",
         "RNA Pseudoknot Prediction in Energy-Based Models",
         "complexity result",
-        note="Establishes that pseudoknotted folding is NP-hard, which is why this project treats it as the interesting regime.",
+        note=(
+            "Establishes that pseudoknotted folding is NP-hard, which is why this "
+            "project treats it as the interesting regime."
+        ),
     ),
     Reference(
         "turner2010",
-        "NNDB: the nearest neighbor parameter database for predicting stability of nucleic acid secondary structure",
+        (
+            "NNDB: the nearest neighbor parameter database for predicting stability "
+            "of nucleic acid secondary structure"
+        ),
         "energy model",
         note="The nearest-neighbour parameters underlying the ViennaRNA energy model.",
     ),
     Reference(
         "zuker1981",
-        "Optimal computer folding of large RNA sequences using thermodynamics and auxiliary information",
+        (
+            "Optimal computer folding of large RNA sequences using thermodynamics "
+            "and auxiliary information"
+        ),
         "classical baseline",
         note="The dynamic program this project measures itself against and does not claim to beat.",
     ),
     Reference(
         "mccaskill1990",
-        "The equilibrium partition function and base pair binding probabilities for RNA secondary structure",
+        (
+            "The equilibrium partition function and base pair binding probabilities "
+            "for RNA secondary structure"
+        ),
         "classical baseline",
         note="Partition-function folding; the basis of the ensemble view ViennaRNA also exposes.",
     ),
@@ -147,7 +164,10 @@ REFERENCES: list[Reference] = [
     ),
     Reference(
         "kumar2025",
-        "Towards Secondary Structure Prediction of Longer mRNA Sequences Using a Quantum-Centric Optimization Scheme",
+        (
+            "Towards Secondary Structure Prediction of Longer mRNA Sequences Using "
+            "a Quantum-Centric Optimization Scheme"
+        ),
         "prior QUBO formulation",
         indexed=False,
         url="https://arxiv.org/abs/2505.05782",
@@ -161,11 +181,17 @@ REFERENCES: list[Reference] = [
         # search to disambiguate, and it returned nothing. Confirmed by fetching
         # this DOI directly (Nucleic Acids Research, 2000).
         doi="10.1093/nar/28.1.235",
-        note="The archive the structural-evidence layer queries; PDB 1EHZ is the tRNA benchmark's structure.",
+        note=(
+            "The archive the structural-evidence layer queries; PDB 1EHZ is the "
+            "tRNA benchmark's structure."
+        ),
     ),
     Reference(
         "shi2000",
-        "The crystal structure of yeast phenylalanine tRNA at 1.93 Å resolution: a classic structure revisited",
+        (
+            "The crystal structure of yeast phenylalanine tRNA at 1.93 Å resolution: "
+            "a classic structure revisited"
+        ),
         "structural data",
         note="PDB 1EHZ. The experimental structure of this project's 76-nt benchmark sequence.",
     ),

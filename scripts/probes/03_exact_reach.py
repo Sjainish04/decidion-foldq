@@ -83,8 +83,8 @@ for n in (30, 40, 50, 60, 80, 100, 120):
         E = 0.0
         for a in range(len(ps) - 1):
             i, j = ps[a]
-            k, l = ps[a + 1]
-            E += fcomp.eval_int_loop(i + 1, j + 1, k + 1, l + 1) / 100.0
+            k, length = ps[a + 1]
+            E += fcomp.eval_int_loop(i + 1, j + 1, k + 1, length + 1) / 100.0
         lin[idx] = E
 
     quad = {}
