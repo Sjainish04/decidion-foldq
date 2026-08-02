@@ -2,34 +2,20 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { GateLadder } from "@/components/foldq/GateLadder";
 import { RunSummary } from "@/components/foldq/RunSummary";
 import { StageTimeline } from "@/components/foldq/StageTimeline";
 import { StructureComparison } from "@/components/foldq/StructureComparison";
 import { foldSequence } from "@/lib/api/client";
-import { foldResponseSchema, type FoldResponse } from "@/lib/api/schemas";
+import { useCachedRun } from "@/lib/foldq/run-cache";
 import { useWorkspace } from "@/stores/workspace";
-
-function cached(runId: string): FoldResponse | null {
-  const raw = typeof window === "undefined" ? null : sessionStorage.getItem(`foldq:run:${runId}`);
-  if (!raw) return null;
-  const parsed = foldResponseSchema.safeParse(JSON.parse(raw));
-  return parsed.success ? parsed.data : null;
-}
 
 export default function RunPage() {
   const { runId } = useParams<{ runId: string }>();
   const workspace = useWorkspace();
 
-  // Read the session cache after mount, never during render. There is no
-  // sessionStorage on the server, so reading it in the component body reports a
-  // miss on every server render — which here meant re-folding through the API on
-  // every navigation to a run we already had, and failing outright with the API
-  // down. `undefined` distinguishes "not looked yet" from "looked and found none".
-  const [initial, setInitial] = useState<FoldResponse | null | undefined>(undefined);
-  useEffect(() => setInitial(cached(runId)), [runId]);
+  const initial = useCachedRun(runId);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["run", runId],

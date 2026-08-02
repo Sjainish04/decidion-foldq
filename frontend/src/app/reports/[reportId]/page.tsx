@@ -1,33 +1,13 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
 import { DecisionCardFrame } from "@/components/foldq/DecisionCardFrame";
-import { foldResponseSchema, type FoldResponse } from "@/lib/api/schemas";
 import { CSV_HEADER, downloadText, runToCsvRow } from "@/lib/foldq/export";
-
-function cached(runId: string): FoldResponse | null {
-  const raw =
-    typeof window === "undefined" ? null : sessionStorage.getItem(`foldq:run:${runId}`);
-  if (!raw) return null;
-  const parsed = foldResponseSchema.safeParse(JSON.parse(raw));
-  return parsed.success ? parsed.data : null;
-}
+import { useCachedRun } from "@/lib/foldq/run-cache";
 
 export default function ReportPage() {
   const { reportId } = useParams<{ reportId: string }>();
-  // sessionStorage is read after mount, not during render.
-  //
-  // Reading it in the component body meant the server render — where there is no
-  // sessionStorage — always took the "not in this browser session" branch, and the
-  // client had no reliable chance to replace that markup. The card was reachable
-  // by its own component test but not through an actual navigation.
-  //
-  // `undefined` is the third state and is load-bearing: it lets the server and the
-  // first client render agree on "still loading", so the alert only ever appears
-  // once we have genuinely looked and found nothing.
-  const [result, setResult] = useState<FoldResponse | null | undefined>(undefined);
-  useEffect(() => setResult(cached(reportId)), [reportId]);
+  const result = useCachedRun(reportId);
 
   if (result === undefined) {
     return (
