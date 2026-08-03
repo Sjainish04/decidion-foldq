@@ -8,6 +8,13 @@ export interface ScatterSeries {
   points: [number, number][];
   color?: string;
   symbol?: string;
+  symbolSize?: number;
+  /** Join the points with a line, in the order given.
+   *
+   *  Used for a Pareto frontier, where the connection is the meaning: it shows
+   *  the exchange curve rather than leaving a reader to infer which scattered
+   *  markers are the undominated ones. */
+  connected?: boolean;
 }
 
 export function ScatterChart({
@@ -29,10 +36,14 @@ export function ScatterChart({
     yAxis: { type: "value", name: yLabel },
     series: series.map((s) => ({
       name: s.name,
-      type: "scatter",
+      // A connected series is drawn as a line with visible points, which is how
+      // a frontier reads; an unconnected one stays a plain scatter.
+      type: s.connected ? "line" : "scatter",
       data: s.points,
       symbol: s.symbol ?? "circle",
-      symbolSize: 9,
+      symbolSize: s.symbolSize ?? 9,
+      showSymbol: true,
+      lineStyle: s.connected ? { width: 2, type: "dashed" } : undefined,
       itemStyle: s.color ? { color: s.color } : undefined,
     })),
   };

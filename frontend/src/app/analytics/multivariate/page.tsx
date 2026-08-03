@@ -1,4 +1,7 @@
 import { BarChart } from "@/components/analytics/BarChart";
+import { CoefficientPlot } from "@/components/analytics/CoefficientPlot";
+import { Heatmap } from "@/components/analytics/Heatmap";
+import { CHART_COLORS } from "@/lib/charts/theme";
 import { ChartCard } from "@/components/analytics/ChartCard";
 import { DataTable } from "@/components/analytics/DataTable";
 import { LineChart } from "@/components/analytics/LineChart";
@@ -49,24 +52,30 @@ function spreadPhrase(spreads: ReturnType<typeof factorSpreads>): string {
   return `${parts.slice(0, -1).join("; ")}; and ${parts[parts.length - 1]}`;
 }
 
-function CorrelationTable({ matrix }: { matrix: CorrelationMatrix }) {
-  const rows = matrix.columns.map((rowName, i) => {
-    const row: Record<string, string | number> = { variable: rowName };
-    matrix.columns.forEach((colName, j) => {
-      row[colName] = matrix.matrix[i][j];
-    });
-    return row;
-  });
-  return (
-    <DataTable
-      caption={`${matrix.method} correlation matrix over ${matrix.columns.join(", ")}`}
-      columns={[
-        { key: "variable", label: "" },
-        ...matrix.columns.map((c) => ({ key: c, label: c, format: fixed2 })),
-      ]}
-      rows={rows}
-    />
-  );
+/** The correlation matrix as DataTable columns and rows.
+ *
+ *  The heatmap is drawn to a canvas, so on its own it is unreadable to a screen
+ *  reader and invisible in a greyscale print. This feeds ChartCard's disclosure
+ *  so the same numbers remain available as text -- the rule this project applies
+ *  to every chart, and one the heatmap would otherwise have quietly broken,
+ *  because the correlation used to BE the table.
+ */
+function correlationTable(matrix: CorrelationMatrix, caption: string) {
+  return {
+    caption,
+    columns: [
+      { key: "feature", label: "" },
+      ...matrix.columns.map((c) => ({
+        key: c,
+        label: c,
+        format: (v: number) => v.toFixed(3),
+      })),
+    ],
+    rows: matrix.matrix.map((row, i) => ({
+      feature: matrix.columns[i],
+      ...Object.fromEntries(row.map((v, j) => [matrix.columns[j], v])),
+    })),
+  };
 }
 
 function regressionRows(model: RegressionModel) {
@@ -80,16 +89,27 @@ function regressionRows(model: RegressionModel) {
 function paretoSeries(points: ParetoPoint[]) {
   const frontier = points.filter((p) => p.on_frontier);
   const rest = points.filter((p) => !p.on_frontier);
+  // Frontier points are drawn larger, in a different shape AND a different
+  // colour, then joined by a line. Shape and connection carry the distinction on
+  // their own, so the chart still reads in greyscale — colour alone would not.
   return [
     {
       name: "On frontier",
-      points: frontier.map((p) => [p.cost, p.benefit] as [number, number]),
-      color: "#10b981",
+      points: frontier
+        .slice()
+        .sort((a, b) => a.cost - b.cost)
+        .map((p) => [p.cost, p.benefit] as [number, number]),
+      color: CHART_COLORS.reference,
+      symbol: "diamond",
+      symbolSize: 14,
+      connected: true,
     },
     {
-      name: "Off frontier",
+      name: "Dominated",
       points: rest.map((p) => [p.cost, p.benefit] as [number, number]),
-      color: "#64748b",
+      color: CHART_COLORS.muted,
+      symbol: "circle",
+      symbolSize: 8,
     },
   ];
 }
@@ -152,16 +172,18 @@ export default function MultivariatePage() {
         title="Correlation matrix — E1 instance features"
         description={`Pairwise ${correlations.e1.method} correlation between the instance-geometry features and base-pair F1.`}
         source={SOURCE}
+        table={correlationTable(correlations.e1, "E1 correlation matrix")}
       >
-        <CorrelationTable matrix={correlations.e1} />
+        <Heatmap columns={correlations.e1.columns} matrix={correlations.e1.matrix} />
       </ChartCard>
 
       <ChartCard
         title="Correlation matrix — E3 solver behaviour"
         description={`Pairwise ${correlations.e3.method} correlation between instance size, energy terms, accuracy and runtime.`}
         source={SOURCE}
+        table={correlationTable(correlations.e3, "E3 correlation matrix")}
       >
-        <CorrelationTable matrix={correlations.e3} />
+        <Heatmap columns={correlations.e3.columns} matrix={correlations.e3.matrix} height={430} />
       </ChartCard>
 
       <ChartCard
@@ -224,10 +246,13 @@ export default function MultivariatePage() {
           rows: regressionRows(f1Model),
         }}
       >
-        <BarChart
-          categories={f1Model.coefficients.map((c) => c.name)}
-          series={[{ name: "Standardised β", data: f1Model.coefficients.map((c) => c.beta) }]}
-          yLabel="β"
+        <CoefficientPlot
+          coefficients={f1Model.coefficients.map((c) => ({
+            name: c.name,
+            beta: c.beta,
+            std_error: c.std_error,
+            significant: c.p_value < 0.05,
+          }))}
         />
       </ChartCard>
 
