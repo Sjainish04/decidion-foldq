@@ -7,9 +7,13 @@ instance passes the exact solver's ceiling" is a step, not a slope.
 Three things are reported, and each is chosen so the result cannot flatter
 itself:
 
-- **Out-of-fold predictions.** Every point is predicted by a model that never
-  saw it. An in-sample parity plot for a random forest is close to a straight
-  line by construction and says nothing about generalisation.
+- **Grouped out-of-fold predictions.** Every point is predicted by a model that
+  never saw it *or any other row from the same sequence*. Plain shuffled
+  cross-validation is not enough here: each sequence contributes 18 rows (one per
+  solver and seed), and (length, num_variables) uniquely identifies it, so a
+  shuffled split lets the forest recognise a sequence it has already seen and
+  reproduce its known difficulty. That scored R2 0.835 while generalising to a
+  new sequence barely at all.
 - **A learning curve.** Whether the ceiling is the model or the data. If the
   curve is still climbing at the full sample, the honest statement is that there
   is not enough data yet.
@@ -39,6 +43,8 @@ class OutOfFoldFit:
     rmse: float
     actual: list[float]
     predicted: list[float]
+    #: Column the folds were grouped on, or None for a row-wise split.
+    grouped_by: str | None = None
 
     @property
     def generalises(self) -> bool:
@@ -71,16 +77,35 @@ def _matrix(
 
 
 def out_of_fold_fit(
-    frame: pd.DataFrame, outcome: str, features: list[str], *, folds: int = 5, seed: int = 42
+    frame: pd.DataFrame,
+    outcome: str,
+    features: list[str],
+    *,
+    folds: int = 5,
+    seed: int = 42,
+    group: str | None = None,
 ) -> OutOfFoldFit:
-    """Cross-validated random forest, returning predictions for every point."""
+    """Cross-validated random forest, returning predictions for every point.
+
+    Pass `group` (e.g. "sequence_id") whenever rows are repeated measurements of
+    the same underlying thing. Without it the split is row-wise, and a model can
+    score well by recognising a unit it has already seen rather than by
+    generalising to a new one.
+    """
     from sklearn.ensemble import RandomForestRegressor
-    from sklearn.model_selection import KFold, cross_val_predict
+    from sklearn.model_selection import GroupKFold, KFold, cross_val_predict
 
     X, y, names = _matrix(frame, outcome, features)
-    folds = max(2, min(folds, len(y) // 2))
     model = RandomForestRegressor(n_estimators=300, random_state=seed, n_jobs=1)
-    predicted = cross_val_predict(model, X, y, cv=KFold(folds, shuffle=True, random_state=seed))
+
+    if group is not None:
+        groups = frame.loc[frame[[outcome, *features]].dropna().index, group].to_numpy()
+        folds = max(2, min(folds, len(set(groups))))
+        splitter = GroupKFold(n_splits=folds)
+        predicted = cross_val_predict(model, X, y, cv=splitter, groups=groups)
+    else:
+        folds = max(2, min(folds, len(y) // 2))
+        predicted = cross_val_predict(model, X, y, cv=KFold(folds, shuffle=True, random_state=seed))
 
     residual = y - predicted
     ss_res = float(residual @ residual)
@@ -90,6 +115,7 @@ def out_of_fold_fit(
         features=names,
         n=len(y),
         folds=folds,
+        grouped_by=group,
         r2=float(1.0 - ss_res / ss_tot) if ss_tot > 0 else float("nan"),
         mae=float(np.abs(residual).mean()),
         rmse=float(np.sqrt((residual**2).mean())),
@@ -99,7 +125,13 @@ def out_of_fold_fit(
 
 
 def permutation_importance(
-    frame: pd.DataFrame, outcome: str, features: list[str], *, seed: int = 42, repeats: int = 20
+    frame: pd.DataFrame,
+    outcome: str,
+    features: list[str],
+    *,
+    seed: int = 42,
+    repeats: int = 20,
+    group: str | None = None,
 ) -> list[FeatureImportance]:
     """How much held-out accuracy each feature is worth.
 
@@ -109,10 +141,20 @@ def permutation_importance(
     """
     from sklearn.ensemble import RandomForestRegressor
     from sklearn.inspection import permutation_importance as sk_permutation
-    from sklearn.model_selection import train_test_split
+    from sklearn.model_selection import GroupShuffleSplit, train_test_split
 
     X, y, names = _matrix(frame, outcome, features)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=seed)
+    if group is not None:
+        # Hold out whole groups, or the "test" set contains rows from sequences
+        # the model already trained on and every feature looks informative.
+        groups = frame.loc[frame[[outcome, *features]].dropna().index, group].to_numpy()
+        train_idx, test_idx = next(
+            GroupShuffleSplit(n_splits=1, test_size=0.3, random_state=seed).split(X, y, groups)
+        )
+        X_train, X_test = X[train_idx], X[test_idx]
+        y_train, y_test = y[train_idx], y[test_idx]
+    else:
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=seed)
     model = RandomForestRegressor(n_estimators=300, random_state=seed, n_jobs=1).fit(
         X_train, y_train
     )
@@ -130,7 +172,12 @@ def permutation_importance(
 
 
 def learning_curve(
-    frame: pd.DataFrame, outcome: str, features: list[str], *, seed: int = 42
+    frame: pd.DataFrame,
+    outcome: str,
+    features: list[str],
+    *,
+    seed: int = 42,
+    group: str | None = None,
 ) -> list[LearningPoint]:
     """Held-out accuracy against training-set size.
 
@@ -139,14 +186,26 @@ def learning_curve(
     rather than presenting the final score as a ceiling.
     """
     from sklearn.ensemble import RandomForestRegressor
+    from sklearn.model_selection import GroupKFold, KFold
     from sklearn.model_selection import learning_curve as sk_learning_curve
 
     X, y, _ = _matrix(frame, outcome, features)
+    groups = None
+    if group is not None:
+        groups = frame.loc[frame[[outcome, *features]].dropna().index, group].to_numpy()
+        cv = GroupKFold(n_splits=max(2, min(5, len(set(groups)))))
+    else:
+        # Shuffled explicitly: the CSVs are ordered by sequence, so an unshuffled
+        # split would hold out whole blocks and understate the score for a reason
+        # that has nothing to do with sample size.
+        cv = KFold(n_splits=min(5, max(2, len(y) // 10)), shuffle=True, random_state=seed)
+
     sizes, train, test = sk_learning_curve(
         RandomForestRegressor(n_estimators=200, random_state=seed, n_jobs=1),
         X,
         y,
-        cv=min(5, max(2, len(y) // 10)),
+        cv=cv,
+        groups=groups,
         train_sizes=np.linspace(0.2, 1.0, 5),
         random_state=seed,
         n_jobs=1,

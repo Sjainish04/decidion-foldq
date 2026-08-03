@@ -122,7 +122,10 @@ export default function MultivariatePage() {
   const gateBSpreads = factorSpreads(partial_dependence.gate_b);
   const f1Spreads = factorSpreads(partial_dependence.base_pair_f1);
 
-  const rf = random_forest.f1_from_design_factors;
+  // The grouped fit is the headline: no sequence spans train and test, so this
+  // is what the model achieves on a sequence it has never seen.
+  const rf = random_forest.f1_from_design_factors_grouped;
+  const leaky = random_forest.f1_from_design_factors_rowwise_leaky;
   const parity = parityPoints(rf);
   const diagonal = diagonalReference(0, 1, 10);
   const learningCurve = random_forest.learning_curve;
@@ -399,14 +402,40 @@ export default function MultivariatePage() {
         />
       </ChartCard>
 
-      <section className="rounded-lg border border-[var(--reference)]/40 bg-[var(--reference)]/10 p-4">
-        <h2 className="text-base font-semibold">This parity plot is out-of-fold</h2>
-        <p className="mt-1 text-sm text-[var(--text-secondary)]">
-          {random_forest.note} Across {rf.folds}-fold cross-validation on {rf.n} E3 runs,
-          the model reaches R² = {fixed3(rf.r2)}, MAE = {fixed3(rf.mae)}, RMSE ={" "}
-          {fixed3(rf.rmse)} on predictions no fold ever trained on. An in-sample fit
-          would be near-perfect by construction and would say nothing about how well
-          design factors alone predict base-pair F1 on unseen instances.
+      <section className="rounded-lg border border-[var(--warning)]/40 bg-[var(--warning)]/10 p-4">
+        <h2 className="text-base font-semibold">
+          Out-of-fold is not enough here — the folds are grouped by sequence
+        </h2>
+        <p className="mt-1 max-w-3xl text-sm text-[var(--text-secondary)]">
+          {random_forest.note}
+        </p>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <div className="rounded border border-[var(--border)] bg-[var(--surface)] p-3">
+            <p className="text-xs uppercase tracking-wide text-[var(--text-secondary)]">
+              Grouped by {rf.grouped_by ?? "sequence_id"} — the honest figure
+            </p>
+            <p className="mt-1 text-2xl font-semibold tabular-nums">R² {fixed3(rf.r2)}</p>
+            <p className="mt-1 text-xs text-[var(--text-secondary)]">
+              MAE {fixed3(rf.mae)} · {rf.folds} folds · {rf.n} runs. Predicting a
+              sequence the model has never seen.
+            </p>
+          </div>
+          <div className="rounded border border-[var(--border)] bg-[var(--surface)] p-3">
+            <p className="text-xs uppercase tracking-wide text-[var(--text-secondary)]">
+              Row-wise split — inflated by leakage
+            </p>
+            <p className="mt-1 text-2xl font-semibold tabular-nums">R² {fixed3(leaky.r2)}</p>
+            <p className="mt-1 text-xs text-[var(--text-secondary)]">
+              MAE {fixed3(leaky.mae)}. What this page would have claimed without
+              grouping.
+            </p>
+          </div>
+        </div>
+        <p className="mt-3 max-w-3xl text-xs text-[var(--text-secondary)]">
+          {random_forest.leakage_note} The gap is the finding: base-pair F1 is
+          dominated by which sequence you happen to be folding, far more than by
+          which solver you choose or how large the instance is. Solver choice does
+          not rescue a hard sequence.
         </p>
       </section>
 

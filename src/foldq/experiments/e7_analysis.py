@@ -140,19 +140,36 @@ def build(results: Path) -> dict:
         },
         "random_forest": {
             "note": (
-                "Predictions are out-of-fold: every point is predicted by a model that "
-                "never saw it. An in-sample forest parity plot is near-perfect by "
-                "construction and says nothing about generalisation."
+                "Two fits, and the gap between them is the point. Each sequence "
+                "contributes 18 rows (one per solver and seed) and (length, "
+                "num_variables) uniquely identifies it, so a row-wise split lets the "
+                "forest recognise a sequence it has already trained on and reproduce "
+                "its known difficulty. Grouping the folds by sequence_id removes that "
+                "route and measures what actually matters: predicting a sequence the "
+                "model has never seen. The honest figure is the grouped one."
             ),
-            "f1_from_design_factors": asdict(
+            "f1_from_design_factors_grouped": asdict(
+                out_of_fold_fit(e3_model, "base_pair_f1", e3_model_features, group="sequence_id")
+            ),
+            "f1_from_design_factors_rowwise_leaky": asdict(
                 out_of_fold_fit(e3_model, "base_pair_f1", e3_model_features)
+            ),
+            "leakage_note": (
+                "Reported side by side deliberately. The row-wise score is what this "
+                "analysis would have claimed without grouping, and publishing only the "
+                "grouped number would hide how large the difference is."
             ),
             "importance": [
                 asdict(f)
-                for f in permutation_importance(e3_model, "base_pair_f1", e3_model_features)
+                for f in permutation_importance(
+                    e3_model, "base_pair_f1", e3_model_features, group="sequence_id"
+                )
             ],
             "learning_curve": [
-                asdict(p) for p in learning_curve(e3_model, "base_pair_f1", e3_model_features)
+                asdict(p)
+                for p in learning_curve(
+                    e3_model, "base_pair_f1", e3_model_features, group="sequence_id"
+                )
             ],
         },
         "pareto": {
@@ -190,8 +207,10 @@ def main() -> None:
     top = max(regression["coefficients"], key=lambda c: abs(c["beta"]))
     name, beta, p_value = top["name"], top["beta"], top["p_value"]
     print(f"  strongest standardised driver: {name} beta={beta:+.3f} p={p_value:.4g}")
-    forest = payload["random_forest"]["f1_from_design_factors"]
-    print(f"  out-of-fold random forest: R2 {forest['r2']:.3f}, MAE {forest['mae']:.3f}")
+    grouped = payload["random_forest"]["f1_from_design_factors_grouped"]
+    leaky = payload["random_forest"]["f1_from_design_factors_rowwise_leaky"]
+    print(f"  random forest, grouped by sequence: R2 {grouped['r2']:.3f} MAE {grouped['mae']:.3f}")
+    print(f"  same model, row-wise split (leaky): R2 {leaky['r2']:.3f} MAE {leaky['mae']:.3f}")
     print("  partial dependence on Gate B:")
     for effect in payload["partial_dependence"]["gate_b"]:
         factor, level, mean, n = (effect[k] for k in ("factor", "level", "mean", "n"))

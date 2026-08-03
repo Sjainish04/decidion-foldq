@@ -85,6 +85,8 @@ export interface PartialDependenceSection {
 }
 
 export interface RandomForestModel {
+  /** Column the folds were grouped on, or null for a row-wise split. */
+  grouped_by?: string | null;
   outcome: string;
   features: string[];
   n: number;
@@ -111,7 +113,14 @@ export interface LearningCurvePoint {
 
 export interface RandomForestSection {
   note: string;
-  f1_from_design_factors: RandomForestModel;
+  /** Folds grouped by sequence, so no sequence spans train and test. This is
+   *  the honest generalisation estimate and the one to quote. */
+  f1_from_design_factors_grouped: RandomForestModel;
+  /** The same model under a row-wise split, kept for contrast. Each sequence
+   *  contributes 18 rows and is uniquely identified by its features, so this
+   *  score is inflated by the model recognising sequences it trained on. */
+  f1_from_design_factors_rowwise_leaky: RandomForestModel;
+  leakage_note: string;
   importance: FeatureImportanceRow[];
   learning_curve: LearningCurvePoint[];
 }
