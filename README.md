@@ -1076,7 +1076,7 @@ published structure, and claim no citation — see [Pseudoknots](#pseudoknots).
 
 This project was developed for the WISER Summer Program 2026 Moderna Challenge. The team
 acknowledges the open-source communities behind ViennaRNA, Qiskit, D-Wave Ocean, NetworkX,
-NumPy, SciPy, pandas, pytest, and the broader RNA and quantum-computing research communities.
+NumPy, SciPy, pandas, pytest, and the broader RNA and quantum-computing research communities and further the University of Toronto. 
 
 ## Disclaimer
 
