@@ -67,6 +67,13 @@ frontend/.next/
 frontend/out/
 frontend/.env.local
 
+# Playwright run artifacts. Written on every failing run, and unanchored for the
+# same reason as node_modules above — the output directory follows the config's
+# location, not the repo root.
+test-results/
+playwright-report/
+blob-report/
+
 # Vercel CLI link state and pulled environment values. `.env.example` is the
 # committed template and must stay tracked.
 .vercel
