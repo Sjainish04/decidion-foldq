@@ -48,7 +48,17 @@ export default function SolverPerformancePage() {
       >
         <BarChart
           categories={rows.map((r) => r.solver)}
-          series={[{ name: "Ground-state rate", data: rows.map((r) => r.groundStateRate) }]}
+          series={[
+            {
+              name: "Ground-state rate",
+              data: rows.map((r) => r.groundStateRate),
+              // Coloured by solver class, the same encoding the scatter below
+              // uses: the four solvers at 1.00 are not four independent results,
+              // they are two classical heuristics and two annealers, and one
+              // flat colour hid that.
+              colors: rows.map((r) => SOLVER_COLORS[r.solver]),
+            },
+          ]}
           yLabel="rate"
           yMax={1}
         />

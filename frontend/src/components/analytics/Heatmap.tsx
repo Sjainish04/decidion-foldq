@@ -1,7 +1,8 @@
 "use client";
 
 import ReactECharts from "echarts-for-react";
-import { BASE_CHART_OPTION } from "@/lib/charts/theme";
+import { baseOption } from "@/lib/charts/theme";
+import { useChartTheme } from "@/lib/charts/use-chart-theme";
 
 export interface HeatmapProps {
   columns: string[];
@@ -29,10 +30,11 @@ export interface HeatmapProps {
  *    relationship and the other is nothing.
  */
 export function Heatmap({ columns, matrix, height = 380, domain = [-1, 1] }: HeatmapProps) {
+  const chrome = useChartTheme();
   const data = matrix.flatMap((row, y) => row.map((value, x) => [x, y, value]));
 
   const option = {
-    ...BASE_CHART_OPTION,
+    ...baseOption(chrome),
     grid: { left: 130, right: 24, top: 16, bottom: 96 },
     tooltip: {
       position: "top",
@@ -58,7 +60,7 @@ export function Heatmap({ columns, matrix, height = 380, domain = [-1, 1] }: Hea
       orient: "horizontal",
       left: "center",
       bottom: 0,
-      textStyle: { color: "#94a3b8" },
+      textStyle: { color: chrome.label },
       // Diverging: cool for negative, neutral at zero, warm for positive. The
       // warm end is the project's brand terracotta.
       inRange: { color: ["#3a7d95", "#7bb8c9", "#efe9df", "#e0a34a", "#d97757"] },
@@ -72,7 +74,9 @@ export function Heatmap({ columns, matrix, height = 380, domain = [-1, 1] }: Hea
           fontSize: 9,
           formatter: (p: { data: [number, number, number] }) => p.data[2].toFixed(2),
         },
-        emphasis: { itemStyle: { borderColor: "#0a1628", borderWidth: 1 } },
+        // Hover outline, drawn in the axis colour so it stays visible against
+        // both a bone and an ink background — ink-on-ink was invisible in dark.
+        emphasis: { itemStyle: { borderColor: chrome.tooltipText, borderWidth: 1 } },
       },
     ],
   };

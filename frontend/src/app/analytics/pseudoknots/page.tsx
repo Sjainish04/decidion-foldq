@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ChartCard } from "@/components/analytics/ChartCard";
 import { BarChart } from "@/components/analytics/BarChart";
+import { CHART_COLORS } from "@/lib/charts/theme";
 import { pseudoknotComparison } from "@/lib/charts/transforms";
 
 const fixed3 = (value: number) => value.toFixed(3);
@@ -42,12 +43,12 @@ export default function PseudoknotsPage() {
         <BarChart
           categories={knotted.map((r) => r.sequenceId)}
           series={[
-            { name: "ViennaRNA", data: knotted.map((r) => r.viennaF1), color: "#10b981" },
-            { name: "FoldQ strict", data: knotted.map((r) => r.strictF1), color: "#0ea5e9" },
+            { name: "ViennaRNA", data: knotted.map((r) => r.viennaF1), color: CHART_COLORS.reference },
+            { name: "FoldQ strict", data: knotted.map((r) => r.strictF1), color: CHART_COLORS.cool },
             {
               name: "FoldQ pseudoknot mode",
               data: knotted.map((r) => r.pseudoknotModeF1),
-              color: "#d946ef",
+              color: CHART_COLORS.emphasis,
             },
           ]}
           yLabel="base-pair F1"
@@ -94,8 +95,8 @@ export default function PseudoknotsPage() {
         <BarChart
           categories={controls.map((r) => r.sequenceId)}
           series={[
-            { name: "ViennaRNA", data: controls.map((r) => r.viennaF1), color: "#10b981" },
-            { name: "FoldQ", data: controls.map((r) => r.strictF1), color: "#0ea5e9" },
+            { name: "ViennaRNA", data: controls.map((r) => r.viennaF1), color: CHART_COLORS.reference },
+            { name: "FoldQ", data: controls.map((r) => r.strictF1), color: CHART_COLORS.cool },
           ]}
           yLabel="base-pair F1"
           yMax={1}

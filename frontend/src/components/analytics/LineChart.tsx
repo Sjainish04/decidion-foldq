@@ -1,14 +1,21 @@
 "use client";
 
 import ReactECharts from "echarts-for-react";
-import { BASE_CHART_OPTION } from "@/lib/charts/theme";
+import {
+  baseOption,
+  categoryAxis,
+  legend,
+  SERIES_PALETTE,
+  valueAxis,
+} from "@/lib/charts/theme";
+import { useChartTheme } from "@/lib/charts/use-chart-theme";
 
 export function LineChart({
   categories,
   series,
   xLabel,
   yLabel,
-  height = 280,
+  height = 300,
 }: {
   categories: (string | number)[];
   series: { name: string; data: number[]; color?: string }[];
@@ -16,25 +23,32 @@ export function LineChart({
   yLabel: string;
   height?: number;
 }) {
+  const chrome = useChartTheme();
+
   const option = {
-    ...BASE_CHART_OPTION,
-    legend: { textStyle: { color: "#94a3b8" } },
+    ...baseOption(chrome),
+    legend: legend(chrome, series.length > 1),
     xAxis: {
-      type: "category",
-      data: categories,
+      ...categoryAxis(chrome, categories.map(String)),
       name: xLabel,
-      nameLocation: "middle",
-      nameGap: 28,
+      nameLocation: "middle" as const,
+      nameGap: 32,
     },
-    yAxis: { type: "value", name: yLabel },
-    series: series.map((s) => ({
-      name: s.name,
-      type: "line",
-      data: s.data,
-      symbolSize: 8,
-      lineStyle: s.color ? { color: s.color } : undefined,
-      itemStyle: s.color ? { color: s.color } : undefined,
-    })),
+    yAxis: valueAxis(chrome, yLabel),
+    series: series.map((s, index) => {
+      const color = s.color ?? SERIES_PALETTE[index % SERIES_PALETTE.length];
+      return {
+        name: s.name,
+        type: "line",
+        data: s.data,
+        symbolSize: 7,
+        // Slightly heavier than the default hairline so a line holds against
+        // the dashed gridlines behind it.
+        lineStyle: { color, width: 2 },
+        itemStyle: { color },
+        emphasis: { focus: "series" as const },
+      };
+    }),
   };
   return <ReactECharts option={option} style={{ height }} notMerge />;
 }

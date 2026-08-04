@@ -480,8 +480,8 @@ export default function MultivariatePage() {
           xLabel="actual base_pair_f1"
           yLabel="predicted base_pair_f1"
           series={[
-            { name: "Out-of-fold predictions", points: parity, color: "#0ea5e9" },
-            { name: "Perfect prediction (y = x)", points: diagonal, color: "#64748b" },
+            { name: "Out-of-fold predictions", points: parity, color: CHART_COLORS.cool },
+            { name: "Perfect prediction (y = x)", points: diagonal, color: CHART_COLORS.muted },
           ]}
         />
       </ChartCard>

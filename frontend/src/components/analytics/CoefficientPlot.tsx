@@ -1,7 +1,8 @@
 "use client";
 
 import ReactECharts from "echarts-for-react";
-import { BASE_CHART_OPTION, CHART_COLORS } from "@/lib/charts/theme";
+import { baseOption, CHART_COLORS, valueAxis } from "@/lib/charts/theme";
+import { useChartTheme } from "@/lib/charts/use-chart-theme";
 
 export interface CoefficientRow {
   name: string;
@@ -36,11 +37,12 @@ export function CoefficientPlot({
 }) {
   // Weakest first: ECharts draws a horizontal category axis bottom-up, so this
   // puts the strongest effect at the top where it is read first.
+  const chrome = useChartTheme();
   const rows = [...coefficients].sort((a, b) => Math.abs(a.beta) - Math.abs(b.beta));
   const labels = rows.map((c) => (c.significant ? `${c.name} *` : c.name));
 
   const option = {
-    ...BASE_CHART_OPTION,
+    ...baseOption(chrome),
     grid: { left: 160, right: 40, top: 16, bottom: 44 },
     tooltip: {
       trigger: "axis",
@@ -55,12 +57,17 @@ export function CoefficientPlot({
       },
     },
     xAxis: {
-      type: "value",
-      name: "standardised β",
-      nameLocation: "middle",
+      ...valueAxis(chrome, "standardised β"),
+      nameLocation: "middle" as const,
       nameGap: 28,
     },
-    yAxis: { type: "category", data: labels, axisLabel: { fontSize: 10 } },
+    yAxis: {
+      type: "category",
+      data: labels,
+      axisLine: { lineStyle: { color: chrome.axisLine } },
+      axisTick: { show: false },
+      axisLabel: { fontSize: 10, color: chrome.label },
+    },
     series: [
       {
         type: "bar",
