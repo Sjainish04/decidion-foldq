@@ -51,8 +51,15 @@
   --classical: #3a7d95;
   --quantum-inspired: #d97757;
   --quantum: #9b5aa8;
-  --reference: #1f7a4d;
-  --warning: #b8791c;
+  /* Darkened from #1f7a4d, which cleared --background (4.98) and --surface
+     (5.32) but landed at 4.40 on --surface-elevated — under 4.5:1, and the gate
+     badges sit on exactly that surface. Now 5.62 / 6.00 / 4.97. */
+  --reference: #1b7146;
+  /* Darkened from #b8791c (3.39:1 on --background). It is used as bare small
+     text for the pseudoknot caveat in SolverPicker, which renders only when
+     "Allow pseudoknots" is checked — so the route sweep, which loads the page in
+     its default state, never saw it. Now 5.53 / 5.91 / 4.90. */
+  --warning: #8a5a10;
   --danger: #b03a2e;
 }
 

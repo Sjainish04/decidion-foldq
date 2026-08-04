@@ -36,6 +36,38 @@ describe("StructureView", () => {
     expect(screen.getByText(/11 nucleotides/i)).toBeInTheDocument();
     expect(screen.getByText(/1 base pair\b/i)).toBeInTheDocument();
   });
+
+  it("renders the forna-style force layout when selected", () => {
+    render(
+      <StructureView
+        sequence="GGGAAAUCCCU"
+        pairs={[
+          [0, 9],
+          [1, 8],
+          [2, 7],
+        ]}
+        label="Forced structure"
+        layout="force"
+      />,
+    );
+    expect(screen.getByRole("img", { name: /forced structure/i })).toBeInTheDocument();
+    expect(screen.getByText(/11 nucleotides/i)).toBeInTheDocument();
+  });
+
+  it("still renders crossing pairs under the force layout", () => {
+    render(
+      <StructureView
+        sequence="GGGGAAAACCCCAAAA"
+        pairs={[
+          [0, 9],
+          [4, 13],
+        ]}
+        label="Pseudoknotted structure"
+        layout="force"
+      />,
+    );
+    expect(screen.getByText(/2 base pairs/i)).toBeInTheDocument();
+  });
 });
 
 describe("GateLadder", () => {

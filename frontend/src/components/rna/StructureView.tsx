@@ -1,5 +1,6 @@
 "use client";
 
+import { forceLayoutStructure } from "@/lib/rna/force-layout";
 import { layoutStructure } from "@/lib/rna/layout";
 
 const BASE_COLORS: Record<string, string> = {
@@ -15,14 +16,22 @@ export function StructureView({
   label,
   highlight = [],
   size = 360,
+  layout: layoutMode = "circular",
 }: {
   sequence: string;
   pairs: [number, number][];
   label: string;
   highlight?: number[];
   size?: number;
+  /** "circular" (default) places every base on a circle with chords for
+   *  pairs — meaning-preserving for any topology, including pseudoknots.
+   *  "force" is the forna-style ladders-and-loops drawing; it still
+   *  handles crossing pairs (they're just springs), but reads more like
+   *  conventional secondary-structure diagrams for nested structure. */
+  layout?: "circular" | "force";
 }) {
-  const layout = layoutStructure(sequence, pairs);
+  const layout =
+    layoutMode === "force" ? forceLayoutStructure(sequence, pairs) : layoutStructure(sequence, pairs);
   const highlighted = new Set(highlight);
   const showBases = sequence.length <= 120;
 

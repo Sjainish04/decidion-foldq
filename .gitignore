@@ -60,7 +60,9 @@ data/raw/synthetic/**
 *.swp
 
 # Frontend
-frontend/node_modules/
+# Unanchored: a tool run from the repo root rather than frontend/ drops a stray
+# node_modules here, and a path-specific rule does not catch it.
+node_modules/
 frontend/.next/
 frontend/out/
 frontend/.env.local
@@ -68,6 +70,8 @@ frontend/.env.local
 # Vercel CLI link state and pulled environment values. `.env.example` is the
 # committed template and must stay tracked.
 .vercel
-.env
-.env.local
-.env.*.local
+.env*
+# Explicit, because `.env*` above would otherwise swallow it. Without this the
+# template survives only by a negation in frontend/.gitignore, which is a fragile
+# thing for a committed file to depend on.
+!.env.example

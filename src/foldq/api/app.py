@@ -12,7 +12,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from foldq.api import errors
-from foldq.api.routes import fold, meta, structures, system
+from foldq.api.routes import diagrams, fold, meta, structures, system
 
 DEFAULT_ORIGINS = ("http://localhost:3000",)
 
@@ -50,6 +50,7 @@ def create_app() -> FastAPI:
         allow_methods=["GET", "POST"],
         allow_headers=["*"],
     )
+    app.include_router(diagrams.router, prefix="/api/v1")
     app.include_router(fold.router, prefix="/api/v1")
     app.include_router(meta.router, prefix="/api/v1")
     app.include_router(structures.router, prefix="/api/v1")

@@ -1,6 +1,10 @@
 import {
+  diagramJobSchema,
+  diagramResultSchema,
   foldResponseSchema,
   metaResponseSchema,
+  type DiagramJob,
+  type DiagramResult,
   type FoldResponse,
   type MetaResponse,
 } from "./schemas";
@@ -63,4 +67,52 @@ export function foldSequence(payload: FoldRequest): Promise<FoldResponse> {
 
 export function fetchMeta(): Promise<MetaResponse> {
   return request("/api/v1/meta", metaResponseSchema);
+}
+
+/** Start an R2DT job. Returns its id; the diagram is not ready yet. */
+export function submitDiagram(sequence: string): Promise<DiagramJob> {
+  return request("/api/v1/diagrams/r2dt", diagramJobSchema, {
+    method: "POST",
+    body: JSON.stringify({ sequence }),
+  });
+}
+
+export function fetchDiagram(jobId: string): Promise<DiagramResult> {
+  return request(`/api/v1/diagrams/r2dt/${encodeURIComponent(jobId)}`, diagramResultSchema);
+}
+
+/** Submit and poll until R2DT finishes, or give up.
+ *
+ *  Polling rather than one long request: an R2DT job takes tens of seconds, and
+ *  a request held open that long would hit the serverless function's budget and
+ *  leave the user with an unexplained spinner. `onState` lets the UI report
+ *  which stage it is in instead.
+ */
+export async function requestDiagram(
+  sequence: string,
+  {
+    signal,
+    onState,
+    intervalMs = 3000,
+    timeoutMs = 180_000,
+  }: {
+    signal?: AbortSignal;
+    onState?: (state: string) => void;
+    intervalMs?: number;
+    timeoutMs?: number;
+  } = {},
+): Promise<DiagramResult> {
+  const { job_id } = await submitDiagram(sequence);
+  const deadline = Date.now() + timeoutMs;
+
+  for (;;) {
+    if (signal?.aborted) throw new DOMException("aborted", "AbortError");
+    const result = await fetchDiagram(job_id);
+    onState?.(result.state);
+    if (result.state === "FINISHED" && result.svg) return result;
+    if (Date.now() > deadline) {
+      throw new ApiError(`R2DT did not finish within ${Math.round(timeoutMs / 1000)}s`, 504);
+    }
+    await new Promise((resolve) => setTimeout(resolve, intervalMs));
+  }
 }

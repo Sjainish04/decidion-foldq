@@ -57,6 +57,27 @@ export const metaResponseSchema = z.object({
   commit: z.string().nullable(),
 });
 
+export const diagramJobSchema = z.object({
+  job_id: z.string(),
+  state: z.string(),
+});
+
+export const diagramResultSchema = z.object({
+  job_id: z.string(),
+  state: z.string(),
+  svg: z.string().nullable().default(null),
+  /** Name of the curated template R2DT matched, e.g. "E_Phe". */
+  template: z.string().nullable().default(null),
+  /** Where that template came from, e.g. "GtRNAdb", "Rfam", "CRW". */
+  template_source: z.string().nullable().default(null),
+  /** False when R2DT fell back to a computed layout. The diagram is still
+   *  valid, but it carries no family convention, so the UI must not imply the
+   *  orientation is meaningful. */
+  templated: z.boolean().default(false),
+});
+
+export type DiagramJob = z.infer<typeof diagramJobSchema>;
+export type DiagramResult = z.infer<typeof diagramResultSchema>;
 export type FoldResponse = z.infer<typeof foldResponseSchema>;
 export type MetaResponse = z.infer<typeof metaResponseSchema>;
 export type GateReport = z.infer<typeof gateReportSchema>;

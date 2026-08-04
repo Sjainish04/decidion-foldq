@@ -3,7 +3,6 @@ import { CoefficientPlot } from "@/components/analytics/CoefficientPlot";
 import { Heatmap } from "@/components/analytics/Heatmap";
 import { CHART_COLORS } from "@/lib/charts/theme";
 import { ChartCard } from "@/components/analytics/ChartCard";
-import { DataTable } from "@/components/analytics/DataTable";
 import { LineChart } from "@/components/analytics/LineChart";
 import { ScatterChart } from "@/components/analytics/ScatterChart";
 import {

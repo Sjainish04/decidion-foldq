@@ -7,6 +7,8 @@ import { GateLadder } from "@/components/foldq/GateLadder";
 import { RunSummary } from "@/components/foldq/RunSummary";
 import { StageTimeline } from "@/components/foldq/StageTimeline";
 import { StructureComparison } from "@/components/foldq/StructureComparison";
+import { R2dtDiagram } from "@/components/rna/R2dtDiagram";
+import { StructureExport } from "@/components/rna/StructureExport";
 import { foldSequence } from "@/lib/api/client";
 import { useCachedRun } from "@/lib/foldq/run-cache";
 import { useWorkspace } from "@/stores/workspace";
@@ -53,6 +55,10 @@ export default function RunPage() {
       </Link>
       <RunSummary result={data} />
       <StructureComparison result={data} />
+      {/* Opt-in, not automatic: it runs a job on EMBL-EBI's servers, and firing
+          that off on every page view would be discourteous to a free service. */}
+      <R2dtDiagram sequence={data.sequence} />
+      <StructureExport result={data} />
       <GateLadder gates={data.gates} />
       <StageTimeline result={data} />
     </div>
