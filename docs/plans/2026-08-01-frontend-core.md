@@ -10,7 +10,7 @@ visitor fold an RNA sequence live, with every gate verdict and attribution visib
 **Architecture:** A Next.js App Router frontend talking to a thin FastAPI seam added
 inside the existing `foldq` package as an optional extra. Experiment CSVs are bundled
 at build time as static JSON so the Analytics Lab and Reports work with the backend
-down; only live folding requires the API. No auth, no database, no job queue — folds
+down; only live folding requires the API. No auth, no database, no job queue: folds
 are sub-second and deterministic, so run IDs are content hashes.
 
 **Tech Stack:** Next.js (App Router), React, TypeScript strict, Tailwind CSS,
@@ -22,17 +22,17 @@ uvicorn, pydantic.
 
 ## Global Constraints
 
-- **Python 3.11 exactly** for the backend. `requires-python = ">=3.11,<3.12"` — the API
+- **Python 3.11 exactly** for the backend. `requires-python = ">=3.11,<3.12"`: the API
   extra must not widen or break this.
 - **The existing Python test suite must stay at 267 passing.** The API is additive; it
   must not change `foldq` library behaviour.
 - **Never add a `Co-Authored-By: Claude` trailer or any Claude / Claude Code
   attribution** to any commit. This is a judged academic submission; authorship is the
-  human team. Git identity is configured — do not change it.
+  human team. Git identity is configured: do not change it.
 - **No number displayed for FoldQ results may be hard-coded.** Every figure traces to a
   bundled experiment CSV or a live API response.
 - **Any view backed by fixture data must show a persistent badge reading
-  `Demonstration data — not part of the challenge submission`.** This plan builds no
+  `Demonstration data, not part of the challenge submission`.** This plan builds no
   fixture-backed views; the rule binds phase 5–6 work.
 - **No quantum-advantage claims** anywhere in UI copy.
 - **`pnpm`** is the package manager (11.0.9 installed). Node 25.9.0.
@@ -43,7 +43,7 @@ uvicorn, pydantic.
 ## File Structure
 
 ```
-src/foldq/api/                      NEW — optional [api] extra
+src/foldq/api/                      NEW: optional [api] extra
   __init__.py
   app.py                            FastAPI app, CORS, error handlers
   schemas.py                        pydantic response models
@@ -83,7 +83,7 @@ frontend/                           NEW
 
 ---
 
-## Phase 0 — Backend seam
+## Phase 0: Backend seam
 
 ### Task 1: FastAPI fold endpoint
 
@@ -551,7 +551,7 @@ Expected: PASS (8 tests)
 
 Run: `.venv/bin/pytest tests -q`
 Expected: 275 passing (267 existing + 8 new). If any pre-existing test fails, the API
-has changed library behaviour — stop and report.
+has changed library behaviour: stop and report.
 
 - [ ] **Step 10: Start the server by hand and check it**
 
@@ -576,7 +576,7 @@ git commit -- src/foldq/api tests/api pyproject.toml -m "feat: add optional HTTP
 
 ---
 
-## Phase 1 — Scaffold, shell, data layer
+## Phase 1: Scaffold, shell, data layer
 
 ### Task 2: Frontend scaffold and design tokens
 
@@ -636,7 +636,7 @@ describe("design tokens", () => {
 - [ ] **Step 3: Run it to verify it fails**
 
 Run: `cd frontend && pnpm vitest run tests/unit/tokens.test.ts`
-Expected: FAIL — tokens not yet defined.
+Expected: FAIL; tokens not yet defined.
 
 - [ ] **Step 4: Write `frontend/src/styles/globals.css`**
 
@@ -755,8 +755,8 @@ frontend/.env.local
 
 - [ ] **Step 8: Run the tests and the dev server**
 
-Run: `cd frontend && pnpm vitest run` — expected PASS (4 tests)
-Run: `pnpm build` — expected: builds with no type errors
+Run: `cd frontend && pnpm vitest run`, expected PASS (4 tests)
+Run: `pnpm build`, expected: builds with no type errors
 
 - [ ] **Step 9: Commit**
 
@@ -778,7 +778,7 @@ git commit -- frontend .gitignore -m "feat: scaffold Next.js frontend with desig
 - Consumes: `results/full/{e1_formulation,e2_encoding,e3_solvers,e4_qaoa,e5_pseudoknot}.csv`
 - Produces: `frontend/src/lib/results/data/*.json`; `loadExperiment(name) -> Row[]`, `EXPERIMENTS` constant
 
-This is what makes the Analytics Lab work with the backend down — the guarantee in the
+This is what makes the Analytics Lab work with the backend down: the guarantee in the
 design doc §9. Data is baked into the bundle at build time.
 
 - [ ] **Step 1: Write the failing test**
@@ -831,7 +831,7 @@ describe("bundled experiment results", () => {
 - [ ] **Step 2: Run it to verify it fails**
 
 Run: `cd frontend && pnpm vitest run tests/unit/results.test.ts`
-Expected: FAIL — `@/lib/results` does not exist.
+Expected: FAIL; `@/lib/results` does not exist.
 
 - [ ] **Step 3: Write the bundler script**
 
@@ -913,7 +913,7 @@ export const EXPERIMENTS = [
 
 export type ExperimentName = (typeof EXPERIMENTS)[number];
 
-/** A single result row. Values are numbers, booleans, strings, or null —
+/** A single result row. Values are numbers, booleans, strings, or null:
  *  null is meaningful: it marks a gate that could not be determined. */
 export type Row = Record<string, number | string | boolean | null>;
 
@@ -940,7 +940,7 @@ In `frontend/package.json` scripts, add:
 "pretest": "node scripts/bundle-results.mjs"
 ```
 
-Also add `src/lib/results/data/` to `frontend/.gitignore` — the JSON is generated.
+Also add `src/lib/results/data/` to `frontend/.gitignore`: the JSON is generated.
 
 Enable JSON imports in `frontend/tsconfig.json` compilerOptions: `"resolveJsonModule": true`.
 
@@ -1058,7 +1058,7 @@ describe("fold response schema", () => {
 - [ ] **Step 2: Run it to verify it fails**
 
 Run: `cd frontend && pnpm vitest run tests/unit/api-schemas.test.ts`
-Expected: FAIL — module not found.
+Expected: FAIL; module not found.
 
 - [ ] **Step 3: Write the schemas**
 
@@ -1210,7 +1210,7 @@ Wrap `{children}` in `layout.tsx` with `<Providers>`.
 
 - [ ] **Step 6: Run the tests**
 
-Run: `cd frontend && pnpm vitest run` — expected PASS (14 tests total)
+Run: `cd frontend && pnpm vitest run`, expected PASS (14 tests total)
 
 - [ ] **Step 7: Commit**
 
@@ -1326,7 +1326,7 @@ describe("AppShell", () => {
 - [ ] **Step 2: Run them to verify they fail**
 
 Run: `cd frontend && pnpm vitest run tests/component/shell.test.tsx tests/unit/nav.test.ts`
-Expected: FAIL — modules not found.
+Expected: FAIL; modules not found.
 
 - [ ] **Step 3: Write `frontend/src/lib/nav.ts`**
 
@@ -1581,7 +1581,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
 - [ ] **Step 6: Run the tests**
 
-Run: `cd frontend && pnpm vitest run` — expected PASS (22 tests total)
+Run: `cd frontend && pnpm vitest run`, expected PASS (22 tests total)
 
 - [ ] **Step 7: Commit**
 
@@ -1592,7 +1592,7 @@ git commit -- frontend -m "feat: add application shell with navigation and comma
 
 ---
 
-## Phase 2 — Analytics Lab
+## Phase 2: Analytics Lab
 
 ### Task 6: Chart transforms
 
@@ -1602,7 +1602,7 @@ git commit -- frontend -m "feat: add application shell with navigation and comma
 
 **Interfaces:**
 - Consumes: `loadExperiment` and `Row` from Task 3
-- Produces: `solverSummary()`, `attributionBreakdown()`, `encodingSummary()`, `qaoaByReps()`, `pseudoknotComparison()`, `scalingByLength()` — all pure, all returning plain arrays
+- Produces: `solverSummary()`, `attributionBreakdown()`, `encodingSummary()`, `qaoaByReps()`, `pseudoknotComparison()`, `scalingByLength()`; all pure, all returning plain arrays
 
 Transforms live apart from rendering so the numbers are unit-testable against the CSVs
 without mounting a chart. Expected values below are computed from the committed data;
@@ -1682,7 +1682,7 @@ describe("encodingSummary", () => {
 
   it("shows maximal stem encoding at msl=1 using fewer variables than pair encoding", () => {
     // The comparison only holds for stem_mode=maximal. Substems at msl=1 is
-    // 1337.5 variables — larger than pair. Naming the mode is load-bearing.
+    // 1337.5 variables: larger than pair. Naming the mode is load-bearing.
     const rows = encodingSummary();
     const pair = rows.find((r) => r.encoding === "pair")!;
     const stem1 = rows.find(
@@ -1791,7 +1791,7 @@ describe("qaoaByLength", () => {
 describe("noiseComparison", () => {
   it("shows the transpilation overhead of targeting a real device", () => {
     const { noiseless, noisy } = noiseComparison();
-    // Same reps, same shots, same objective — the only difference is the device
+    // Same reps, same shots, same objective: the only difference is the device
     // target. Routing cost lands entirely in the two-qubit gate count.
     expect(noisy.meanTwoQubitGates).toBeGreaterThan(noiseless.meanTwoQubitGates);
     expect(noisy.meanTranspiledDepth).toBeGreaterThan(noiseless.meanTranspiledDepth);
@@ -1834,7 +1834,7 @@ describe("scalingByLength", () => {
 - [ ] **Step 2: Run it to verify it fails**
 
 Run: `cd frontend && pnpm vitest run tests/unit/transforms.test.ts`
-Expected: FAIL — module not found.
+Expected: FAIL; module not found.
 
 - [ ] **Step 3: Write the transforms**
 
@@ -1861,7 +1861,7 @@ export interface SolverSummaryRow {
   solver: string;
   runs: number;
   /** Rows where Gate C is determinate. Above ~22 variables the exact reference is
-   *  unavailable and found_ground_state is null — those rows are excluded from the
+   *  unavailable and found_ground_state is null: those rows are excluded from the
    *  rate rather than counted as failures. */
   determinateCount: number;
   groundStateRate: number;
@@ -1975,8 +1975,8 @@ function groundStateRate(rows: Row[]): number {
 
 /** The README's QAOA table is the **noiseless expectation** subset: 27 rows per
  *  `reps` (3 shot settings x 9 sequences). e4 also contains 9 `fake_hanoi` rows at
- *  reps=1 and 9 CVaR rows at reps=3. Pooling them changes every published figure —
- *  reps=1 becomes 27.8% instead of 29.6% — so both filters are required, not
+ *  reps=1 and 9 CVaR rows at reps=3. Pooling them changes every published figure:
+ *  reps=1 becomes 27.8% instead of 29.6%, so both filters are required, not
  *  cosmetic. `noiseComparison` covers the device-target rows separately. */
 export function qaoaByReps(): QaoaRow[] {
   const rows = loadExperiment("e4_qaoa").filter(NOISELESS_EXPECTATION);
@@ -2051,7 +2051,7 @@ export interface ObjectiveArm {
   meanF1: number;
 }
 
-/** CVaR was run at exactly one configuration — reps=3, 256 shots, noiseless — so it
+/** CVaR was run at exactly one configuration (reps=3, 256 shots, noiseless), so it
  *  can only be compared against the expectation rows at that same setting. Comparing
  *  it against expectation pooled over every shot count would attribute the sampling
  *  budget to the objective and manufacture a difference that is not there. The
@@ -2112,7 +2112,7 @@ export interface NoiseArm {
 
 /** Compares the same circuits transpiled for an ideal simulator against
  *  `fake_hanoi` (real IBM calibration data). Matched on reps=1, shots=256,
- *  expectation objective — a mismatched comparison would attribute shot noise to
+ *  expectation objective: a mismatched comparison would attribute shot noise to
  *  routing. SWAP cost is folded into two_qubit_gates, not reported separately. */
 export function noiseComparison(): { noiseless: NoiseArm; noisy: NoiseArm } {
   const rows = loadExperiment("e4_qaoa").filter(
@@ -2144,7 +2144,7 @@ export interface PseudoknotRow {
   viennaStructure: string;
 }
 
-/** e5 holds two rows per fixture — forbid_crossing true (strict) and false
+/** e5 holds two rows per fixture: forbid_crossing true (strict) and false
  *  (pseudoknot mode). They are joined here so a chart can show the pair. */
 export function pseudoknotComparison(): PseudoknotRow[] {
   const rows = loadExperiment("e5_pseudoknot");
@@ -2250,11 +2250,11 @@ describe("DataTable", () => {
     expect(screen.getByText("0.873")).toBeInTheDocument();
   });
 
-  it("renders an em dash for null rather than blank", () => {
+  it("renders n/a for null rather than blank", () => {
     render(
       <DataTable columns={columns} rows={[{ solver: "x", meanF1: null }]} caption="c" />,
     );
-    expect(screen.getByText("—")).toBeInTheDocument();
+    expect(screen.getByText("n/a")).toBeInTheDocument();
   });
 });
 
@@ -2303,7 +2303,7 @@ describe("ChartCard", () => {
 - [ ] **Step 2: Run it to verify it fails**
 
 Run: `cd frontend && pnpm vitest run tests/component/charts.test.tsx`
-Expected: FAIL — modules not found.
+Expected: FAIL; modules not found.
 
 - [ ] **Step 3: Write `frontend/src/lib/charts/theme.ts`**
 
@@ -2378,7 +2378,7 @@ export function DataTable({ columns, rows, caption }: DataTableProps) {
                 const value = row[column.key];
                 const rendered =
                   value === null || value === undefined
-                    ? "—"
+                    ? "n/a"
                     : column.format
                       ? column.format(value as never)
                       : String(value);
@@ -2677,7 +2677,7 @@ describe("energy page", () => {
 - [ ] **Step 2: Run it to verify it fails**
 
 Run: `cd frontend && pnpm vitest run tests/component/analytics-pages.test.tsx`
-Expected: FAIL — pages not found.
+Expected: FAIL; pages not found.
 
 - [ ] **Step 3: Write `GateLegend.tsx`**
 
@@ -2687,7 +2687,7 @@ const GATES = [
     id: "A",
     name: "Representable",
     question: "Is the reference structure in the candidate set?",
-    onFailure: "candidate generation — a hard ceiling no optimizer can lift",
+    onFailure: "candidate generation, a hard ceiling no optimizer can lift",
   },
   {
     id: "B",
@@ -2715,7 +2715,7 @@ export function GateLegend() {
       <h2 className="text-base font-semibold">The four-gate diagnostic ladder</h2>
       <p className="mb-3 mt-1 text-sm text-[var(--text-secondary)]">
         Attribution names the <strong>earliest failing gate</strong>. A later gate is
-        never blamed for an earlier failure — if the candidate set never held the answer,
+        never blamed for an earlier failure: if the candidate set never held the answer,
         the optimizer cannot be at fault.
       </p>
       <ul aria-label="Four-gate diagnostic ladder" className="grid gap-2 sm:grid-cols-2">
@@ -2764,7 +2764,7 @@ export default function SolverPerformancePage() {
         <h1 className="text-2xl font-semibold">Solver performance</h1>
         <p className="mt-1 max-w-3xl text-sm text-[var(--text-secondary)]">
           Every solver in the registry run across the same QUBO instances at a fixed
-          seed. Gate C — did the solver reach the QUBO ground state — can only be
+          seed. Gate C (did the solver reach the QUBO ground state) can only be
           decided where an exact reference exists;{" "}
           <strong>
             {indeterminate} of {totalRuns} runs are indeterminate
@@ -2849,7 +2849,7 @@ export default function EnergyPage() {
       <header>
         <h1 className="text-2xl font-semibold">Energy model and attribution</h1>
         <p className="mt-1 max-w-3xl text-sm text-[var(--text-secondary)]">
-          Energy coefficients come from ViennaRNA&apos;s Turner primitives — never
+          Energy coefficients come from ViennaRNA&apos;s Turner primitives: never
           reimplemented constants. Hairpin closure is charged in the linear term and
           refunded in the quadratic term when a helix nests inside, which is how a
           k-body predicate fits a degree-2 model.
@@ -2892,7 +2892,7 @@ In `frontend/src/app/layout.tsx`, wrap `{children}` with `<Providers><AppShell>�
 Run: `cd frontend && pnpm vitest run tests/component/analytics-pages.test.tsx`
 Expected: PASS (7 tests)
 
-Run: `pnpm build` — expected: no type errors.
+Run: `pnpm build`, expected: no type errors.
 
 - [ ] **Step 8: Commit**
 
@@ -3006,7 +3006,7 @@ describe("pseudoknots page", () => {
 - [ ] **Step 2: Run it to verify it fails**
 
 Run: `cd frontend && pnpm vitest run tests/component/analytics-pages-2.test.tsx`
-Expected: FAIL — pages not found.
+Expected: FAIL; pages not found.
 
 - [ ] **Step 3: Write the scaling page**
 
@@ -3036,7 +3036,7 @@ export default function ScalingPage() {
         <p className="mt-1 max-w-3xl text-sm text-[var(--text-secondary)]">
           Variable count is what a quantum device would have to hold, so the encoding
           choice is a resource decision. The comparison only means something at{" "}
-          <strong>matched representability</strong> — an encoding that drops structures is
+          <strong>matched representability</strong>: an encoding that drops structures is
           smaller for a reason that costs accuracy.
         </p>
       </header>
@@ -3071,7 +3071,7 @@ export default function ScalingPage() {
         <h2 className="text-base font-semibold">The representability ceiling</h2>
         <p className="mt-1 text-sm text-[var(--text-secondary)]">
           Every instance that fails Gate A at <code>min_stem_length=2</code> is rescued at{" "}
-          <code>min_stem_length=1</code>. The ceiling has exactly one cause —{" "}
+          <code>min_stem_length=1</code>. The ceiling has exactly one cause:{" "}
           <strong>lone base pairs</strong>, helices of a single pair that a minimum-length
           filter excludes. Perfect representability is reachable, and the price is the
           variable count in the chart above.
@@ -3147,7 +3147,7 @@ export default function ResourcesPage() {
           At the most favourable setting measured it reaches the QUBO ground state on
           two thirds of runs, while tabu, local search, simulated annealing and
           path-integral SQA reach it on every determinate run. Reporting that plainly,
-          with the circuit cost that bought it, is the point of this page — and the{" "}
+          with the circuit cost that bought it, is the point of this page, and the{" "}
           <strong>sampling budget turns out to move the result further than circuit
           depth does</strong>, which the conventional depth-only table hides.
         </p>
@@ -3209,8 +3209,8 @@ export default function ResourcesPage() {
       <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
         <h2 className="text-base font-semibold">Depth does not compensate for a thin sample</h2>
         <p className="mb-3 mt-1 text-sm text-[var(--text-secondary)]">
-          The full grid. The deepest circuit on the smallest budget —{" "}
-          <code>reps=3</code> at 256 shots — reaches the ground state less often than
+          The full grid. The deepest circuit on the smallest budget (
+          <code>reps=3</code> at 256 shots) reaches the ground state less often than
           the shallowest circuit on the largest budget. At these sizes the binding
           constraint was measurement, not circuit expressivity.
         </p>
@@ -3239,11 +3239,11 @@ export default function ResourcesPage() {
       <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
         <h2 className="text-base font-semibold">CVaR against the expectation objective</h2>
         <p className="mb-3 mt-1 text-sm text-[var(--text-secondary)]">
-          CVaR was run at one configuration only —{" "}
+          CVaR was run at one configuration only (
           <strong>
             reps={objective.setting.reps}, {objective.setting.shots} shots, noiseless
-          </strong>{" "}
-          — so it is compared here against the expectation circuits at that same
+          </strong>
+          ), so it is compared here against the expectation circuits at that same
           setting. At it the two are <strong>indistinguishable</strong>: identical
           ground-state rate on 9 circuits each. Comparing CVaR against expectation
           pooled over every shot budget would show a gap, but the gap would be the
@@ -3290,8 +3290,8 @@ export default function ResourcesPage() {
       <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
         <h2 className="text-base font-semibold">Cost of targeting a real device</h2>
         <p className="mb-3 mt-1 text-sm text-[var(--text-secondary)]">
-          The same circuits transpiled onto <code>fake_hanoi</code> — local IBM
-          calibration data, <strong>no live hardware and no queue</strong> — against an
+          The same circuits transpiled onto <code>fake_hanoi</code> (local IBM
+          calibration data, <strong>no live hardware and no queue</strong>) against an
           ideal simulator. Matched on reps, shots and objective, so the difference is
           routing, not shot noise. SWAP cost is folded into the two-qubit gate count
           rather than reported separately.
@@ -3316,7 +3316,7 @@ export default function ResourcesPage() {
           At sizes where an exact reference exists, these QUBO instances are easy.
           Simulated annealing reaches the optimum on every determinate run in a fraction
           of a second. There is no room for an advantage claim in a regime classical
-          methods already own — which is itself a finding about where quantum
+          methods already own, which is itself a finding about where quantum
           optimization should be pointed.
         </p>
         <DataTable
@@ -3355,7 +3355,7 @@ export default function PseudoknotsPage() {
       <header>
         <h1 className="text-2xl font-semibold">Pseudoknots</h1>
         <p className="mt-1 max-w-3xl text-sm text-[var(--text-secondary)]">
-          Disabling the crossing penalty — one term in the QUBO — reaches structures
+          Disabling the crossing penalty (one term in the QUBO) reaches structures
           dynamic programming has no representation for. Single-bracket dot-bracket
           notation <strong>cannot express a crossing</strong>, so ViennaRNA does not
           score poorly on these fixtures; it structurally cannot return the answer.
@@ -3404,7 +3404,7 @@ export default function PseudoknotsPage() {
         <ul className="mt-2 space-y-1 text-sm">
           {knotted.map((row) => (
             <li key={row.sequenceId}>
-              <code>{row.sequenceId}</code> — {row.source}
+              <code>{row.sequenceId}</code>: {row.source}
             </li>
           ))}
         </ul>
@@ -3460,7 +3460,7 @@ git commit -- frontend -m "feat: add scaling, resource and pseudoknot analytics 
 
 ---
 
-## Phase 3 — FoldQ Studio
+## Phase 3: FoldQ Studio
 
 ### Task 10: Dot-bracket parsing and 2D layout
 
@@ -3472,7 +3472,7 @@ git commit -- frontend -m "feat: add scaling, resource and pseudoknot analytics 
 - Produces: `parseDotBracket(structure) -> {pairs, unpaired, isValid, error?}`; `describeStructure(structure) -> StructureStats`; `layoutStructure(sequence, pairs) -> {nodes, links}` where `nodes = {index, base, x, y, paired}[]`
 
 Pure functions with no React and no fetching, so they are testable in isolation. The
-layout is a force-free deterministic circular-arc placement — the same input always
+layout is a force-free deterministic circular-arc placement: the same input always
 produces the same coordinates, which keeps snapshot comparison meaningful.
 
 - [ ] **Step 1: Write the failing tests**
@@ -3599,7 +3599,7 @@ describe("layoutStructure", () => {
 - [ ] **Step 2: Run them to verify they fail**
 
 Run: `cd frontend && pnpm vitest run tests/unit/dotbracket.test.ts tests/unit/layout.test.ts`
-Expected: FAIL — modules not found.
+Expected: FAIL; modules not found.
 
 - [ ] **Step 3: Write `frontend/src/lib/rna/dotbracket.ts`**
 
@@ -3612,7 +3612,7 @@ export interface ParsedStructure {
 }
 
 /** Parses single-bracket dot-bracket notation. Crossing pairs cannot be expressed
- *  in this notation at all — a pseudoknotted candidate arrives from the API as an
+ *  in this notation at all: a pseudoknotted candidate arrives from the API as an
  *  explicit base-pair list instead, never as a string. */
 export function parseDotBracket(structure: string): ParsedStructure {
   const stack: number[] = [];
@@ -3736,7 +3736,7 @@ export interface Layout {
 /** Circular backbone with chords for base pairs.
  *
  *  A radial-loop layout (the ViennaRNA/R2DT look) is the eventual goal, but it has
- *  no meaning for crossing pairs — and pseudoknots are the result this project is
+ *  no meaning for crossing pairs, and pseudoknots are the result this project is
  *  built to show. A circle places every base deterministically regardless of
  *  topology, so nested and crossing structures render through one code path.
  */
@@ -3848,7 +3848,7 @@ describe("gateLadder", () => {
         "candidate generation: the reference structure is not in the candidate set (only 50% of its pairs are reachable)",
     });
     expect(ladder[0].state).toBe("fail");
-    // A later gate cannot be blamed for an earlier failure — this is the whole
+    // A later gate cannot be blamed for an earlier failure; this is the whole
     // point of attributing to the earliest failing gate.
     expect(ladder.slice(1).every((g) => g.state === "not-applicable")).toBe(true);
   });
@@ -3990,7 +3990,7 @@ describe("GateLadder", () => {
 - [ ] **Step 2: Run them to verify they fail**
 
 Run: `cd frontend && pnpm vitest run tests/unit/gates.test.ts tests/component/structure.test.tsx`
-Expected: FAIL — modules not found.
+Expected: FAIL; modules not found.
 
 - [ ] **Step 3: Write `frontend/src/lib/foldq/gates.ts`**
 
@@ -4032,7 +4032,7 @@ export function gateLadder(gates: GateReport): GateStatus[] {
         name: "Representable",
         question: "Is the reference structure in the candidate set?",
         state: "fail",
-        detail: `Only ${(gates.representable_fraction * 100).toFixed(0)}% of the reference's pairs are reachable. This is a hard ceiling — no optimizer can recover a structure the candidate set never held.`,
+        detail: `Only ${(gates.representable_fraction * 100).toFixed(0)}% of the reference's pairs are reachable. This is a hard ceiling: no optimizer can recover a structure the candidate set never held.`,
         attributionPrefix: "candidate generation",
       };
 
@@ -4048,7 +4048,7 @@ export function gateLadder(gates: GateReport): GateStatus[] {
         ? {
             state: "indeterminate" as GateState,
             detail:
-              "Exact ground truth is unavailable above roughly 22 variables. Not a failure — an unanswered question.",
+              "Exact ground truth is unavailable above roughly 22 variables. Not a failure: an unanswered question.",
             attributionPrefix: "indeterminate",
           }
         : gates.is_qubo_ground_state
@@ -4308,7 +4308,7 @@ git commit -- frontend -m "feat: add RNA structure view and diagnostic gate ladd
 - Consumes: `foldSequence`, `fetchMeta` (Task 4)
 - Produces: `useWorkspace()` Zustand store with `{sequence, solver, seed, pseudoknots, setSequence, setSolver, setSeed, setPseudoknots, reset}`; `<SequenceInput/>`, `<SolverPicker/>`; the `/foldq/new` route
 
-The MSW fixture is a real captured response — generated by running the API and saving
+The MSW fixture is a real captured response, generated by running the API and saving
 its output, not hand-written. A hand-written fixture drifts from the backend and the
 tests keep passing while the app breaks.
 
@@ -4328,7 +4328,7 @@ kill %1
 ```
 
 Confirm both files are valid JSON and `fold-response.json` contains an `attribution`
-field. If the server is unreachable, complete Task 1 first — do not hand-write these.
+field. If the server is unreachable, complete Task 1 first: do not hand-write these.
 
 - [ ] **Step 2: Write the failing test**
 
@@ -4425,7 +4425,7 @@ describe("analysis wizard", () => {
 - [ ] **Step 3: Run it to verify it fails**
 
 Run: `cd frontend && pnpm vitest run tests/component/wizard.test.tsx`
-Expected: FAIL — modules not found.
+Expected: FAIL; modules not found.
 
 - [ ] **Step 4: Write the MSW handlers**
 
@@ -4532,7 +4532,7 @@ export function SequenceInput() {
         RNA sequence
       </label>
       <p className="mb-1 mt-0.5 text-xs text-[var(--text-secondary)]">
-        A, U, C, G. DNA input is accepted — T is converted to U. Use public,
+        A, U, C, G. DNA input is accepted: T is converted to U. Use public,
         synthetic, or randomly generated sequences only.
       </p>
       <textarea
@@ -4620,7 +4620,7 @@ export function SolverPicker() {
           <p className="mt-1 text-xs text-[var(--warning)]">
             The crossing penalty is disabled, so the candidate may contain crossing
             pairs. ViennaRNA cannot represent or score those, and its reference fold can
-            hold at most one of any two crossing helices — so{" "}
+            hold at most one of any two crossing helices, so{" "}
             <strong>precision against a nested reference is capped</strong> even when the
             structure is right.
           </p>
@@ -4719,7 +4719,7 @@ git commit -- frontend -m "feat: add analysis wizard with MSW-backed tests"
 
 Results are read from `sessionStorage` where the wizard wrote them. A run is a content
 hash of its inputs, so a shared link that misses the cache re-folds identically rather
-than 404ing — which is why no database is needed.
+than 404ing, which is why no database is needed.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -4794,7 +4794,7 @@ describe("run page", () => {
 - [ ] **Step 2: Run it to verify it fails**
 
 Run: `cd frontend && pnpm vitest run tests/component/run-page.test.tsx`
-Expected: FAIL — page not found.
+Expected: FAIL; page not found.
 
 - [ ] **Step 3: Write `StageTimeline.tsx`**
 
@@ -4867,7 +4867,7 @@ export function RunSummary({ result }: { result: FoldResponse }) {
       </dl>
       <p className="mt-3 text-xs text-[var(--text-secondary)]">
         Run <code>{result.run_id}</code> is a content hash of the sequence, solver, seed
-        and pseudoknot setting — the same inputs always reproduce it.
+        and pseudoknot setting; the same inputs always reproduce it.
       </p>
     </section>
   );
@@ -4891,7 +4891,7 @@ export function StructureComparison({ result }: { result: FoldResponse }) {
         <p className="mb-2 mt-1 text-xs text-[var(--text-secondary)]">
           {energy(result.candidate.energy)}
           {result.candidate.is_pseudoknotted &&
-            " — contains crossing pairs, which ViennaRNA cannot score"}
+            ". Contains crossing pairs, which ViennaRNA cannot score"}
           {result.candidate.was_repaired &&
             ` · ${result.candidate.repair_count} repair(s) applied to the decoded sample`}
         </p>
@@ -4913,7 +4913,7 @@ export function StructureComparison({ result }: { result: FoldResponse }) {
       <div className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
         <h2 className="text-base font-semibold">ViennaRNA reference</h2>
         <p className="mb-2 mt-1 text-xs text-[var(--text-secondary)]">
-          {energy(result.reference.energy)} — exact MFE under the Turner model
+          {energy(result.reference.energy)}: exact MFE under the Turner model
         </p>
         <StructureView
           sequence={result.sequence}
@@ -4963,7 +4963,7 @@ export default function RunPage() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["run", runId],
     // A run identifier is a content hash, so a cache miss re-folds the same inputs
-    // and yields the same result — no persistence layer required.
+    // and yields the same result; no persistence layer required.
     queryFn: () =>
       foldSequence({
         sequence: workspace.sequence,
@@ -5022,7 +5022,7 @@ git commit -- frontend -m "feat: add run results workspace"
 
 `NAV_SECTIONS` links to `/foldq/compare` from Task 5 onward. Without this task the
 primary navigation ships a 404, which is why the nav test in Task 5 asserts the built
-route set. This is also where `parseDotBracket` and `describeStructure` are consumed —
+route set. This is also where `parseDotBracket` and `describeStructure` are consumed:
 the run page reads pairs straight from the API, but a comparison needs to derive
 structure from the dot-bracket the report and CSV carry.
 
@@ -5115,7 +5115,7 @@ describe("compare page", () => {
 - [ ] **Step 2: Run them to verify they fail**
 
 Run: `cd frontend && pnpm vitest run tests/unit/diff.test.ts tests/component/compare.test.tsx`
-Expected: FAIL — modules not found.
+Expected: FAIL; modules not found.
 
 - [ ] **Step 3: Write `frontend/src/lib/foldq/diff.ts`**
 
@@ -5134,7 +5134,7 @@ const key = ([i, j]: [number, number]) => `${i}-${j}`;
 
 /** Compares two dot-bracket structures by base pair.
  *
- *  Throws on an unparseable input rather than treating it as "no pairs" — an
+ *  Throws on an unparseable input rather than treating it as "no pairs": an
  *  empty pair set would silently report zero overlap, which reads as a real
  *  disagreement between two structures instead of a parse failure. */
 export function comparePairs(a: string, b: string): PairDiff {
@@ -5158,7 +5158,7 @@ export function comparePairs(a: string, b: string): PairDiff {
   return { shared, onlyA, onlyB, f1 };
 }
 
-/** Every run this browser session has folded. There is no server-side history —
+/** Every run this browser session has folded. There is no server-side history:
  *  a run is a content hash, so re-folding the same inputs restores it exactly. */
 export function listCachedRuns(): FoldResponse[] {
   if (typeof window === "undefined") return [];
@@ -5216,7 +5216,7 @@ export default function ComparePage() {
         <h1 className="text-2xl font-semibold">Compare runs</h1>
         <p role="status" className="text-sm text-[var(--text-secondary)]">
           Comparison needs at least two runs from this browser session. Fold the same
-          sequence with two different solvers, then come back — runs are not stored on a
+          sequence with two different solvers, then come back: runs are not stored on a
           server, so this list is per-session by design.
         </p>
       </div>
@@ -5315,7 +5315,7 @@ export default function ComparePage() {
 Run: `cd frontend && pnpm vitest run tests/unit/diff.test.ts tests/component/compare.test.tsx`
 Expected: PASS (8 tests)
 
-Run: `pnpm vitest run tests/unit/nav.test.ts` — the built-route assertion from Task 5 now
+Run: `pnpm vitest run tests/unit/nav.test.ts`; the built-route assertion from Task 5 now
 holds, since `/foldq/compare` exists.
 
 - [ ] **Step 6: Commit**
@@ -5327,7 +5327,7 @@ git commit -- frontend -m "feat: add run comparison view"
 
 ---
 
-## Phase 4 — Reports and Command Center
+## Phase 4: Reports and Command Center
 
 ### Task 14: Decision card report
 
@@ -5340,7 +5340,7 @@ git commit -- frontend -m "feat: add run comparison view"
 - Consumes: `FoldResponse.decision_card_html` (Task 1), `cached()` pattern (Task 13)
 - Produces: the `/reports/[reportId]` route; `downloadText(filename, contents, mime)`, `runToCsvRow(result) -> string`, `CSV_HEADER`
 
-The decision card is the existing Jinja2 template — self-contained HTML with zero
+The decision card is the existing Jinja2 template: self-contained HTML with zero
 external requests. It is rendered in a sandboxed iframe rather than injected into the
 page, so the report cannot reach the app's DOM or storage.
 
@@ -5423,7 +5423,7 @@ describe("report page", () => {
 - [ ] **Step 2: Run them to verify they fail**
 
 Run: `cd frontend && pnpm vitest run tests/unit/export.test.ts tests/component/report.test.tsx`
-Expected: FAIL — modules not found.
+Expected: FAIL; modules not found.
 
 - [ ] **Step 3: Write `frontend/src/lib/foldq/export.ts`**
 
@@ -5452,7 +5452,7 @@ export const CSV_HEADER = [
 ].join(",");
 
 /** A null gate means indeterminate, not false. It is written as an empty field so a
- *  reader cannot mistake "we could not check" for "it failed" — the same convention
+ *  reader cannot mistake "we could not check" for "it failed": the same convention
  *  the experiment CSVs use. */
 const flag = (value: boolean | null) => (value === null ? "" : String(value));
 const number = (value: number | null) => (value === null ? "" : String(value));
@@ -5535,7 +5535,7 @@ export default function ReportPage() {
     return (
       <p role="alert" className="text-sm">
         This report is not in this browser session. Fold the sequence again to regenerate
-        it — the result is fully determined by the sequence, solver and seed.
+        it: the result is fully determined by the sequence, solver and seed.
       </p>
     );
   }
@@ -5546,7 +5546,7 @@ export default function ReportPage() {
         <div>
           <h1 className="text-2xl font-semibold">Decision card</h1>
           <p className="mt-1 text-sm text-[var(--text-secondary)]">
-            Self-contained HTML — no external requests, no scripts, no network access.
+            Self-contained HTML: no external requests, no scripts, no network access.
             Open it anywhere, including offline.
           </p>
         </div>
@@ -5707,7 +5707,7 @@ describe("dashboard", () => {
 - [ ] **Step 2: Run them to verify they fail**
 
 Run: `cd frontend && pnpm vitest run tests/unit/headline.test.ts tests/component/dashboard.test.tsx`
-Expected: FAIL — modules not found.
+Expected: FAIL; modules not found.
 
 - [ ] **Step 3: Write `frontend/src/lib/charts/headline.ts`**
 
@@ -5727,7 +5727,7 @@ export interface HeadlineStat {
 }
 
 /** Every figure is computed from the bundled experiment output. Nothing here is a
- *  literal — a hard-coded headline is how a README ends up citing a number no
+ *  literal: a hard-coded headline is how a README ends up citing a number no
  *  experiment produced. */
 export function headlineStats(): HeadlineStat[] {
   const attribution = attributionBreakdown();
@@ -5752,7 +5752,7 @@ export function headlineStats(): HeadlineStat[] {
       label: "QAOA reaches the ground state",
       value: `${Math.min(...rates)}–${Math.max(...rates)}%`,
       caption:
-        "Across circuit depth, on the noiseless expectation objective. The shot budget spans a wider range still — see Quantum resources.",
+        "Across circuit depth, on the noiseless expectation objective. The shot budget spans a wider range still; see Quantum resources.",
       source: "results/full/e4_qaoa.csv",
     },
     {
@@ -5770,7 +5770,7 @@ export function headlineStats(): HeadlineStat[] {
     },
     {
       label: "Hardest real structure",
-      value: worst ? worst.strictF1.toFixed(3) : "—",
+      value: worst ? worst.strictF1.toFixed(3) : "n/a",
       caption: worst
         ? `Base-pair F1 on ${worst.sequenceId} (${worst.length} nt). The method degrades on real structures at scale, and we report it.`
         : "",
@@ -5895,8 +5895,8 @@ export default function Home() {
 
 - [ ] **Step 7: Run the tests**
 
-Run: `cd frontend && pnpm vitest run` — expected PASS (all suites)
-Run: `pnpm build` — expected: no type errors
+Run: `cd frontend && pnpm vitest run`, expected PASS (all suites)
+Run: `pnpm build`, expected: no type errors
 
 - [ ] **Step 8: Commit**
 
@@ -6072,17 +6072,17 @@ frontend-test:  ## Run frontend unit, component and end-to-end tests
 - [ ] **Step 5: Write `frontend/README.md`**
 
 ```markdown
-# Decidion FoldQ — frontend
+# Decidion FoldQ: frontend
 
 Next.js interface over the FoldQ pipeline.
 
 ## Running it
 
-    # terminal 1 — the API (optional; analytics works without it)
+    # terminal 1: the API (optional; analytics works without it)
     uv pip install -e ".[dev,quantum,api]"
     make api
 
-    # terminal 2 — the frontend
+    # terminal 2: the frontend
     cd frontend && pnpm install && pnpm dev
 
 Open http://localhost:3000.
@@ -6106,9 +6106,9 @@ numbers as a table.
 ## Scope
 
 Built: shell, Analytics Lab, FoldQ Studio, Reports. Not built: RCSB structural
-evidence, the Mol* 3D viewer, and the real-world-evidence area — see
+evidence, the Mol* 3D viewer, and the real-world-evidence area; see
 `docs/design/2026-08-01-frontend-design.md` §10. Any view added later against fixture
-data must carry a persistent `Demonstration data — not part of the challenge
+data must carry a persistent `Demonstration data, not part of the challenge
 submission` badge.
 ```
 
@@ -6139,7 +6139,7 @@ cd .. && .venv/bin/pytest tests -q && .venv/bin/ruff check src tests && .venv/bi
 Expected: frontend suites pass, Playwright passes including the axe checks, Python at
 275 passing with ruff and mypy clean.
 
-If an axe violation appears, fix the markup — do not narrow the rule set. The design
+If an axe violation appears, fix the markup: do not narrow the rule set. The design
 commits to WCAG 2.2 AA.
 
 - [ ] **Step 8: Commit**
@@ -6172,12 +6172,12 @@ Carried from design §10, so a reviewer does not read these as gaps:
 
 - Authentication, multi-user projects, persistent run history, job queues
 - RCSB structural evidence, the Mol* 3D viewer, 2D↔3D synchronisation (design phase 5)
-- Real-world evidence, materials and targets (design phase 6 — fixture-backed, and
+- Real-world evidence, materials and targets (design phase 6: fixture-backed, and
   requires the demonstration badge)
 - R2DT template layouts, density maps, backend PDF export
 - `GET /api/v1/results/{experiment}` (design §3). The Analytics Lab reads bundled
   JSON and never fetches experiment data, so the endpoint would have no consumer.
-  Its stated purpose — serving regenerated results without a rebuild — is covered by
+  Its stated purpose (serving regenerated results without a rebuild) is covered by
   re-running `pnpm build`, which re-bundles from `results/full/`.
 - `/library/*`, `/settings` and `/help` (design §5). Nothing is saved server-side and
   there is no user preference to persist beyond the theme toggle, so these would be

@@ -14,7 +14,7 @@ export interface CoefficientRow {
 /** Standardised regression coefficients as a horizontal effect plot.
  *
  *  The conventional way to show "which predictor moves the outcome most", and it
- *  works precisely because the coefficients are standardised — a raw coefficient
+ *  works precisely because the coefficients are standardised: a raw coefficient
  *  on sequence length (tens of nt) and one on QUBO density (0–1) share no scale
  *  and cannot be put on one axis honestly.
  *
@@ -23,8 +23,8 @@ export interface CoefficientRow {
  *  - **Error bars, not bare bars.** A coefficient without its uncertainty invites
  *    reading a rank order that the data may not support; here you can see the
  *    intervals overlap.
- *  - **Significance is marked in the label, not only by colour** — a trailing
- *    asterisk — so the distinction survives greyscale and colour blindness.
+ *  - **Significance is marked in the label, not only by colour**: a trailing
+ *    asterisk, so the distinction survives greyscale and colour blindness.
  *  - **A zero line is always drawn**, because the question for every predictor is
  *    whether its interval clears zero.
  */

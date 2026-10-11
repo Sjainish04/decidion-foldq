@@ -18,7 +18,7 @@ import type { DiagramResult } from "@/lib/api/schemas";
  *  the browser treats it as inert by specification. The sequence submitted by
  *  the user reaches R2DT and comes back inside the returned document, so this is
  *  a real path from user input to markup, not a hypothetical one. The cost is
- *  losing per-nucleotide hover — worth paying, and the interactive drawing
+ *  losing per-nucleotide hover: worth paying, and the interactive drawing
  *  elsewhere on the page already provides it.
  */
 export function R2dtDiagram({ sequence }: { sequence: string }) {

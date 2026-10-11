@@ -23,7 +23,7 @@ env/
 coverage.xml
 htmlcov/
 
-# Secrets — never commit credentials
+# Secrets: never commit credentials
 .env
 *.token
 
@@ -68,7 +68,7 @@ frontend/out/
 frontend/.env.local
 
 # Playwright run artifacts. Written on every failing run, and unanchored for the
-# same reason as node_modules above — the output directory follows the config's
+# same reason as node_modules above: the output directory follows the config's
 # location, not the repo root.
 test-results/
 playwright-report/

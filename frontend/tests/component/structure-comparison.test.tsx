@@ -60,7 +60,7 @@ describe("StructureComparison", () => {
     const [candidateAfter, referenceAfter] = positions(container);
 
     // Both moved. If only one had, the two panels would be drawn by different
-    // algorithms and could not be compared by eye — the entire point of the view.
+    // algorithms and could not be compared by eye: the entire point of the view.
     expect(candidateAfter).not.toEqual(candidateBefore);
     expect(referenceAfter).not.toEqual(referenceBefore);
 

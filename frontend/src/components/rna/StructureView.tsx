@@ -67,7 +67,7 @@ export function StructureView({
    *  square. `max-w-full` still shrinks it on narrow viewports. */
   size?: number;
   /** "circular" (default) places every base on a circle with chords for
-   *  pairs — meaning-preserving for any topology, including pseudoknots.
+   *  pairs, meaning-preserving for any topology, including pseudoknots.
    *  "force" is the forna-style ladders-and-loops drawing; it still
    *  handles crossing pairs (they're just springs), but reads more like
    *  conventional secondary-structure diagrams for nested structure. */
@@ -104,7 +104,7 @@ export function StructureView({
 
   // A square element was right for the circular layout, which is square by
   // construction, and wrong for the force layout, whose aspect ratio depends on
-  // the structure. Boxing a tall drawing — a tRNA cloverleaf is roughly 2:1 —
+  // the structure. Boxing a tall drawing (a tRNA cloverleaf is roughly 2:1)
   // into a square makes `preserveAspectRatio` letterbox it, so it rendered at
   // about half the size the panel had room for. Deriving the box from the
   // layout's own bounds makes the drawing fill it. Circular layouts are 1:1, so

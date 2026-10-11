@@ -137,7 +137,7 @@ def main() -> None:
         "- Stems that could have supplied the missed pairs: "
         + (
             ", ".join(stems_covering(false_negative, candidate_stems))
-            or "_none — those pairs were never available_"
+            or "_none: those pairs were never available_"
         ),
         f"- Stems selected that contributed wrong pairs: "
         f"{', '.join(stems_covering(false_positive, candidate_stems)) or '_none_'}",
@@ -160,7 +160,7 @@ def main() -> None:
 
 def _tri(value: bool | None) -> str:
     if value is None:
-        return "**indeterminate** — instance exceeds the exact solver's ceiling"
+        return "**indeterminate**: instance exceeds the exact solver's ceiling"
     return "yes" if value else "**NO**"
 
 
@@ -187,7 +187,7 @@ def _diagnosis(gates) -> str:
             "**Attribution is indeterminate.** The instance exceeds the exact solver's "
             "variable ceiling, so Gates B and C could not be decided. The accuracy below "
             "is real, but this report cannot say whether the energy model or the "
-            "optimizer is responsible for it — and reporting either as the cause would "
+            "optimizer is responsible for it, and reporting either as the cause would "
             "be a guess."
         )
     return "**No gate failed.** The prediction matched under every check."
@@ -199,7 +199,7 @@ def _interpretation(gates, known, predicted, vienna) -> str:
         f"The prediction shares {len(predicted & known)} of {len(known)} reference pairs "
         f"and {overlap_with_vienna} of {len(vienna)} pairs with ViennaRNA's own MFE fold.\n\n"
         "Two things are worth separating here. Gate A passing means the structure was "
-        "*available* — the candidate set was not the limitation. Whether the energy "
+        "*available*: the candidate set was not the limitation. Whether the energy "
         "model or the optimizer then chose wrongly is exactly what Gates B and C exist "
         "to distinguish, and at this size they cannot be decided, so this report says so "
         "rather than assigning blame it cannot support.\n\n"

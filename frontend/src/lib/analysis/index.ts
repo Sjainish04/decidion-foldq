@@ -1,7 +1,7 @@
 import data from "./data.json";
 
 /** E7 runs multivariate statistics over FoldQ's own committed experiment output
- *  (E1's instance geometry, E3's solver behaviour) — it is not a new sweep, and
+ *  (E1's instance geometry, E3's solver behaviour); it is not a new sweep, and
  *  re-running it against the same CSVs reproduces every number here exactly.
  *  Each section below carries its own `note` explaining a methodological choice
  *  (why predictors are z-scored, why partial dependence needs no surrogate model,
@@ -150,7 +150,7 @@ export interface E7Analysis {
   pareto: ParetoSection;
 }
 
-/** `results/full/e7_analysis.json`, committed verbatim as `./data.json` — see
+/** `results/full/e7_analysis.json`, committed verbatim as `./data.json`; see
  *  that file's own top-level `note` for provenance. */
 export const analysis = data as E7Analysis;
 
@@ -194,7 +194,7 @@ export function componentsForVariance(ratios: number[], threshold = 0.9): number
 
 export interface FactorSpread {
   factor: string;
-  /** This factor's levels, sorted by mean descending — index 0 is the best
+  /** This factor's levels, sorted by mean descending; index 0 is the best
    *  level, the last index the worst. */
   levels: PartialDependenceRow[];
   /** max(mean) - min(mean) across this factor's levels: how much the outcome
@@ -203,7 +203,7 @@ export interface FactorSpread {
 }
 
 /** Groups partial-dependence rows by factor and ranks the factors by how much
- *  the outcome moves across their levels — the largest spread is the factor
+ *  the outcome moves across their levels: the largest spread is the factor
  *  that matters most to the outcome. */
 export function factorSpreads(rows: PartialDependenceRow[]): FactorSpread[] {
   const byFactor = new Map<string, PartialDependenceRow[]>();
@@ -238,7 +238,7 @@ export function diagonalReference(min = 0, max = 1, steps = 10): [number, number
 }
 
 /** Importance rows whose magnitude does not exceed one std of the permutation
- *  estimate — i.e. not distinguishable from zero at that resolution. */
+ *  estimate: i.e. not distinguishable from zero at that resolution. */
 export function negligibleImportance(rows: FeatureImportanceRow[]): FeatureImportanceRow[] {
   return rows.filter((r) => Math.abs(r.importance) < r.std);
 }

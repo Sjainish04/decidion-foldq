@@ -182,7 +182,7 @@ def learning_curve(
     """Held-out accuracy against training-set size.
 
     Answers whether more data would help. A curve still rising at the full sample
-    means the limit is the sample, not the model — which is worth saying plainly
+    means the limit is the sample, not the model, which is worth saying plainly
     rather than presenting the final score as a ceiling.
     """
     from sklearn.ensemble import RandomForestRegressor
@@ -230,7 +230,7 @@ def marginal_effects(frame: pd.DataFrame, outcome: str, factors: list[str]) -> l
     """Partial dependence, computed exactly rather than approximated.
 
     E1 is a full factorial sweep over energy model, nesting policy and overlap
-    penalty, so the marginal mean at each level IS the partial dependence — there
+    penalty, so the marginal mean at each level IS the partial dependence: there
     is no need to average a model's predictions over a synthetic grid, and doing
     so would only add the model's error to a quantity the design already gives.
     """

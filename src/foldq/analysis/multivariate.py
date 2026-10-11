@@ -1,6 +1,6 @@
 """Multivariate statistics over this project's own experiment output.
 
-The experiments report one outcome at a time — Gate B here, base-pair F1 there.
+The experiments report one outcome at a time: Gate B here, base-pair F1 there.
 That leaves the obvious question unanswered: of the knobs this project exposes,
 which ones actually move the result, and which look like they do only because
 they travel with something else?
@@ -8,7 +8,7 @@ they travel with something else?
 The tools here answer that on the committed CSVs:
 
 - a correlation matrix, to see what moves together at all;
-- variance inflation factors, because several predictors are near-duplicates —
+- variance inflation factors, because several predictors are near-duplicates:
   variable count and sequence length carry much of the same information, and an
   unregularised regression will split their shared effect arbitrarily between
   them and report both as weak;
@@ -207,7 +207,7 @@ def principal_components(
 ) -> PrincipalComponents:
     """PCA on z-scored columns, via SVD.
 
-    Standardised first, because these columns differ by orders of magnitude —
+    Standardised first, because these columns differ by orders of magnitude,
     unscaled, the component structure would just recover whichever column has the
     largest raw variance.
     """

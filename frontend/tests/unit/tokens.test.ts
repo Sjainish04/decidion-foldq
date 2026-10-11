@@ -27,7 +27,7 @@ describe("design tokens", () => {
 
   it("defines a text accent per theme, distinct from the chart colour", () => {
     // --quantum-inspired is a chart colour: against every surface in either theme
-    // it sits between 3.87:1 and 4.35:1 — enough for a non-text graphic (WCAG
+    // it sits between 3.87:1 and 4.35:1, enough for a non-text graphic (WCAG
     // 1.4.11 wants 3:1) but short of the 4.5:1 WCAG 1.4.3 AA demands of text.
     // axe caught two such uses in review. No single value works as text in both
     // themes, since it must darken against white and lighten against near black,

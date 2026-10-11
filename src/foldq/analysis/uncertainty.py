@@ -1,6 +1,6 @@
 """Uncertainty estimates for reported statistics.
 
-Every headline number in this project is computed from a sample — 19 instances,
+Every headline number in this project is computed from a sample: 19 instances,
 30 determinate solver runs, 27 circuits. Reporting a point estimate without an
 interval invites a reader to treat 89.5% and 88.1% as different findings when the
 sample cannot distinguish them.
@@ -110,7 +110,7 @@ def wilson_ci(successes: int, trials: int, *, confidence: float = 0.95) -> Inter
 
 
 def format_rate(successes: int, trials: int, *, confidence: float = 0.95) -> str:
-    """`17/19 = 89.5% [69.2%, 97.1%]` — the form used in the README tables."""
+    """`17/19 = 89.5% [69.2%, 97.1%]`: the form used in the README tables."""
     interval = wilson_ci(successes, trials, confidence=confidence)
     if trials == 0:
         return "0/0 = n/a"

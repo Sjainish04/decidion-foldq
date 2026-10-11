@@ -35,7 +35,7 @@ export function ScatterChart({
     ...baseOption(chrome),
     tooltip: { ...baseOption(chrome).tooltip, trigger: "item" as const },
     // Anchored above the plot. ECharts' default centres the legend on the
-    // canvas, which put its entries directly on top of the x-axis tick labels —
+    // canvas, which put its entries directly on top of the x-axis tick labels:
     // solver names were overprinting the runtime ticks.
     legend: legend(chrome, true),
     xAxis: {

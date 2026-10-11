@@ -33,7 +33,7 @@ export const ROLES = [...new Set(library.references.map((r) => r.role))].sort();
 
 export function byRole(role: string | null): Reference[] {
   const rows = role ? library.references.filter((r) => r.role === role) : library.references;
-  // Verified first, then alphabetical — the page's whole point is which ones resolve.
+  // Verified first, then alphabetical; the page's whole point is which ones resolve.
   return [...rows].sort(
     (a, b) =>
       Number(b.crossref_verified) - Number(a.crossref_verified) ||

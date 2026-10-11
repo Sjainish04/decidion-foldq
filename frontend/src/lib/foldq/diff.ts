@@ -12,7 +12,7 @@ const key = ([i, j]: [number, number]) => `${i}-${j}`;
 
 /** Compares two dot-bracket structures by base pair.
  *
- *  Throws on an unparseable input rather than treating it as "no pairs" — an
+ *  Throws on an unparseable input rather than treating it as "no pairs": an
  *  empty pair set would silently report zero overlap, which reads as a real
  *  disagreement between two structures instead of a parse failure. */
 export function comparePairs(a: string, b: string): PairDiff {
@@ -36,7 +36,7 @@ export function comparePairs(a: string, b: string): PairDiff {
   return { shared, onlyA, onlyB, f1 };
 }
 
-/** Every run this browser session has folded. There is no server-side history —
+/** Every run this browser session has folded. There is no server-side history:
  *  a run is a content hash, so re-folding the same inputs restores it exactly. */
 export function listCachedRuns(): FoldResponse[] {
   if (typeof window === "undefined") return [];

@@ -6,7 +6,7 @@ import Link from "next/link";
  *  different things: the site content is © Decidion AI, all rights reserved, while
  *  the source code in the repository remains MIT-licensed. "All rights reserved" on
  *  its own would contradict the MIT licence actually shipped, so the licence
- *  statement is kept immediately alongside it rather than dropped — a reviewer
+ *  statement is kept immediately alongside it rather than dropped: a reviewer
  *  needs to see both, not just the one project owners asked for by name.
  */
 export function Footer() {

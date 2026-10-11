@@ -1,14 +1,14 @@
-# Decidion FoldQ — frontend
+# Decidion FoldQ: frontend
 
 Next.js interface over the FoldQ pipeline.
 
 ## Running it
 
-    # terminal 1 — the API (optional; analytics works without it)
+    # terminal 1: the API (optional; analytics works without it)
     uv pip install -e ".[dev,quantum,api]"
     make api         # http://localhost:8010 -- 8000 is often occupied on dev machines
 
-    # terminal 2 — the frontend
+    # terminal 2: the frontend
     cd frontend && pnpm install && pnpm dev
 
 Open http://localhost:3000.
@@ -33,8 +33,8 @@ numbers as a table.
     pnpm lint        # eslint + tsc --noEmit
     pnpm test:e2e    # Playwright, including axe-core WCAG 2.2 AA checks
 
-`pnpm test:e2e` starts both the frontend (port 3000) and the API (port 8010) for you —
-see `playwright.config.ts` — so neither needs to be running first. The first run also
+`pnpm test:e2e` starts both the frontend (port 3000) and the API (port 8010) for you
+(see `playwright.config.ts`), so neither needs to be running first. The first run also
 needs the Chromium browser once:
 
     pnpm exec playwright install chromium
@@ -42,14 +42,14 @@ needs the Chromium browser once:
 ## Scope
 
 Built: shell, Analytics Lab, FoldQ Studio, Reports, and structural evidence (RCSB
-search at `/structures` and the Mol* 3D viewer at `/structures/[pdbId]`) — see
+search at `/structures` and the Mol* 3D viewer at `/structures/[pdbId]`); see
 `docs/plans/2026-08-01-frontend-structures.md`. Deliberately not built: the CQD
 material layer (no underlying data), the real-world-evidence/materials/targets routes
 that depended on it, 2D↔3D selection sync (RCSB's residue numbering does not map
 cleanly onto sequence position), and automated comparison of FoldQ output against
-experimental base pairs (RCSB serves no secondary-structure annotation) — see that
+experimental base pairs (RCSB serves no secondary-structure annotation); see that
 plan's "Deliberately not built" section for the full list and reasoning. Any view added
-later against fixture data must carry a persistent `Demonstration data — not part of
+later against fixture data must carry a persistent `Demonstration data, not part of
 the challenge submission` badge.
 
 ## Structural evidence
@@ -68,6 +68,6 @@ Three rules this layer holds to:
   every other route is unaffected.
 
 The carbon-quantum-dot material layer described in the source workflow is deliberately
-not built — see `docs/plans/2026-08-01-frontend-structures.md`.
+not built; see `docs/plans/2026-08-01-frontend-structures.md`.
 
 RCSB is public and needs no key or account.

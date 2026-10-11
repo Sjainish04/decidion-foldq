@@ -3,11 +3,11 @@
 Three questions a client needs answered before it can behave sensibly, and none
 of which `/meta` alone answers:
 
-- `/health` — is this instance serving? Cheap, dependency-free, safe to poll.
-- `/capabilities` — what can this *particular* deployment do? A size-constrained
+- `/health`: is this instance serving? Cheap, dependency-free, safe to poll.
+- `/capabilities`: what can this *particular* deployment do? A size-constrained
   host installs without the quantum extra, so the solver list is a property of
   the deployment rather than of the codebase.
-- `/preflight` — what will this specific request cost before it is run? A fold is
+- `/preflight`: what will this specific request cost before it is run? A fold is
   usually milliseconds, but variable count grows with sequence length and the
   circuit solvers are exponential in it. Preflight lets a UI warn instead of
   letting a request occupy a worker until it times out.

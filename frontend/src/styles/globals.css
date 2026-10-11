@@ -32,7 +32,7 @@
   --surface: #ffffff;
   --surface-elevated: #efe9df;  /* sand */
   --text-primary: #0a1628;      /* ink */
-  --text-secondary: #5c6678;    /* muted — 4.80:1 on sand */
+  --text-secondary: #5c6678;    /* muted, 4.80:1 on sand */
   --border: #d6d2c8;            /* line */
 
   --brand: #d97757;             /* terracotta, charts and borders only */
@@ -52,12 +52,12 @@
   --quantum-inspired: #d97757;
   --quantum: #9b5aa8;
   /* Darkened from #1f7a4d, which cleared --background (4.98) and --surface
-     (5.32) but landed at 4.40 on --surface-elevated — under 4.5:1, and the gate
+     (5.32) but landed at 4.40 on --surface-elevated, under 4.5:1, and the gate
      badges sit on exactly that surface. Now 5.62 / 6.00 / 4.97. */
   --reference: #1b7146;
   /* Darkened from #b8791c (3.39:1 on --background). It is used as bare small
      text for the pseudoknot caveat in SolverPicker, which renders only when
-     "Allow pseudoknots" is checked — so the route sweep, which loads the page in
+     "Allow pseudoknots" is checked, so the route sweep, which loads the page in
      its default state, never saw it. Now 5.53 / 5.91 / 4.90. */
   --warning: #8a5a10;
   --danger: #b03a2e;
@@ -80,10 +80,10 @@
   --surface: #0f2540;           /* clinical */
   --surface-elevated: #16304f;
   --text-primary: #faf7f2;      /* bone */
-  --text-secondary: #8e98a9;    /* lightened muted — 4.60:1 on the elevated surface */
+  --text-secondary: #8e98a9;    /* lightened muted, 4.60:1 on the elevated surface */
   --border: #294260;
 
-  --accent-text: #db7f61;       /* lightened terracotta — 4.60:1 on the elevated surface */
+  --accent-text: #db7f61;       /* lightened terracotta, 4.60:1 on the elevated surface */
   --accent-strong: #c3512c;
 
   --rna-a: #4ac27e;

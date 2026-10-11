@@ -3,7 +3,7 @@ import { z } from "zod";
 export const structureSchema = z.object({
   pdb_id: z.string(),
   title: z.string(),
-  /** The experimental method. Displayed on every card — a viewer must never have to
+  /** The experimental method. Displayed on every card: a viewer must never have to
    *  assume whether a structure was measured or predicted. */
   method: z.string(),
   /** Null for NMR and some cryo-EM entries. Null means "not reported", not "poor". */
@@ -13,7 +13,7 @@ export const structureSchema = z.object({
   ligands: z.array(z.string()),
   organisms: z.array(z.string()),
   released: z.string(),
-  /** The date this record was fetched from RCSB. Required — an undated cached
+  /** The date this record was fetched from RCSB. Required: an undated cached
    *  record is an undated claim. */
   retrieved: z.string(),
 });

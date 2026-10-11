@@ -21,7 +21,7 @@ def allowed_origins() -> list[str]:
     """Browser origins permitted to call this API.
 
     Set `FOLDQ_ALLOWED_ORIGINS` to a comma-separated list when the frontend is
-    deployed somewhere other than local development — without the deployed
+    deployed somewhere other than local development, without the deployed
     origin listed, the browser blocks every request and the site looks broken
     while the API itself is healthy.
 

@@ -6,7 +6,7 @@ import { expect, test } from "@playwright/test";
  *  a11y.spec.ts covers every route reachable with no prior app state. These two
  *  are not: a run page needs a run to exist, and a structure page needs a PDB id
  *  chosen from a live search. That made them the only routes shipping without an
- *  axe check — and between them they hold the layout picker, the R2DT panel, the
+ *  axe check, and between them they hold the layout picker, the R2DT panel, the
  *  export panel and the 3D representation picker, so "unchecked" was covering
  *  most of the interactive surface rather than an edge case.
  *
@@ -51,7 +51,7 @@ test("the layout picker keeps the run page accessible in either layout", async (
 
 test("the pseudoknot caveat is readable once it is actually shown", async ({ page }) => {
   // The caveat renders only when the box is checked, so a sweep of /foldq/new in
-  // its default state never reaches it — which is exactly how it shipped at
+  // its default state never reaches it, which is exactly how it shipped at
   // 3.39:1. Conditional content needs the condition met before it is checked.
   await page.goto("/foldq/new");
   await expect(page.getByRole("option", { name: "exact" })).toBeAttached();

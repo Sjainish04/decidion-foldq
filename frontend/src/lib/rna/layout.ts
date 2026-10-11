@@ -22,7 +22,7 @@ export interface Layout {
 /** Circular backbone with chords for base pairs.
  *
  *  A radial-loop layout (the ViennaRNA/R2DT look) is the eventual goal, but it has
- *  no meaning for crossing pairs — and pseudoknots are the result this project is
+ *  no meaning for crossing pairs, and pseudoknots are the result this project is
  *  built to show. A circle places every base deterministically regardless of
  *  topology, so nested and crossing structures render through one code path.
  */

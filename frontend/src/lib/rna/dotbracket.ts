@@ -6,7 +6,7 @@ export interface ParsedStructure {
 }
 
 /** Parses single-bracket dot-bracket notation. Crossing pairs cannot be expressed
- *  in this notation at all — a pseudoknotted candidate arrives from the API as an
+ *  in this notation at all: a pseudoknotted candidate arrives from the API as an
  *  explicit base-pair list instead, never as a string. */
 export function parseDotBracket(structure: string): ParsedStructure {
   const stack: number[] = [];

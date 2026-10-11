@@ -82,7 +82,7 @@ export function Heatmap({ columns, matrix, height = 380, domain = [-1, 1] }: Hea
         // rather than a smear, with rounded corners to match the cards.
         itemStyle: { borderColor: chrome.background, borderWidth: 2, borderRadius: 4 },
         // Hover outline, drawn in the axis colour so it stays visible against
-        // both a bone and an ink background — ink-on-ink was invisible in dark.
+        // both a bone and an ink background; ink-on-ink was invisible in dark.
         emphasis: {
           itemStyle: {
             borderColor: chrome.tooltipText,

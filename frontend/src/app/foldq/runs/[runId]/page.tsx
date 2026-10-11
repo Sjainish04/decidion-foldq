@@ -22,7 +22,7 @@ export default function RunPage() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["run", runId],
     // A run identifier is a content hash, so a genuine cache miss re-folds the same
-    // inputs and yields the same result — no persistence layer required.
+    // inputs and yields the same result; no persistence layer required.
     queryFn: () =>
       foldSequence({
         sequence: workspace.sequence,

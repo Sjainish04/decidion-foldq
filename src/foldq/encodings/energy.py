@@ -1,7 +1,7 @@
 """Charge-and-refund energy coefficients for the stem QUBO.
 
 A degree-2 objective cannot express "this helix closes a hairpin", because that
-depends on which *other* helices are selected — a k-body predicate. The
+depends on which *other* helices are selected: a k-body predicate. The
 construction here recovers it in two representable layers:
 
   linear[s]      = stacking(s) + hairpin_closure(s)     provisionally assume a hairpin

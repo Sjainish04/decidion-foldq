@@ -7,7 +7,7 @@
 > **Prerequisite:** `docs/plans/2026-08-01-frontend-core.md` Tasks 1–5 (API seam, app
 > shell, API client, design tokens). This plan assumes those exist.
 
-**Goal:** Connect every folded sequence to real experimentally determined structures —
+**Goal:** Connect every folded sequence to real experimentally determined structures;
 search RCSB PDB, rank by resolution, pick a target and a structure, render it in 3D with
 hetero-atoms as sticks, and fold its actual sequence through FoldQ.
 
@@ -36,13 +36,13 @@ repository and would have required fixtures.
 
 What remains, and is real: RCSB discovery, best-resolution-first ranking, target
 selection, structure selection, 3D rendering with hetero-atoms as sticks. The entity
-driving the target list becomes **RNA itself** rather than a CQD receptor — which is both
+driving the target list becomes **RNA itself** rather than a CQD receptor, which is both
 honest and closer to the project, since FoldQ folds RNA.
 
 **The connecting thread is verified, not asserted.** `data/fixtures/curated.json` contains
 `trna_phe_yeast_acceptor`, and its sequence is byte-identical to PDB **1EHZ** polymer
 entity 1 (*Saccharomyces cerevisiae* phenylalanine tRNA, X-ray, 1.93 Å). That fixture
-already carries a measured FoldQ result — base-pair F1 0.326 in `e5_pseudoknot.csv`. So
+already carries a measured FoldQ result: base-pair F1 0.326 in `e5_pseudoknot.csv`. So
 the worked example through this whole feature is a real structure, a real sequence, and a
 result the project already published. Task 6 makes that link explicit in the UI.
 
@@ -54,7 +54,7 @@ specific to this plan:
 - **Never substitute a predicted or computed model for an experimental structure.** RCSB
   serves both. Only experimental entries (`X-RAY DIFFRACTION`, `ELECTRON MICROSCOPY`,
   `SOLUTION NMR`) are listed, and the method is displayed on every row. This is the single
-  most important correctness rule in this plan — a computed model presented as
+  most important correctness rule in this plan: a computed model presented as
   experimental evidence would be the same class of failure as a fabricated citation.
 - **Every structure card shows its retrieval date.** RCSB content changes; a cached
   response with no date is an undated claim.
@@ -660,7 +660,7 @@ describe("StructureCard", () => {
 - [ ] **Step 3: Run them to verify they fail**
 
 Run: `cd frontend && pnpm vitest run tests/unit/structures-schema.test.ts tests/component/structure-card.test.tsx`
-Expected: FAIL — modules not found.
+Expected: FAIL; modules not found.
 
 - [ ] **Step 4: Write the schemas and client**
 
@@ -671,7 +671,7 @@ import { z } from "zod";
 export const structureSchema = z.object({
   pdb_id: z.string(),
   title: z.string(),
-  /** The experimental method. Displayed on every card — a viewer must never have to
+  /** The experimental method. Displayed on every card: a viewer must never have to
    *  assume whether a structure was measured or predicted. */
   method: z.string(),
   /** Null for NMR and some cryo-EM entries. Null means "not reported", not "poor". */
@@ -681,7 +681,7 @@ export const structureSchema = z.object({
   ligands: z.array(z.string()),
   organisms: z.array(z.string()),
   released: z.string(),
-  /** The date this record was fetched from RCSB. Required — an undated cached
+  /** The date this record was fetched from RCSB. Required: an undated cached
    *  record is an undated claim. */
   retrieved: z.string(),
 });
@@ -753,7 +753,7 @@ export function LigandList({ ligands }: { ligands: string[] }) {
           {ligand}
         </code>
       ))}
-      <span className="ml-1">— rendered as sticks in the 3D view.</span>
+      <span className="ml-1">Rendered as sticks in the 3D view.</span>
     </p>
   );
 }
@@ -859,16 +859,16 @@ git commit -- frontend -m "feat: add structure client and ranked structure card"
 - Consumes: `searchStructures` (Task 2), `StructureCard` (Task 2), `useWorkspace` (core plan Task 12)
 - Produces: `RNA_TARGETS: RnaTarget[]` where `RnaTarget = {id, label, description, query}`; the `/structures` route
 
-**Pick a target, then a structure** — the two levels the source workflow specifies. In the
+**Pick a target, then a structure**: the two levels the source workflow specifies. In the
 original CQD framing the target was a protein a carbon-dot ligand binds. With that layer
-dropped, the target becomes an **RNA functional class** — tRNA, ribosome, riboswitch,
+dropped, the target becomes an **RNA functional class**: tRNA, ribosome, riboswitch,
 ribozyme, aptamer, ribonucleoprotein. Each target is nothing more than a full-text query
 against RCSB plus a label; there is no target database, and none is invented. Selecting
 one filters the ranked structure list below it.
 
 Task 5 of the core plan asserts that `NAV_SECTIONS` links only to built routes. Adding
 `/structures` to the nav requires extending that list in the same commit, or the nav test
-fails — which is the intended behaviour.
+fails, which is the intended behaviour.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -999,7 +999,7 @@ describe("RNA targets", () => {
 - [ ] **Step 2: Run them to verify they fail**
 
 Run: `cd frontend && pnpm vitest run tests/component/structures-page.test.tsx tests/unit/targets.test.ts`
-Expected: FAIL — modules not found.
+Expected: FAIL; modules not found.
 
 - [ ] **Step 3: Write the target classes**
 
@@ -1007,7 +1007,7 @@ Expected: FAIL — modules not found.
 // frontend/src/lib/structures/targets.ts
 
 /** An RNA functional class. Each is a label plus a full-text query passed straight
- *  to RCSB — there is no target database behind this, and none is implied. The
+ *  to RCSB: there is no target database behind this, and none is implied. The
  *  structures returned are whatever RCSB matches, ranked by resolution. */
 export interface RnaTarget {
   id: string;
@@ -1026,7 +1026,7 @@ export const RNA_TARGETS: RnaTarget[] = [
   {
     id: "ribosome",
     label: "Ribosomal RNA",
-    description: "Ribosomal subunits and complexes — the largest RNA structures.",
+    description: "Ribosomal subunits and complexes, the largest RNA structures.",
     query: "ribosome",
   },
   {
@@ -1050,7 +1050,7 @@ export const RNA_TARGETS: RnaTarget[] = [
   {
     id: "viral",
     label: "Viral RNA element",
-    description: "Structured viral elements — frameshift signals, IRES, UTRs.",
+    description: "Structured viral elements: frameshift signals, IRES, UTRs.",
     query: "viral RNA element",
   },
 ];
@@ -1093,14 +1093,14 @@ export default function StructuresPage() {
         <h1 className="text-2xl font-semibold">Structural evidence</h1>
         <p className="mt-1 max-w-3xl text-sm text-[var(--text-secondary)]">
           RNA-containing entries from the RCSB Protein Data Bank, ranked best resolution
-          first. <strong>Only experimentally determined structures are listed</strong> —
+          first. <strong>Only experimentally determined structures are listed</strong>:
           X-ray, cryo-EM and NMR. Computed models are excluded rather than ranked lower,
           and every card names its method and the date the record was retrieved.
         </p>
       </header>
 
       <section role="group" aria-label="RNA target class">
-        <h2 className="mb-2 text-base font-semibold">1 — Pick a target</h2>
+        <h2 className="mb-2 text-base font-semibold">1. Pick a target</h2>
         <div className="flex flex-wrap gap-2">
           {RNA_TARGETS.map((option) => {
             const active = option.id === targetId;
@@ -1128,7 +1128,7 @@ export default function StructuresPage() {
         )}
       </section>
 
-      <h2 className="text-base font-semibold">2 — Pick a structure</h2>
+      <h2 className="text-base font-semibold">2. Pick a structure</h2>
 
       <div className="flex flex-wrap gap-4">
         <label className="text-sm">
@@ -1157,7 +1157,7 @@ export default function StructuresPage() {
       {isLoading && <p role="status">Searching RCSB…</p>}
       {error && (
         <p role="alert" className="text-sm text-[var(--danger)]">
-          {(error as Error).message}. The rest of the application is unaffected — only
+          {(error as Error).message}. The rest of the application is unaffected: only
           structure views depend on RCSB.
         </p>
       )}
@@ -1225,7 +1225,7 @@ git commit -- frontend -m "feat: add PDB structure discovery page"
 
 Mol* is the largest dependency in the project and the only WebGL surface. It is loaded
 with `next/dynamic` and `ssr: false`, so it is absent from the server bundle and from
-every route that does not render it. The component test mocks the library — asserting the
+every route that does not render it. The component test mocks the library, asserting the
 lifecycle contract (created once, disposed on unmount) rather than rendering WebGL, which
 jsdom cannot do.
 
@@ -1292,7 +1292,7 @@ describe("MolstarViewer", () => {
 
   it("renders a labelled container before the viewer initialises", () => {
     const { getByRole } = render(<MolstarViewer pdbId="1EHZ" />);
-    // The shell must be present immediately — Mol* takes seconds to initialise and
+    // The shell must be present immediately: Mol* takes seconds to initialise and
     // a blank area reads as a broken page.
     expect(getByRole("region", { name: /3D structure/i })).toBeInTheDocument();
   });
@@ -1308,7 +1308,7 @@ describe("MolstarViewer", () => {
 - [ ] **Step 3: Run it to verify it fails**
 
 Run: `cd frontend && pnpm vitest run tests/component/molstar.test.tsx`
-Expected: FAIL — module not found.
+Expected: FAIL; module not found.
 
 - [ ] **Step 4: Write the viewer**
 
@@ -1321,7 +1321,7 @@ import { useEffect, useRef, useState } from "react";
 /** Mol* wrapper.
  *
  *  The library is imported inside the effect rather than at module scope so it never
- *  enters the bundle of a route that does not render a structure — it is by a wide
+ *  enters the bundle of a route that does not render a structure: it is by a wide
  *  margin the largest dependency in the project.
  *
  *  Ligands and hetero-atoms render as sticks and ions as spheres, which is Mol*'s
@@ -1408,12 +1408,12 @@ export function MolstarViewer({
 - **Do not import from `molstar/lib/apps/viewer`** (the package index). Its `index.d.ts`
   side-effect-imports `./index.html`, `./mvs.html`, `./favicon.ico` and
   `../../mol-plugin-ui/skin/light.scss`, none of which webpack can resolve without extra
-  loaders. Importing `/app` directly avoids all four — `app.js` has no asset imports.
+  loaders. Importing `/app` directly avoids all four: `app.js` has no asset imports.
 - **Do not import from `molstar/build/viewer/molstar`** either. That is the standalone
   browser bundle; it ships no `.d.ts` for `Viewer`, so TypeScript would fail.
 
 If a later Mol\* version moves the class, change the source import and the test's
-`vi.mock` path in the same edit — a mock pointing at a path the source no longer imports
+`vi.mock` path in the same edit: a mock pointing at a path the source no longer imports
 makes the test pass against nothing.
 
 - [ ] **Step 5: Run the tests**
@@ -1513,7 +1513,7 @@ describe("structure detail", () => {
 - [ ] **Step 2: Run it to verify it fails**
 
 Run: `cd frontend && pnpm vitest run tests/component/structure-detail.test.tsx`
-Expected: FAIL — page not found.
+Expected: FAIL; page not found.
 
 - [ ] **Step 3: Write the page**
 
@@ -1590,7 +1590,7 @@ export default function StructureDetailPage() {
         <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
           <h2 className="text-base font-semibold">RNA entity sequence</h2>
           <p className="mb-2 mt-1 text-xs text-[var(--text-secondary)]">
-            {data.rna_length} nt, as deposited. This is the sequence FoldQ folds — the
+            {data.rna_length} nt, as deposited. This is the sequence FoldQ folds: the
             structure above is the experimental answer to compare a prediction against.
           </p>
           <pre className="overflow-x-auto rounded border border-[var(--border)] bg-[var(--surface-elevated)] p-3">
@@ -1652,7 +1652,7 @@ print("IDENTICAL" if pdb == fixture["sequence"] else "*** DIFFERENT - do not rec
 PY
 ```
 
-Expected: `IDENTICAL`. **If it prints anything else, stop and report** — the provenance
+Expected: `IDENTICAL`. **If it prints anything else, stop and report**: the provenance
 claim in the next step would be false, and this project has already had to retract one
 fabricated provenance.
 
@@ -1672,7 +1672,7 @@ Leave every other field unchanged. The sequence itself must not be edited.
 
 Run: `.venv/bin/pytest tests -q`
 Expected: 280 passing. If a test asserts on the `source` string, update the test to the
-new value — the fixture is the source of truth for provenance, not the test.
+new value: the fixture is the source of truth for provenance, not the test.
 
 - [ ] **Step 4: Link the pseudoknot page's hardest case to its structure**
 
@@ -1747,7 +1747,7 @@ test("1EHZ carries the sequence the tRNA benchmark uses", async ({ page }) => {
 ```
 
 Add `"/structures"` to the `ROUTES` array in `frontend/tests/e2e/a11y.spec.ts`. Do not
-add `/structures/[pdbId]` — the Mol* canvas is a WebGL surface and axe has no meaningful
+add `/structures/[pdbId]`: the Mol* canvas is a WebGL surface and axe has no meaningful
 rule set for it; the surrounding page is covered by the component tests.
 
 - [ ] **Step 6: Document the layer**
@@ -1771,7 +1771,7 @@ Three rules this layer holds to:
   every other route is unaffected.
 
 The carbon-quantum-dot material layer described in the source workflow is deliberately
-not built — see `docs/plans/2026-08-01-frontend-structures.md`.
+not built; see `docs/plans/2026-08-01-frontend-structures.md`.
 
 RCSB is public and needs no key or account.
 ```
@@ -1813,7 +1813,7 @@ git commit -- frontend data/fixtures/curated.json \
 
 ## Deliberately not built
 
-- **The CQD material layer** — carbon-dot catalogue, receptor/effector mapping, payload
+- **The CQD material layer**: carbon-dot catalogue, receptor/effector mapping, payload
   records, and the `material → protein` join. Excluded at the project owners' direction;
   it had no underlying data and would have required fixtures.
 - **Real-world evidence, materials and targets routes** (design §5, phase 6). These were
@@ -1822,7 +1822,7 @@ git commit -- frontend data/fixtures/curated.json \
 - **2D↔3D selection synchronisation.** Mapping a base-pair selection in the 2D view onto
   Mol* residues requires a residue-numbering map RCSB does not serve directly; the
   deposited numbering frequently differs from sequence position. Building it on an assumed
-  identity mapping would produce a viewer that highlights the wrong residues — worse than
+  identity mapping would produce a viewer that highlights the wrong residues: worse than
   not offering the feature.
 - **Comparing FoldQ output against experimental base pairs.** RCSB serves no secondary
   structure annotation, and deriving base pairs from 3D coordinates needs a geometric

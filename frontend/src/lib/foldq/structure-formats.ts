@@ -46,7 +46,7 @@ export function toBpseq(result: FoldResponse): string {
 /** CT (connectivity table), the mfold/RNAstructure format.
  *
  *  Six columns: index, base, previous index, next index, pair, natural
- *  numbering. The redundant neighbour columns are part of the spec — readers
+ *  numbering. The redundant neighbour columns are part of the spec: readers
  *  parse by position, so they cannot be omitted even though they are derivable.
  */
 export function toCt(result: FoldResponse): string {

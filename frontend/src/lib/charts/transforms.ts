@@ -19,7 +19,7 @@ export interface SolverSummaryRow {
   solver: string;
   runs: number;
   /** Rows where Gate C is determinate. Above ~22 variables the exact reference is
-   *  unavailable and found_ground_state is null — those rows are excluded from the
+   *  unavailable and found_ground_state is null: those rows are excluded from the
    *  rate rather than counted as failures. */
   determinateCount: number;
   groundStateRate: number;
@@ -133,8 +133,8 @@ function groundStateRate(rows: Row[]): number {
 
 /** The README's QAOA table is the **noiseless expectation** subset: 27 rows per
  *  `reps` (3 shot settings x 9 sequences). e4 also contains 9 `fake_hanoi` rows at
- *  reps=1 and 9 CVaR rows at reps=3. Pooling them changes every published figure —
- *  reps=1 becomes 27.8% instead of 29.6% — so both filters are required, not
+ *  reps=1 and 9 CVaR rows at reps=3. Pooling them changes every published figure:
+ *  reps=1 becomes 27.8% instead of 29.6%, so both filters are required, not
  *  cosmetic. `noiseComparison` covers the device-target rows separately. */
 export function qaoaByReps(): QaoaRow[] {
   const rows = loadExperiment("e4_qaoa").filter(NOISELESS_EXPECTATION);
@@ -209,7 +209,7 @@ export interface ObjectiveArm {
   meanF1: number;
 }
 
-/** CVaR was run at exactly one configuration — reps=3, 256 shots, noiseless — so it
+/** CVaR was run at exactly one configuration (reps=3, 256 shots, noiseless), so it
  *  can only be compared against the expectation rows at that same setting. Comparing
  *  it against expectation pooled over every shot count would attribute the sampling
  *  budget to the objective and manufacture a difference that is not there. The
@@ -270,7 +270,7 @@ export interface NoiseArm {
 
 /** Compares the same circuits transpiled for an ideal simulator against
  *  `fake_hanoi` (real IBM calibration data). Matched on reps=1, shots=256,
- *  expectation objective — a mismatched comparison would attribute shot noise to
+ *  expectation objective: a mismatched comparison would attribute shot noise to
  *  routing. SWAP cost is folded into two_qubit_gates, not reported separately. */
 export function noiseComparison(): { noiseless: NoiseArm; noisy: NoiseArm } {
   const rows = loadExperiment("e4_qaoa").filter(
@@ -302,7 +302,7 @@ export interface PseudoknotRow {
   viennaStructure: string;
 }
 
-/** e5 holds two rows per fixture — forbid_crossing true (strict) and false
+/** e5 holds two rows per fixture: forbid_crossing true (strict) and false
  *  (pseudoknot mode). They are joined here so a chart can show the pair. */
 export function pseudoknotComparison(): PseudoknotRow[] {
   const rows = loadExperiment("e5_pseudoknot");

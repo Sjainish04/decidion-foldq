@@ -16,7 +16,7 @@ export const EXPERIMENTS = [
 
 export type ExperimentName = (typeof EXPERIMENTS)[number];
 
-/** A single result row. Values are numbers, booleans, strings, or null —
+/** A single result row. Values are numbers, booleans, strings, or null:
  *  null is meaningful: it marks a gate that could not be determined. */
 export type Row = Record<string, number | string | boolean | null>;
 

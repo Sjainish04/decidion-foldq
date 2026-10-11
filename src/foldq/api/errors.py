@@ -5,7 +5,7 @@ Two problems with the default FastAPI error shape for this API.
 A client cannot branch on it. `{"detail": "..."}` carries a human sentence, so
 telling "your sequence has a bad character" apart from "this instance is too big
 for the exact gates" means matching on prose. A stable `code` makes that a
-lookup, and `details` carries what the client needs to recover — for a
+lookup, and `details` carries what the client needs to recover: for a
 too-large instance, which solver to use instead.
 
 And it discards the distinction this project exists to make. "Gates B and C are
@@ -13,8 +13,8 @@ indeterminate" is not an error at all; it is a result. So the codes below cover
 genuine failures only, and anything that is a legitimate scientific outcome
 travels in the normal response.
 
-Log lines carry the fields a reviewer would need to reconstruct a run — run id,
-stage, solver, duration, error code — as JSON, so they survive being grepped out
+Log lines carry the fields a reviewer would need to reconstruct a run (run id,
+stage, solver, duration, error code), as JSON, so they survive being grepped out
 of a platform log viewer.
 """
 

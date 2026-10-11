@@ -30,7 +30,7 @@ describe("gateLadder", () => {
         "candidate generation: the reference structure is not in the candidate set (only 50% of its pairs are reachable)",
     });
     expect(ladder[0].state).toBe("fail");
-    // A later gate cannot be blamed for an earlier failure — this is the whole
+    // A later gate cannot be blamed for an earlier failure; this is the whole
     // point of attributing to the earliest failing gate.
     expect(ladder.slice(1).every((g) => g.state === "not-applicable")).toBe(true);
   });

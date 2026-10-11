@@ -27,7 +27,7 @@ afterEach(() => {
 describe("chart palette", () => {
   it("never falls through to the library's default colours", () => {
     // The original defect: itemStyle was set only when a call site passed a
-    // colour, so most bars rendered in ECharts' factory indigo (#5470c6-ish) —
+    // colour, so most bars rendered in ECharts' factory indigo (#5470c6-ish),
     // a colour in neither of this project's palettes.
     // Bars draw their colour as a gradient, so the flat value lives on the
     // series (where the legend reads it) and as the gradient's first stop.
@@ -73,7 +73,7 @@ describe("chart theme", () => {
 
   it("follows the dark toggle at runtime", async () => {
     // Canvas cannot read CSS variables, so unlike the rest of the UI these do
-    // not follow the theme for free — the observer is the whole mechanism.
+    // not follow the theme for free: the observer is the whole mechanism.
     render(<BarChart categories={["a"]} series={[{ name: "s", data: [1] }]} yLabel="n" />);
     expect(option().textStyle.color).toBe(LIGHT_CHROME.label);
 

@@ -131,7 +131,7 @@ def test_gate_d_scores_a_pseudoknotted_candidate_from_its_stems():
 
     decode_sample masks crossing structures to all dots because single-bracket
     notation cannot express them. Parsing that placeholder scored every
-    pseudoknot as 0.0 while the structure it stands for was fully correct — the
+    pseudoknot as 0.0 while the structure it stands for was fully correct: the
     documented --pseudoknots command reported F1 0.000 where the experiment
     reported 1.000.
     """

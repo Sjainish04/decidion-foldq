@@ -38,7 +38,7 @@ describe("forceLayoutStructure", () => {
 
   // DETERMINISM IS REQUIRED: d3-force's internal tie-breaking jiggle falls
   // back to Math.random unless a random source is fixed, and its default
-  // node placement is unrelated to sequence topology unless seeded — the
+  // node placement is unrelated to sequence topology unless seeded; the
   // layout must reproduce byte-for-byte on every call.
   it("is deterministic", () => {
     const first = forceLayoutStructure(sequence, pairs);
@@ -67,7 +67,7 @@ describe("forceLayoutStructure", () => {
     expect(first).toEqual(second);
   });
 
-  // Pseudoknots are this project's headline result — a layout that only
+  // Pseudoknots are this project's headline result: a layout that only
   // handles nested pairs would drop them, so a crossing pair must place
   // every base without error, same as the circular layout's guarantee.
   it("lays out crossing pairs without error", () => {

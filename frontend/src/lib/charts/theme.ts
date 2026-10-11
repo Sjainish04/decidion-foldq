@@ -1,13 +1,13 @@
 /** Chart palette and shared ECharts options.
  *
- *  ECharts draws to a canvas, where `var(--token)` does not resolve — a CSS
+ *  ECharts draws to a canvas, where `var(--token)` does not resolve: a CSS
  *  variable passed as a series colour silently renders as the library default.
  *  Every colour here is therefore a literal, kept in step with the design tokens
  *  in globals.css by hand.
  *
  *  That silent fallback is exactly how the charts drifted: `BarChart` set
  *  `itemStyle` only when a call site passed a colour, and most pass none, so the
- *  bars rendered in ECharts' factory indigo and lime — colours that appear in
+ *  bars rendered in ECharts' factory indigo and lime: colours that appear in
  *  neither of this project's palettes.
  */
 
@@ -16,7 +16,7 @@
  *  Solvers of the same class share a colour: the interesting comparison is
  *  "classical heuristic vs annealing vs quantum vs exact reference", not nine
  *  individually-named runs. `SOLVER_SYMBOLS` then separates the individual
- *  solvers by marker shape, so the encoding is never colour-alone — which also
+ *  solvers by marker shape, so the encoding is never colour-alone, which also
  *  keeps it legible in greyscale and to colour-blind readers.
  */
 export const SOLVER_COLORS: Record<string, string> = {
@@ -50,7 +50,7 @@ export const SOLVER_SYMBOLS: Record<string, string> = {
 /** Ordered palette for series that are not solvers.
  *
  *  Earth tones drawn from the Decidion palette rather than a generic categorical
- *  ramp, and ordered so the first two — the common case — are maximally distinct
+ *  ramp, and ordered so the first two (the common case) are maximally distinct
  *  from each other.
  */
 export const SERIES_PALETTE = [
@@ -76,7 +76,7 @@ export const CHART_COLORS = {
    *  Deliberately lighter than `--reference` (#1b7146) in globals.css. That
    *  token is tuned for small TEXT on a light background, where it needs 4.5:1;
    *  a chart fill is a non-text object needing 3:1, but it has to clear that on
-   *  BOTH backgrounds, and #1b7146 manages only 3.02:1 on ink — technically a
+   *  BOTH backgrounds, and #1b7146 manages only 3.02:1 on ink, technically a
    *  pass, visibly muddy. This sits at 4.05 on bone and 4.19 on ink.
    *
    *  Series colours stay theme-invariant on purpose: a figure captured from the
@@ -274,7 +274,7 @@ export function categoryAxis(chrome: ChartChrome, categories: string[]) {
 /** Legend placed above the plot rather than inside it.
  *
  *  ECharts' default puts the legend at the top-centre of the *canvas*, which
- *  with a bottom-anchored layout overlapped the x-axis tick labels — legend
+ *  with a bottom-anchored layout overlapped the x-axis tick labels: legend
  *  entries were sitting on top of the category names.
  */
 export function legend(chrome: ChartChrome, show: boolean) {

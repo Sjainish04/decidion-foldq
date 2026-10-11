@@ -17,7 +17,7 @@ export interface BarSeries {
   data: number[];
   color?: string;
   /** Per-bar colours, for a single series where each category means something
-   *  different — e.g. one bar per solver, coloured by solver class. */
+   *  different: e.g. one bar per solver, coloured by solver class. */
   colors?: (string | undefined)[];
 }
 
@@ -92,7 +92,7 @@ export function BarChart({
         barMaxWidth: 46,
         barGap: "12%",
         barCategoryGap: "34%",
-        // The value on the bar, so the chart is readable without hovering — and
+        // The value on the bar, so the chart is readable without hovering, and
         // still readable in a screenshot or a printed page, which a tooltip is not.
         label: {
           show: true,

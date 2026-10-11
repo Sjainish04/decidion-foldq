@@ -19,7 +19,7 @@ const ION_COMPONENT_KEY = "structure-component-static-ion";
 
 /** Hand-typed slice of Mol*'s PluginUIContext covering only what this file calls.
  *  Kept separate from `molstar`'s own types so nothing here forces an eager,
- *  module-scope import of the package — see the dynamic imports below. */
+ *  module-scope import of the package; see the dynamic imports below. */
 interface MolstarComponentRef {
   key?: string;
 }
@@ -58,7 +58,7 @@ function findComponents(plugin: MolstarPlugin, key: string): MolstarComponentRef
   );
 }
 
-/** Mol*'s component manager has no single "change representation type" call — the
+/** Mol*'s component manager has no single "change representation type" call: the
  *  supported idiom (mol-plugin-ui/structure/components.js's remove/add actions) is to
  *  drop the existing representation(s) and add a new one of the desired type, which
  *  fills in correct defaults for that type via the representation registry. */
@@ -75,18 +75,18 @@ async function setComponentRepresentation(
 /** Mol* wrapper.
  *
  *  The library is imported inside the effect rather than at module scope so it never
- *  enters the bundle of a route that does not render a structure — it is by a wide
+ *  enters the bundle of a route that does not render a structure: it is by a wide
  *  margin the largest dependency in the project.
  *
  *  `loadPdb` alone applies Mol*'s size-based "auto" representation preset, which for
- *  small entries (most FoldQ predictions) collapses everything — polymer, ligands,
- *  ions — into one ball-and-stick component with nothing separable. Right after load
+ *  small entries (most FoldQ predictions) collapses everything (polymer, ligands,
+ *  ions) into one ball-and-stick component with nothing separable. Right after load
  *  we explicitly re-apply the "polymer-and-ligand" preset instead, which always
  *  produces distinct polymer / ligand / ion (etc.) components; `component.applyPreset`
  *  also deletes whatever component the previous preset created, so this never leaves a
  *  duplicate structure rendered underneath. Ligands and other hetero-atoms keep that
  *  preset's ball-and-stick default; ions are switched to spacefill once, immediately
- *  after — both stay fixed no matter what the user later picks for the polymer.
+ *  after: both stay fixed no matter what the user later picks for the polymer.
  */
 export function MolstarViewer({
   pdbId,
@@ -166,7 +166,7 @@ export function MolstarViewer({
 
     // The promise is held, not discarded, so cleanup can dispose through it.
     // Reading a mutable `viewer` variable instead loses the instance whenever
-    // teardown lands while `Viewer.create` is still in flight — the common case
+    // teardown lands while `Viewer.create` is still in flight: the common case
     // under StrictMode's double-invoked effects, and a leaked WebGL context is
     // not garbage collected. Chaining off the promise makes disposal ordered
     // after creation rather than racing it.

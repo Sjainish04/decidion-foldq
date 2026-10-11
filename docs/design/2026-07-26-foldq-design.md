@@ -1,4 +1,4 @@
-# Decidion FoldQ — Proof-of-Concept Design
+# Decidion FoldQ: Proof-of-Concept Design
 
 **Date:** 2026-07-26
 **Status:** Approved
@@ -34,7 +34,7 @@ Every design decision below is grounded in measurements taken on 2026-07-26 agai
 ViennaRNA 2.7.2 / Qiskit 2.5.1 / Ocean 9.4.0 on macOS arm64, Python 3.11. Probe
 scripts are reproduced under `scripts/probes/`.
 
-### 2.1 Variable counts — maximal-helix encoding is the enabler
+### 2.1 Variable counts: maximal-helix encoding is the enabler
 
 Min stem length 3, wobble pairs allowed:
 
@@ -51,10 +51,10 @@ what brings 30-nt sequences within statevector QAOA reach.
 > **Caveat carried into §12:** this table was measured at `min_stem_length=3`. The
 > resolved default is 2, which admits shorter helices and therefore *raises* these
 > counts. Tier boundaries in §4 are consequently enforced by **variable count, not
-> nucleotide length** — the length column is indicative only. Re-measuring the
+> nucleotide length**: the length column is indicative only. Re-measuring the
 > length↔variable mapping at `min_stem_length=2` is the first task of E2.
 
-### 2.2 Surrogate fidelity — the charge-and-refund requirement
+### 2.2 Surrogate fidelity: the charge-and-refund requirement
 
 Additive stem energies compared against true ViennaRNA energy, 24 sequences, 30–100 nt:
 
@@ -70,7 +70,7 @@ Two consequences:
   r ≈ 0.96, though systematically ~10 kcal/mol too stable because it never pays loop
   entropy. The QUBO is a viable *ranking* surrogate.
 - Adding loop costs naively makes it **much worse** (0.96 → 0.35). Whether a helix
-  closes a hairpin depends on which *other* helices are selected — a k-body
+  closes a hairpin depends on which *other* helices are selected: a k-body
   predicate. This forces the charge-and-refund construction in §5.
 
 ### 2.3 Exact-validation reach and problem hardness
@@ -79,8 +79,8 @@ Two consequences:
 |---|---|---|---|---|---|---|
 | 30 | 15 | 86 | 0.82 | 10 | 0.003 s | **yes** |
 | 40 | 22 | 179 | 0.77 | 15 | 0.056 s | **no** |
-| 50 | 45 | 641 | 0.65 | 27 | fails | — |
-| 120 | 252 | 15329 | 0.48 | 163 | fails | — |
+| 50 | 45 | 641 | 0.65 | 27 | fails | n/a |
+| 120 | 252 | 15329 | 0.48 | 163 | fails | n/a |
 
 - Conflict graphs are **dense** (0.5–0.8), not sparse. Tree decomposition fails
   above ~22 variables, so rigorous Gates B/C are capped near **22 vars ≈ 30–40 nt**.
@@ -120,23 +120,23 @@ Boundaries derived from §2.1 and §2.3, not from nucleotide-count guesses.
 
 | Tier | Length | Vars | Solvers | Gates |
 |---|---|---|---|---|
-| **V** — validate | 20–40 nt | ≤ 22 | exact, random, greedy, local search, tabu, SA | A, B, C, D |
-| **Q** — quantum | 25–45 nt | ≤ 26 | + QAOA, CVaR-QAOA, shot-based, noisy | A, B, C, D |
-| **S** — scale | 50–150 nt | ≤ 250 | SA, tabu, path-integral SQA | A, D + projected resources |
-| **P** — pseudoknot | curated real PKs | varies | SA, QAOA on reduced instances | A, D vs. *published* structures |
+| **V**: validate | 20–40 nt | ≤ 22 | exact, random, greedy, local search, tabu, SA | A, B, C, D |
+| **Q**: quantum | 25–45 nt | ≤ 26 | + QAOA, CVaR-QAOA, shot-based, noisy | A, B, C, D |
+| **S**: scale | 50–150 nt | ≤ 250 | SA, tabu, path-integral SQA | A, D + projected resources |
+| **P**: pseudoknot | curated real PKs | varies | SA, QAOA on reduced instances | A, D vs. *published* structures |
 
-Tier P ground truth comes from literature-published structures, not from ViennaRNA —
+Tier P ground truth comes from literature-published structures, not from ViennaRNA:
 that is the point, since ViennaRNA cannot represent them.
 
 ---
 
-## 5. Energy model — charge and refund
+## 5. Energy model: charge and refund
 
 Three layers, each independently testable. All coefficients derive from ViennaRNA's
 own Turner primitives (`fold_compound.eval_int_loop`, `eval_hp_loop`), never
 reimplemented constants.
 
-**Layer 1 — linear.** For each candidate helix *s*:
+**Layer 1: linear.** For each candidate helix *s*:
 
 ```
 E_s = stacking(s) + hairpin_closure(s)
@@ -144,7 +144,7 @@ E_s = stacking(s) + hairpin_closure(s)
 
 i.e. provisionally *assume* every helix closes a hairpin.
 
-**Layer 2 — quadratic, nestable pairs.** Helix *t* is *nestable directly inside* *s*
+**Layer 2: quadratic, nestable pairs.** Helix *t* is *nestable directly inside* *s*
 when *t* lies strictly within *s*'s innermost pair, *t* does not conflict with *s*,
 and no third candidate helix could sit between them within the same selection. For
 each such ordered pair:
@@ -159,7 +159,7 @@ between *s*'s innermost pair and *t*'s outermost pair.
 The assumption from Layer 1 is refunded and replaced with the correct loop energy.
 This is exactly degree-2 and therefore QUBO-representable.
 
-**Layer 3 — quadratic hard penalties.**
+**Layer 3: quadratic hard penalties.**
 
 ```
 lambda_overlap  * x_s * x_t    for helices sharing a nucleotide
@@ -170,7 +170,7 @@ lambda_crossing * x_s * x_t    for crossing (pseudoknotted) helix pairs
 single flag is the Tier P mechanism.
 
 **Known approximation.** When several helices nest inside one, the hairpin refund is
-applied more than once. This is measured and reported rather than glossed over —
+applied more than once. This is measured and reported rather than glossed over:
 it is the substance of RQ4 (surrogate fidelity).
 
 **Penalty calibration.** Grid search over normalized penalty scale, validated against
@@ -188,7 +188,7 @@ Twelve modules under `src/foldq/`, each with a single responsibility:
 
 | Module | Responsibility |
 |---|---|
-| `schemas/` | `SequenceRecord`, `Stem`, `ConflictGraph`, `QuboProblem`, `SolverResult`, `FoldCandidate`, `GateReport` — frozen pydantic models |
+| `schemas/` | `SequenceRecord`, `Stem`, `ConflictGraph`, `QuboProblem`, `SolverResult`, `FoldCandidate`, `GateReport`: frozen pydantic models |
 | `io/` | FASTA/CSV loading, curated fixtures, manifest writing |
 | `biology/` | candidate pairs → maximal stems → sub-stems → conflict detection |
 | `classical/` | ViennaRNA wrapper: MFE, `eval_structure`, partition function, centroid, subopt, Turner loop primitives |
@@ -251,7 +251,7 @@ Warm-start QAOA initialised from the greedy solution.
 
 ---
 
-## 8. Execution environment — free, local, account-free
+## 8. Execution environment: free, local, account-free
 
 | Need | Tool | Notes |
 |---|---|---|
@@ -273,12 +273,12 @@ qiskit-aer 0.17.2, dwave-ocean-sdk 9.4.0, dimod 0.12.22, numpy 2.4.6, scipy 1.17
 
 ## 9. Benchmark data
 
-**Synthetic generator** — planted motifs (hairpins, multiloops, nested stems) plus
+**Synthetic generator**, planted motifs (hairpins, multiloops, nested stems) plus
 rejection sampling on MFE magnitude, giving independent control over length, GC
 content, stem count, conflict density, and ground-state degeneracy. Required for
 clean scaling studies. Seeded and reproducible.
 
-**Curated real sequences** — a small vendored fixture set with published structures:
+**Curated real sequences**: a small vendored fixture set with published structures:
 tRNA-Phe, 5S rRNA fragments, and known pseudoknots (SRV-1 frameshifter, HDV ribozyme)
 from PseudoBase/Rfam. Vendored at fixed revision, not fetched at runtime, so offline
 reproduction and CI both work.
@@ -294,11 +294,11 @@ Cut from ten to five; scaling analysis is folded into E2/E3 rather than standing
 
 | ID | Experiment | Tier | Answers |
 |---|---|---|---|
-| **E1** | Formulation validation — Gates A & B under penalty sweeps | V | RQ1, RQ4 |
-| **E2** | Encoding comparison — pair vs. stem, maximal vs. sub-stems; variable and density scaling | V, S | RQ2, RQ5 |
-| **E3** | Solver comparison — all solvers on identical QUBOs, Gates C & D | V, Q, S | RQ3 |
-| **E4** | QAOA study — depth p=1,2,3, CVaR alpha sweep, shot counts, `fake_provider` noise | Q | RQ5, RQ6 |
-| **E5** | Pseudoknot reach — crossing penalty disabled, versus published structures | P | RQ7 |
+| **E1** | Formulation validation: Gates A & B under penalty sweeps | V | RQ1, RQ4 |
+| **E2** | Encoding comparison: pair vs. stem, maximal vs. sub-stems; variable and density scaling | V, S | RQ2, RQ5 |
+| **E3** | Solver comparison: all solvers on identical QUBOs, Gates C & D | V, Q, S | RQ3 |
+| **E4** | QAOA study: depth p=1,2,3, CVaR alpha sweep, shot counts, `fake_provider` noise | Q | RQ5, RQ6 |
+| **E5** | Pseudoknot reach: crossing penalty disabled, versus published structures | P | RQ7 |
 
 ---
 
@@ -308,7 +308,7 @@ Cut from ten to five; scaling analysis is folded into E2/E3 rather than standing
 |---|---|
 | `tests/unit` | sequence validation, pair compatibility, stem extraction, conflict detection, dot-bracket conversion, QUBO coefficients, Ising mapping, decoding, repair, metrics |
 | `tests/property` (Hypothesis) | dot-bracket length invariance, bracket balance, no nucleotide paired twice, stem→pair round-trip, constraint violations always raise objective, seed determinism |
-| `tests/scientific` | golden fixtures — exact enumeration matches stored solutions, ViennaRNA energies within tolerance, QUBO and Ising agree after offset |
+| `tests/scientific` | golden fixtures: exact enumeration matches stored solutions, ViennaRNA energies within tolerance, QUBO and Ising agree after offset |
 | `tests/integration` | full pipeline sequence → report |
 
 Coverage target: ≥90% on deterministic core (`biology`, `encodings`, `qubo`,
@@ -323,10 +323,10 @@ Coverage target: ≥90% on deterministic core (`biology`, `encodings`, `qubo`,
 Twelve modules, five experiments, four test suites, decision cards, figures,
 rewritten README, presentation outline, one CI workflow, reproducible manifests.
 
-### Deferred — documented explicitly in the README, not silently dropped
+### Deferred: documented explicitly in the README, not silently dropped
 
 `manuscript.tex` and supplementary; MkDocs site; Docker; four of five CI workflows;
-all seven notebooks (scripts instead — notebooks are a reproducibility liability
+all seven notebooks (scripts instead: notebooks are a reproducibility liability
 under a deadline); D-Wave and IBM hardware execution; Optuna (grid search instead);
 forgi, forna, Plotly, Quarto; hierarchical encoding; graph-decomposition experiment.
 
@@ -348,7 +348,7 @@ forgi, forna, Plotly, Quarto; hierarchical encoding; graph-decomposition experim
 | Risk | Likelihood | Mitigation |
 |---|---|---|
 | Charge-and-refund double-refund error is large | Medium | Measured in E1; fall back to stacking-only (r=0.958) if the correction hurts |
-| Dense conflict graphs make QAOA circuits deep | High | Expected and *reported* — it is a headline resource finding, not a failure |
+| Dense conflict graphs make QAOA circuits deep | High | Expected and *reported*: it is a headline resource finding, not a failure |
 | Tier P has no exact ground truth | Certain | Validate against published structures; state the limitation |
 | Curated PK fixtures have licensing constraints | Low | Use only sequences with clear public redistribution terms; record provenance in the data manifest |
 | 12-day timeline slips | Medium | Tier V/Q + E1/E3 are the minimum viable submission; E4/E5 are the upside |

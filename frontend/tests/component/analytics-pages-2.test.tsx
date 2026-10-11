@@ -82,7 +82,7 @@ describe("pseudoknots page", () => {
   });
 });
 
-describe("resources page — statistical qualification", () => {
+describe("resources page: statistical qualification", () => {
   it("says plainly that the reps table does not establish a trend", () => {
     // The site must not contradict the README, which states the reps intervals
     // overlap at n=27 and the apparent trend is within sampling noise.

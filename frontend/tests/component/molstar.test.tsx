@@ -64,7 +64,7 @@ describe("MolstarViewer", () => {
 
   it("renders a labelled container before the viewer initialises", () => {
     const { getByRole } = render(<MolstarViewer pdbId="1EHZ" />);
-    // The shell must be present immediately — Mol* takes seconds to initialise and
+    // The shell must be present immediately: Mol* takes seconds to initialise and
     // a blank area reads as a broken page.
     expect(getByRole("region", { name: /3D structure/i })).toBeInTheDocument();
   });
@@ -93,7 +93,7 @@ describe("MolstarViewer", () => {
   it("switches only the polymer component's representation when the control is used, leaving ions alone", async () => {
     const { getByLabelText } = render(<MolstarViewer pdbId="1EHZ" />);
 
-    // Disabled until Mol* has finished loading and the preset/ion setup has run —
+    // Disabled until Mol* has finished loading and the preset/ion setup has run:
     // otherwise there is no polymer component yet to restyle.
     const select = getByLabelText(/polymer representation/i) as HTMLSelectElement;
     expect(select).toBeDisabled();

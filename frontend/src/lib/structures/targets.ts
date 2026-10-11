@@ -1,5 +1,5 @@
 /** An RNA functional class. Each is a label plus a full-text query passed straight
- *  to RCSB — there is no target database behind this, and none is implied. The
+ *  to RCSB: there is no target database behind this, and none is implied. The
  *  structures returned are whatever RCSB matches, ranked by resolution. */
 export interface RnaTarget {
   id: string;

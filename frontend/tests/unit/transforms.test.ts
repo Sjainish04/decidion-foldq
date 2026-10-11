@@ -68,7 +68,7 @@ describe("encodingSummary", () => {
 
   it("shows maximal stem encoding at msl=1 using fewer variables than pair encoding", () => {
     // The comparison only holds for stem_mode=maximal. Substems at msl=1 is
-    // 1337.5 variables — larger than pair. Naming the mode is load-bearing.
+    // 1337.5 variables: larger than pair. Naming the mode is load-bearing.
     const rows = encodingSummary();
     const pair = rows.find((r) => r.encoding === "pair")!;
     const stem1 = rows.find(
@@ -177,7 +177,7 @@ describe("qaoaByLength", () => {
 describe("noiseComparison", () => {
   it("shows the transpilation overhead of targeting a real device", () => {
     const { noiseless, noisy } = noiseComparison();
-    // Same reps, same shots, same objective — the only difference is the device
+    // Same reps, same shots, same objective: the only difference is the device
     // target. Routing cost lands entirely in the two-qubit gate count.
     expect(noisy.meanTwoQubitGates).toBeGreaterThan(noiseless.meanTwoQubitGates);
     expect(noisy.meanTranspiledDepth).toBeGreaterThan(noiseless.meanTranspiledDepth);

@@ -3,7 +3,7 @@
  *  Mirrors `foldq.analysis.uncertainty` so the site and the README cannot state
  *  a rate with different qualification. The README reports every headline rate
  *  with an interval; a page showing the bare point estimate invites exactly the
- *  over-reading the interval exists to prevent — most sharply on the QAOA `reps`
+ *  over-reading the interval exists to prevent: most sharply on the QAOA `reps`
  *  table, where the intervals overlap and the apparent trend is not separable.
  */
 
@@ -38,7 +38,7 @@ export function wilsonCi(successes: number, trials: number): Interval {
   };
 }
 
-/** `[15.9%, 48.5%]` — the form used beside a rate. */
+/** `[15.9%, 48.5%]`: the form used beside a rate. */
 export function formatInterval(interval: Interval): string {
   if (!Number.isFinite(interval.low)) return "n/a";
   return `[${(interval.low * 100).toFixed(1)}%, ${(interval.high * 100).toFixed(1)}%]`;

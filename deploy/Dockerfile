@@ -1,6 +1,6 @@
 # Container for the FoldQ API, sized for a Hugging Face Space (Docker SDK).
 #
-# Python is pinned to 3.11 because the project requires >=3.11,<3.12 — the
+# Python is pinned to 3.11 because the project requires >=3.11,<3.12: the
 # scientific stack has no wheels for newer interpreters and building from source
 # on a free tier will time out.
 FROM python:3.11-slim

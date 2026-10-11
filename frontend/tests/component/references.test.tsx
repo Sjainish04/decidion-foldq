@@ -54,7 +54,7 @@ describe("footer", () => {
   it("keeps the MIT licence visible alongside the site-content copyright line", () => {
     // Project owners require "© 2026 Decidion AI. All rights reserved." for site
     // content. The repository's source code is still MIT-licensed, so that
-    // statement must stay visible too — the two are scoped to different things
+    // statement must stay visible too: the two are scoped to different things
     // (site content vs. source code) and are both true at once. The guard this
     // test protects is that the MIT statement never gets silently dropped, not
     // that "all rights reserved" can never appear.

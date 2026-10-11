@@ -17,7 +17,7 @@ test("picks a target, then a structure, views it in 3D, and folds its sequence",
   await first.getByRole("link").first().click();
 
   // Both of these depend on a live RCSB round trip plus a client-side route
-  // transition (and, in dev, first-visit compilation of the [pdbId] route) —
+  // transition (and, in dev, first-visit compilation of the [pdbId] route),
   // the default 5s expect timeout is tight for that under parallel workers.
   await expect(page).toHaveURL(/\/structures\/[A-Z0-9]{4}/i, { timeout: 15_000 });
   await expect(page.getByRole("link", { name: /view on rcsb/i })).toBeVisible({

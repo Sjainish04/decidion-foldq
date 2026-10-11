@@ -22,11 +22,11 @@ Length 76 nt · 229 QUBO variables · density 0.618
 | Gate | Question | Result |
 |---|---|---|
 | A | Is the reference structure reachable from the candidate stems? | yes (100% of its pairs reachable) |
-| B | Is the reference the QUBO's ground state? | **indeterminate** — instance exceeds the exact solver's ceiling |
-| C | Did the solver reach the QUBO ground state? | **indeterminate** — instance exceeds the exact solver's ceiling |
+| B | Is the reference the QUBO's ground state? | **indeterminate**: instance exceeds the exact solver's ceiling |
+| C | Did the solver reach the QUBO ground state? | **indeterminate**: instance exceeds the exact solver's ceiling |
 | D | Structural accuracy after decode and rescore | base-pair F1 0.326 |
 
-**Attribution is indeterminate.** The instance exceeds the exact solver's variable ceiling, so Gates B and C could not be decided. The accuracy below is real, but this report cannot say whether the energy model or the optimizer is responsible for it — and reporting either as the cause would be a guess.
+**Attribution is indeterminate.** The instance exceeds the exact solver's variable ceiling, so Gates B and C could not be decided. The accuracy below is real, but this report cannot say whether the energy model or the optimizer is responsible for it, and reporting either as the cause would be a guess.
 
 ## Base pairs
 
@@ -44,6 +44,6 @@ Length 76 nt · 229 QUBO variables · density 0.618
 
 The prediction shares 7 of 21 reference pairs and 7 of 21 pairs with ViennaRNA's own MFE fold.
 
-Two things are worth separating here. Gate A passing means the structure was *available* — the candidate set was not the limitation. Whether the energy model or the optimizer then chose wrongly is exactly what Gates B and C exist to distinguish, and at this size they cannot be decided, so this report says so rather than assigning blame it cannot support.
+Two things are worth separating here. Gate A passing means the structure was *available*: the candidate set was not the limitation. Whether the energy model or the optimizer then chose wrongly is exactly what Gates B and C exist to distinguish, and at this size they cannot be decided, so this report says so rather than assigning blame it cannot support.
 
 This is the regime the project is honest about: small designed structures score near 1.0, and a real 76-nt cloverleaf does not. The multiloop junction at the centre of a tRNA is precisely the many-body structure a degree-2 QUBO approximates worst.

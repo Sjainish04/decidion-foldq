@@ -89,7 +89,7 @@ export function gateLadder(gates: GateReport): GateStatus[] {
   };
 
   // A hard failure anywhere upstream (A, B, or C) makes Gate D's physical metrics
-  // moot too — they would be scoring a run that already went wrong for a known
+  // moot too: they would be scoring a run that already went wrong for a known
   // reason. An *indeterminate* upstream gate does not block D: F1 and energy gap
   // are measured directly off the decoded candidate and stay meaningful even when
   // exact ground truth couldn't be decided (see the "indeterminate" test case).

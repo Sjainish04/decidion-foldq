@@ -30,7 +30,7 @@ const pct1 = (value: number) => `${(value * 100).toFixed(1)}%`;
 const formatP = (value: number) => (value < 0.001 ? "< 0.001" : value.toFixed(3));
 const yesNo = (value: boolean) => (value ? "yes" : "no");
 
-/** "a, b, and c" — used so significance and importance findings read as a
+/** "a, b, and c": used so significance and importance findings read as a
  *  sentence rather than a bracketed array dump. */
 function joinNames(names: string[]): string {
   if (names.length === 0) return "none of them";
@@ -90,7 +90,7 @@ function paretoSeries(points: ParetoPoint[]) {
   const rest = points.filter((p) => !p.on_frontier);
   // Frontier points are drawn larger, in a different shape AND a different
   // colour, then joined by a line. Shape and connection carry the distinction on
-  // their own, so the chart still reads in greyscale — colour alone would not.
+  // their own, so the chart still reads in greyscale: colour alone would not.
   return [
     {
       name: "On frontier",

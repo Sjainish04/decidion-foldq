@@ -1,6 +1,6 @@
 """Template-based secondary-structure diagrams, via EMBL-EBI's R2DT.
 
-Exposed as three endpoints — submit, status, result — mirroring R2DT's own job
+Exposed as three endpoints (submit, status, result) mirroring R2DT's own job
 model rather than hiding it behind one blocking call. A job takes tens of
 seconds; holding a serverless function open for that long wastes the function's
 budget and gives the user a spinner with no progress, whereas polling lets the
@@ -52,7 +52,7 @@ class DiagramResult(BaseModel):
 
 
 def _unavailable(error: Exception) -> FoldQAPIError:
-    """R2DT being down is a 503, not a 500 — this app is fine."""
+    """R2DT being down is a 503, not a 500; this app is fine."""
     return FoldQAPIError(
         ErrorCode.STRUCTURE_SOURCE_UNAVAILABLE,
         f"R2DT is unavailable: {error}",

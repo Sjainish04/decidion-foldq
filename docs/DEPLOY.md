@@ -38,13 +38,13 @@ asserts the pages still render.
 ## What this deployment leaves out, and why
 
 Vercel caps a serverless function at **250 MB uncompressed**. The full dependency
-set is ~490 MB, so `requirements.txt` installs the classical stack only —
-**147 MB measured** — and omits qiskit, qiskit-aer, scipy, pandas and matplotlib.
+set is ~490 MB, so `requirements.txt` installs the classical stack only
+(**147 MB measured**), and omits qiskit, qiskit-aer, scipy, pandas and matplotlib.
 
 That is not a compromise on the fold path: tracing a real `simulated_annealing`
 run shows it imports ViennaRNA, numpy, networkx, dimod and dwave-samplers and
 nothing heavier. Verified in a clean Python 3.11 environment with only
-`requirements.txt` installed — `/meta`, a simulated-annealing fold, an exact fold
+`requirements.txt` installed: `/meta`, a simulated-annealing fold, an exact fold
 (F1 1.0), decision-card rendering and the RCSB proxy all work.
 
 **The consequence: `qaoa` and `cvar_qaoa` are not available on the deployed API.**
@@ -68,7 +68,7 @@ Deployed from the repository root, where `api/index.py`, `requirements.txt` and
    **Do not add a `rewrites` rule for `/api/*`.** Vercel now routes backend
    framework projects using the *rewritten destination* path, so a rewrite to
    `/api/index` makes every request arrive at the app as `/api/index` and each
-   one 404s — including `/openapi.json`. Native detection already routes
+   one 404s, including `/openapi.json`. Native detection already routes
    correctly; the absence of a rewrite is the fix.
 4. Check it:
 
@@ -76,7 +76,7 @@ Deployed from the repository root, where `api/index.py`, `requirements.txt` and
    curl https://decidion-foldq-api.vercel.app/api/v1/meta
    ```
 
-   Expect seven solvers and `"python": "3.1x"`. `qaoa` should be **absent** —
+   Expect seven solvers and `"python": "3.1x"`. `qaoa` should be **absent**:
    that is correct, not a broken build.
 
 ## 2. Frontend project
@@ -101,7 +101,7 @@ Deployed from the repository root, where `api/index.py`, `requirements.txt` and
    NEXT_PUBLIC_API_URL = https://decidion-foldq-api.vercel.app
    ```
 
-   `NEXT_PUBLIC_` is required — the value is read in the browser.
+   `NEXT_PUBLIC_` is required: the value is read in the browser.
 5. Deploy.
 
 ## 3. Point CORS at the frontend
@@ -116,7 +116,7 @@ Comma-separate more origins if you want preview deployments to fold. Redeploy th
 API afterwards so the new value is picked up.
 
 Until this is set the API allows only `http://localhost:3000`, and the browser
-blocks every call — the site looks broken while the API is perfectly healthy. It
+blocks every call: the site looks broken while the API is perfectly healthy. It
 is the most common cause of "the fold button does nothing".
 
 ## 4. Verify
@@ -135,7 +135,7 @@ In the browser:
 - `/dashboard` and every `/analytics/*` route must render **without** the API. If
   they do not, the problem is the frontend build, not the API.
 - `/foldq/new` → fold a sequence. A network error here is almost always
-  `FOLDQ_ALLOWED_ORIGINS` not matching the frontend origin exactly — scheme
+  `FOLDQ_ALLOWED_ORIGINS` not matching the frontend origin exactly: scheme
   included, no trailing slash.
 
 ## Limits worth knowing
@@ -147,7 +147,7 @@ In the browser:
   long enough to hit it.
 - **Hobby is non-commercial.** Fine for an academic submission.
 - `deploy/Dockerfile` remains in the repository for hosts that take a container
-  (Cloud Run, Koyeb, a Space with Docker enabled). It has **not** been built —
-  there was no Docker daemon available when it was written — so treat its first
+  (Cloud Run, Koyeb, a Space with Docker enabled). It has **not** been built
+  (there was no Docker daemon available when it was written), so treat its first
   build log as the real test. The Vercel path above is the one that has been
   exercised.

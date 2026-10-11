@@ -4,7 +4,7 @@
 
 **Goal:** Build a reproducible platform that encodes RNA secondary-structure prediction as a QUBO, solves it with classical, quantum-inspired, and gate-based methods, validates every result against ViennaRNA through a four-gate diagnostic ladder, and extends to pseudoknots that classical dynamic programming cannot represent.
 
-**Architecture:** A single-direction pipeline — `SequenceRecord → CandidateSet → ConflictGraph → QuboProblem → SolverResult → FoldCandidate → GateReport`. Every solver implements one `FoldSolver` Protocol and shares an identical decode/repair/rescore path so comparisons stay fair. All energy coefficients derive from ViennaRNA's own Turner primitives rather than reimplemented constants.
+**Architecture:** A single-direction pipeline; `SequenceRecord → CandidateSet → ConflictGraph → QuboProblem → SolverResult → FoldCandidate → GateReport`. Every solver implements one `FoldSolver` Protocol and shares an identical decode/repair/rescore path so comparisons stay fair. All energy coefficients derive from ViennaRNA's own Turner primitives rather than reimplemented constants.
 
 **Tech Stack:** Python 3.11, ViennaRNA 2.7.2, Qiskit 2.5.1, qiskit-aer 0.17.2, qiskit-ibm-runtime (fake_provider only), dwave-ocean-sdk 9.4.0, dimod, networkx, numpy, scipy, pandas, pydantic, typer, jinja2, matplotlib, pytest, hypothesis, ruff, mypy.
 
@@ -73,7 +73,7 @@ data/fixtures/curated.json          vendored real RNAs incl. pseudoknots
 
 ---
 
-## Phase 0 — Scaffold
+## Phase 0: Scaffold
 
 ### Task 1: Project scaffold and environment
 
@@ -206,7 +206,7 @@ uv pip install -e ".[dev,quantum]"
 .venv/bin/pytest tests/unit/test_scaffold.py -v
 ```
 
-Expected: PASS. If `RNA.fold` returns something else, stop — the ViennaRNA build differs from the one the spec was measured against and every downstream energy number is suspect.
+Expected: PASS. If `RNA.fold` returns something else, stop: the ViennaRNA build differs from the one the spec was measured against and every downstream energy number is suspect.
 
 - [ ] **Step 6: Write the `Makefile`**
 
@@ -242,7 +242,7 @@ git commit -m "feat: project scaffold with pinned Python 3.11 scientific stack"
 
 ---
 
-## Phase 1 — Schemas and the ViennaRNA boundary
+## Phase 1: Schemas and the ViennaRNA boundary
 
 ### Task 2: Core schemas
 
@@ -677,7 +677,7 @@ class ViennaBackend:
 - [ ] **Step 5: Run the tests**
 
 Run: `.venv/bin/pytest tests/scientific/test_vienna.py -v`
-Expected: PASS (7 tests). The `test_stack_plus_hairpin_reconstructs_vienna_energy` test is the important one — it proves the unit conversion and index offsets are simultaneously correct.
+Expected: PASS (7 tests). The `test_stack_plus_hairpin_reconstructs_vienna_energy` test is the important one: it proves the unit conversion and index offsets are simultaneously correct.
 
 - [ ] **Step 6: Commit**
 
@@ -691,7 +691,7 @@ index offset, which are the two most likely sources of silent energy error."
 
 ---
 
-## Phase 2 — Biological representation
+## Phase 2: Biological representation
 
 ### Task 4: Candidate pairs and maximal stems
 
@@ -1290,7 +1290,7 @@ balance, roundtrip fidelity, and minimum hairpin compliance."
 
 ---
 
-## Phase 3 — Encoding and QUBO
+## Phase 3: Encoding and QUBO
 
 ### Task 7: Charge-and-refund energy coefficients
 
@@ -1303,11 +1303,11 @@ The scientific core. Measured evidence from the spec: stacking alone correlates 
 **Interfaces:**
 - Consumes: `ViennaBackend` (Task 3), `Stem` (Task 2), `is_nested` (Task 5)
 - Produces:
-  - `NestingPolicy` — `Literal["all_nestable", "immediate_only"]`
+  - `NestingPolicy`: `Literal["all_nestable", "immediate_only"]`
   - `stem_linear_energy(backend: ViennaBackend, sequence: str, stem: Stem) -> float`
   - `refund_pair_energy(backend: ViennaBackend, sequence: str, outer: Stem, inner: Stem) -> float`
   - `nestable_pairs(stems: list[Stem], policy: NestingPolicy = "all_nestable") -> list[tuple[int,int]]`
-  - `EnergyModel` — `Literal["stacking_only", "charge_refund"]`
+  - `EnergyModel`: `Literal["stacking_only", "charge_refund"]`
 
 - [ ] **Step 1: Write the failing test**
 
@@ -1427,7 +1427,7 @@ Expected: FAIL with `ModuleNotFoundError: No module named 'foldq.encodings'`
 """Charge-and-refund energy coefficients for the stem QUBO.
 
 A degree-2 objective cannot express "this helix closes a hairpin", because that
-depends on which *other* helices are selected — a k-body predicate. The
+depends on which *other* helices are selected: a k-body predicate. The
 construction here recovers it in two representable layers:
 
   linear[s]      = stacking(s) + hairpin_closure(s)     provisionally assume a hairpin
@@ -1501,7 +1501,7 @@ def nestable_pairs(
 - [ ] **Step 5: Run the tests**
 
 Run: `.venv/bin/pytest tests/scientific/test_energy_model.py -v`
-Expected: PASS (8 tests). If `test_stacking_only_correlates_with_vienna_on_real_folds` fails, the energy model has regressed against the spec's measured baseline — stop and investigate before proceeding.
+Expected: PASS (8 tests). If `test_stacking_only_correlates_with_vienna_on_real_folds` fails, the energy model has regressed against the spec's measured baseline: stop and investigate before proceeding.
 
 - [ ] **Step 6: Commit**
 
@@ -1525,7 +1525,7 @@ Includes a regression guard on the r=0.958 stacking-surrogate baseline."
 **Interfaces:**
 - Consumes: `Stem`, `ViennaBackend`, `build_conflict_graph`, energy functions
 - Produces:
-  - `PenaltyConfig(overlap: float | None = None, crossing: float | None = None, forbid_crossing: bool = True)` — `None` means adaptive
+  - `PenaltyConfig(overlap: float | None = None, crossing: float | None = None, forbid_crossing: bool = True)`; `None` means adaptive
   - `QuboProblem(linear, quadratic, offset, variable_map, sequence, metadata)` with `.num_variables`, `.density`, `.energy(bits) -> float`, `.to_bqm() -> dimod.BinaryQuadraticModel`
   - `calibrate_penalty(linear: dict[int, float]) -> float`
   - `build_stem_qubo(sequence, stems, backend, *, penalties, energy_model, nesting_policy) -> QuboProblem`
@@ -2217,7 +2217,7 @@ otherwise silently optimise a permuted objective."
 
 ---
 
-## Phase 4 — Solver layer
+## Phase 4: Solver layer
 
 ### Task 10: Solver protocol and exact solver
 
@@ -2605,7 +2605,7 @@ answer that would silently invalidate the diagnostic gates."
 
 **Interfaces:**
 - Consumes: `QuboProblem`, `SolverConfig`, `SolverResult`
-- Produces: `RandomSolver()`, `GreedySolver(ranking: str = "energy")`, `LocalSearchSolver(max_iterations: int = 1000)` — each with `.name` and `.solve()`
+- Produces: `RandomSolver()`, `GreedySolver(ranking: str = "energy")`, `LocalSearchSolver(max_iterations: int = 1000)`; each with `.name` and `.solve()`
 
 - [ ] **Step 1: Write the failing test**
 
@@ -2828,7 +2828,7 @@ git commit -m "feat: add random, greedy, and local-search baseline solvers"
 
 **Interfaces:**
 - Consumes: `QuboProblem.to_bqm()`, `SolverConfig`
-- Produces: `SimulatedAnnealingSolver(num_sweeps: int = 1000)`, `TabuSolver()`, `PathIntegralSolver(num_sweeps: int = 1000)` — the last is simulated *quantum* annealing with tunnelling dynamics
+- Produces: `SimulatedAnnealingSolver(num_sweeps: int = 1000)`, `TabuSolver()`, `PathIntegralSolver(num_sweeps: int = 1000)`; the last is simulated *quantum* annealing with tunnelling dynamics
 
 - [ ] **Step 1: Write the failing test**
 
@@ -3011,7 +3011,7 @@ class PathIntegralSolver:
 - [ ] **Step 4: Run the tests**
 
 Run: `.venv/bin/pytest tests/unit/test_annealing_solvers.py -v`
-Expected: PASS. If `PathIntegralAnnealingSampler` rejects the `seed` keyword in the installed Ocean version, drop that argument and mark the reproducibility test `xfail` with a comment naming the version — do not silently remove the test.
+Expected: PASS. If `PathIntegralAnnealingSampler` rejects the `seed` keyword in the installed Ocean version, drop that argument and mark the reproducibility test `xfail` with a comment naming the version: do not silently remove the test.
 
 - [ ] **Step 5: Commit**
 
@@ -3022,7 +3022,7 @@ git commit -m "feat: add simulated annealing, tabu, and path-integral SQA solver
 
 ---
 
-## Phase 5 — Decoding, repair, and evaluation
+## Phase 5: Decoding, repair, and evaluation
 
 ### Task 13: Decoding and deterministic repair
 
@@ -3776,7 +3776,7 @@ optimizer, rather than reporting an unexplained score."
 
 ---
 
-## Phase 6 — Gate-based quantum layer
+## Phase 6: Gate-based quantum layer
 
 ### Task 16: QAOA solver and quantum-resource accounting
 
@@ -4146,7 +4146,7 @@ def estimate_resources(
 - [ ] **Step 5: Run the tests**
 
 Run: `.venv/bin/pytest tests/unit/test_qaoa.py -v`
-Expected: PASS (10 tests). `test_qaoa_reported_energies_match_the_qubo` is the critical one — it catches the little-endian bitstring reversal, which is the single most common QAOA integration bug and silently optimises a permuted problem if wrong.
+Expected: PASS (10 tests). `test_qaoa_reported_energies_match_the_qubo` is the critical one: it catches the little-endian bitstring reversal, which is the single most common QAOA integration bug and silently optimises a permuted problem if wrong.
 
 - [ ] **Step 6: Commit**
 
@@ -4246,11 +4246,11 @@ git commit -m "test: verify noisy and shot-based QAOA paths against fake_provide
 
 ---
 
-## Phase 7 — Benchmark data
+## Phase 7: Benchmark data
 
 ### Task 18: Synthetic generator and curated fixtures
 
-The spec measured that uniformly random sequences below ~25 nt do not fold at all — MFE is exactly 0.00 with an empty structure. A benchmark built from them would score every solver at 100% against "predict nothing". The generator must therefore reject sequences that do not fold.
+The spec measured that uniformly random sequences below ~25 nt do not fold at all: MFE is exactly 0.00 with an empty structure. A benchmark built from them would score every solver at 100% against "predict nothing". The generator must therefore reject sequences that do not fold.
 
 **Files:**
 - Create: `src/foldq/data/__init__.py`, `src/foldq/data/generate.py`, `data/fixtures/curated.json`, `src/foldq/io/__init__.py`, `src/foldq/io/fixtures.py`
@@ -4588,7 +4588,7 @@ def load_curated(path: str | Path = DEFAULT_FIXTURE_PATH) -> list[CuratedRecord]
 - [ ] **Step 8: Run the tests**
 
 Run: `.venv/bin/pytest tests/unit/test_generate.py tests/scientific/test_fixtures.py -v`
-Expected: PASS. If a curated structure fails its length check, fix the fixture JSON — do not relax the validation.
+Expected: PASS. If a curated structure fails its length check, fix the fixture JSON: do not relax the validation.
 
 - [ ] **Step 9: Commit**
 
@@ -4602,7 +4602,7 @@ includes published pseudoknots that ViennaRNA structurally cannot express."
 
 ---
 
-## Phase 8 — Pipeline, configuration, and CLI
+## Phase 8: Pipeline, configuration, and CLI
 
 ### Task 19: Pipeline orchestration, config, and CLI
 
@@ -5154,7 +5154,7 @@ git commit -m "feat: add pipeline orchestration, YAML config, and CLI"
 
 ---
 
-## Phase 9 — Experiments and reporting
+## Phase 9: Experiments and reporting
 
 ### Task 20: Experiment runners E1-E3
 
@@ -6184,16 +6184,16 @@ Expected: PASS (4 tests)
 
 The existing README describes an aspirational architecture. Rewrite it to describe what exists, following this outline. Every claim must be backed by code that runs.
 
-1. **Title and one-paragraph summary** — keep the existing framing.
-2. **Status** — replace "Planned/Implemented" markers with what is actually true after this plan.
-3. **The four-gate diagnostic ladder** — promote this to near the top; it is the contribution.
-4. **Quick start** — the exact commands from Task 19 Step 8, verified to work.
-5. **Results** — the measured tables from `results/`, generated by `make reproduce`.
-6. **Pseudoknots** — move from "out of scope" to a headline section explaining that disabling the crossing penalty reaches structures ViennaRNA cannot express, with the E5 table.
-7. **Scope and deferred work** — state explicitly what was deferred and why: manuscript, MkDocs site, Docker, extra CI workflows, notebooks, hardware execution, Optuna, hierarchical encoding, graph decomposition.
-8. **Limitations** — keep the existing list; add that Gates B and C are capped near 22 variables, and that the degree-2 surrogate approximates loop terms.
-9. **Reproducibility** — `make reproduce`, seeds, manifests, lockfile.
-10. **Team, citation, license, references** — keep.
+1. **Title and one-paragraph summary**: keep the existing framing.
+2. **Status**: replace "Planned/Implemented" markers with what is actually true after this plan.
+3. **The four-gate diagnostic ladder**: promote this to near the top; it is the contribution.
+4. **Quick start**: the exact commands from Task 19 Step 8, verified to work.
+5. **Results**: the measured tables from `results/`, generated by `make reproduce`.
+6. **Pseudoknots**: move from "out of scope" to a headline section explaining that disabling the crossing penalty reaches structures ViennaRNA cannot express, with the E5 table.
+7. **Scope and deferred work**: state explicitly what was deferred and why: manuscript, MkDocs site, Docker, extra CI workflows, notebooks, hardware execution, Optuna, hierarchical encoding, graph decomposition.
+8. **Limitations**: keep the existing list; add that Gates B and C are capped near 22 variables, and that the degree-2 surrogate approximates loop terms.
+9. **Reproducibility**: `make reproduce`, seeds, manifests, lockfile.
+10. **Team, citation, license, references**: keep.
 
 Remove the "Current reference versions at project planning time" section and replace it with the actual locked versions.
 

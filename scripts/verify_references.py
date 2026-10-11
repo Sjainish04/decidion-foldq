@@ -5,8 +5,8 @@ metadata Crossref returned and the date it was checked.
 
 The point is that nothing here is hand-typed from memory. Every DOI is either
 resolved from the work's title through Crossref's search and then fetched back to
-confirm it exists, or — for preprints, documentation and software repositories,
-which Crossref does not index — recorded explicitly as having no DOI rather than
+confirm it exists, or (for preprints, documentation and software repositories,
+which Crossref does not index) recorded explicitly as having no DOI rather than
 being given a plausible-looking one.
 
 This project has already had to retract one fabricated provenance. A citation

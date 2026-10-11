@@ -7,7 +7,7 @@ import type { FoldResponse } from "@/lib/api/schemas";
 /** Download a result in the formats other RNA structure tools read.
  *
  *  This is the honest form of "integrate with XRNA": XRNA-React is a hosted web
- *  application, not a package — there is no npm module to import and no
+ *  application, not a package: there is no npm module to import and no
  *  embeddable component. What it does accept is standard structure files, so the
  *  useful thing to build is the export, not a wrapper around something that
  *  cannot be wrapped. The same files open in RNAcanvas, VARNA and forna, which

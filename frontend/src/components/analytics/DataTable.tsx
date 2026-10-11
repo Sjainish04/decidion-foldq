@@ -10,7 +10,7 @@ export interface Column {
  *  like `SolverSummaryRow` is not assignable to `Record<string, unknown>` even
  *  though its shape is compatible. Typing `rows` that way forced every caller to
  *  write `as unknown as Record<string, unknown>[]`, which is a double assertion
- *  that switches off checking at each call site — so a genuinely wrong row type
+ *  that switches off checking at each call site, so a genuinely wrong row type
  *  would have passed silently. Widening once, here, keeps the call sites honest.
  */
 export interface DataTableProps<Row = unknown> {

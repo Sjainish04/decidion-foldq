@@ -6,7 +6,7 @@ import { DARK_CHROME, LIGHT_CHROME, type ChartChrome } from "./theme";
 /** Whether the dark theme is active, as a subscribable external store.
  *
  *  Charts render to a canvas and cannot use CSS variables, so unlike the rest of
- *  the UI they do not follow the theme for free — the colours have to be passed
+ *  the UI they do not follow the theme for free: the colours have to be passed
  *  in as literals and the chart re-rendered when the theme changes. The toggle
  *  stamps a `dark` class on <html>, so a MutationObserver on that attribute is
  *  the signal.

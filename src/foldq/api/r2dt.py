@@ -6,7 +6,7 @@ force simulation settles into. That is the value of it here: this project's own
 layouts are computed from the structure alone and have no notion of how a family
 is conventionally drawn.
 
-It is a job service, not a request/response API — submit, poll, then fetch — so
+It is a job service, not a request/response API (submit, poll, then fetch), so
 this wraps that pattern and nothing else. Results are cached in-process keyed by
 sequence, because R2DT takes tens of seconds and the same benchmark sequences are
 requested repeatedly.
@@ -107,7 +107,7 @@ def diagram(sequence: str, *, timeout_seconds: float = 180.0, poll: float = 3.0)
 
     Blocking on purpose. A job takes tens of seconds, which is too long for a
     request, so the HTTP layer above runs this in the background and the frontend
-    polls — this function stays a plain synchronous call so it can also be used
+    polls: this function stays a plain synchronous call so it can also be used
     from a script or a notebook.
     """
     key = sequence.strip().upper()

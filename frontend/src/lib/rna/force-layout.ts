@@ -10,7 +10,7 @@ import { layoutStructure, type Layout, type LayoutLink, type LayoutNode } from "
 
 /** Backbone links hold consecutive nucleotides at a fixed rest length. */
 const BACKBONE_LENGTH = 20;
-/** Pair links are shorter than backbone links — that gap is what pulls a
+/** Pair links are shorter than backbone links: that gap is what pulls a
  *  paired strand together into a ladder instead of a loose loop. */
 const PAIR_LENGTH = 15;
 /** Diagonal brace between two stacked base pairs (see `braceLinks`), sized
@@ -20,7 +20,7 @@ const BRACE_LENGTH = Math.sqrt(BACKBONE_LENGTH ** 2 + PAIR_LENGTH ** 2);
 const CHARGE_STRENGTH = -50;
 const COLLIDE_RADIUS = 6;
 /** One full run of d3-force's default alpha-decay schedule (alpha decays
- *  past alphaMin by tick ~300) — enough to converge, no more. */
+ *  past alphaMin by tick ~300), enough to converge, no more. */
 const DEFAULT_TICKS = 300;
 /** Fixed seed for the simulation's internal tie-breaking jiggle. */
 const RANDOM_SEED = 1;
@@ -59,7 +59,7 @@ function seededRandom(seed: number): () => number {
 /** Diagonal braces between consecutive stacked base pairs (i, j) and
  *  (i+1, j-1): both diagonals of the little rectangle they form, so the
  *  rectangle resists shearing and the helix reads as a straight ladder
- *  instead of curling under repulsion. Simulation-only — braces are never
+ *  instead of curling under repulsion. Simulation-only: braces are never
  *  part of the rendered output, only backbone and pair links are. */
 function braceLinks(pairs: [number, number][]): SimLink[] {
   const partner = new Map<number, number>();
@@ -81,12 +81,12 @@ function braceLinks(pairs: [number, number][]): SimLink[] {
  * Forna-style force-directed layout: backbone and base-pair springs plus
  * mutual repulsion between every nucleotide, run synchronously to a fixed
  * tick count so the component can render it during a server render like any
- * other layout — no animation, no client-only simulation loop.
+ * other layout: no animation, no client-only simulation loop.
  *
  * Initial positions come from the existing circular layout
  * (`layoutStructure`) rather than d3-force's own default placement. That
- * gives the simulation a topology-aware starting point, and — combined with
- * a fixed random source and a fixed tick count — keeps the result fully
+ * gives the simulation a topology-aware starting point, and (combined with
+ * a fixed random source and a fixed tick count) keeps the result fully
  * deterministic: the same sequence and pairs always produce the same
  * coordinates.
  *

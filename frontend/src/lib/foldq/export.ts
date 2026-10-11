@@ -22,7 +22,7 @@ export const CSV_HEADER = [
 ].join(",");
 
 /** A null gate means indeterminate, not false. It is written as an empty field so a
- *  reader cannot mistake "we could not check" for "it failed" — the same convention
+ *  reader cannot mistake "we could not check" for "it failed": the same convention
  *  the experiment CSVs use. */
 const flag = (value: boolean | null) => (value === null ? "" : String(value));
 const number = (value: number | null) => (value === null ? "" : String(value));

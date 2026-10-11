@@ -23,7 +23,7 @@ export interface HeadlineStat {
 }
 
 /** Every figure is computed from the bundled experiment output. Nothing here is a
- *  literal — a hard-coded headline is how a README ends up citing a number no
+ *  literal: a hard-coded headline is how a README ends up citing a number no
  *  experiment produced. */
 export function headlineStats(): HeadlineStat[] {
   const attribution = attributionBreakdown();

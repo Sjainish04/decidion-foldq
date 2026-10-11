@@ -2,7 +2,7 @@ import { useSyncExternalStore } from "react";
 import { foldResponseSchema, type FoldResponse } from "@/lib/api/schemas";
 
 /** A run held in this browser session, or `null` if there is none, or `undefined`
- *  while we do not yet know — which is the state the server is always in. */
+ *  while we do not yet know, which is the state the server is always in. */
 export type CachedRun = FoldResponse | null | undefined;
 
 const KEY = (runId: string) => `foldq:run:${runId}`;
@@ -19,7 +19,7 @@ const parsed = new Map<string, FoldResponse>();
 
 function readRun(runId: string): FoldResponse | null {
   // Storage is consulted on every call, before the memo. The memo exists only to
-  // keep the returned reference stable for React, not to avoid the lookup — if it
+  // keep the returned reference stable for React, not to avoid the lookup: if it
   // short-circuited it would keep serving a run after the entry was removed, which
   // is a cache outliving its source rather than caching it.
   const raw = sessionStorage.getItem(KEY(runId));
@@ -40,7 +40,7 @@ const subscribe = () => () => {};
 /** Reads a run from session storage without a hydration mismatch.
  *
  *  sessionStorage does not exist on the server, so reading it during render made
- *  every server render report a miss — the report page committed to its "not in
+ *  every server render report a miss: the report page committed to its "not in
  *  this browser session" branch and the client never reliably replaced it. Reading
  *  it in an effect fixed that but sets state on mount, which is what
  *  react-hooks/set-state-in-effect exists to discourage.

@@ -72,7 +72,7 @@ describe("BPSEQ", () => {
       .filter((line) => !line.startsWith("#"));
 
     // Crossing pairs (1,9) and (5,11) in 1-based terms, both present and
-    // symmetric — the format has no notion of nesting to violate.
+    // symmetric: the format has no notion of nesting to violate.
     expect(lines[0]).toBe("1 G 9");
     expect(lines[8]).toBe("9 G 1");
     expect(lines[4]).toBe("5 A 11");
