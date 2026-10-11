@@ -19,7 +19,7 @@ const EXPERIMENTS = [
 
 /** Coerce one CSV cell to a JS value.
  *
- *  Empty and `nan` become null, and null MEANS INDETERMINATE — never false and
+ *  Empty and `nan` become null, and null MEANS INDETERMINATE: never false and
  *  never zero. In e3_solvers.csv an empty `found_ground_state` marks a run whose
  *  instance exceeded the exact solver's variable ceiling, so the gate could not be
  *  decided. Rendering that as a failure would invert the finding.
@@ -27,7 +27,7 @@ const EXPERIMENTS = [
  *  Anything numeric becomes a number, which makes one column mixed-type:
  *  `overlap_penalty` in e1 holds the sentinel "adaptive" alongside 5.0 and 20.0,
  *  so it arrives as `number | "adaptive"`. Compare it numerically or against the
- *  sentinel — `=== "5.0"` will not match, because the value is the number 5.
+ *  sentinel: `=== "5.0"` will not match, because the value is the number 5.
  */
 function parseValue(raw) {
   if (raw === "" || raw === "NA") return null;
@@ -45,7 +45,7 @@ function parseValue(raw) {
  *  /("([^"]|"")*"|[^,]*)/g over a record loses alignment the moment a field is
  *  empty, because the alternation matches a zero-length string and the match list
  *  stops corresponding to the fields. On these files that silently blanked every
- *  column AFTER an empty one — in e3_solvers.csv the 270 rows with an empty
+ *  column AFTER an empty one: in e3_solvers.csv the 270 rows with an empty
  *  `found_ground_state` lost `was_repaired`, `attribution` and `runtime_seconds`.
  *  Row counts and the header still looked right, so nothing failed loudly.
  */
@@ -80,7 +80,10 @@ function splitRecord(line) {
 }
 
 function parseCsv(text) {
-  const [header, ...lines] = text.trim().split("\n");
+  // \r?\n, not \n: a Windows checkout with core.autocrlf converts the CSVs to
+  // CRLF, and splitting on \n alone leaves "\r" on the last column name and the
+  // last value of every row, so lookups by that column silently return undefined.
+  const [header, ...lines] = text.trim().split(/\r?\n/);
   const columns = splitRecord(header);
   return lines.map((line, index) => {
     const cells = splitRecord(line);
