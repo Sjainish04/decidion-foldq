@@ -272,7 +272,7 @@ REFERENCES: list[Reference] = [
         "motivating application",
         note=(
             "Shows mRNA secondary structure governs vaccine stability and translation "
-            "efficiency — the applied motivation (the 'Moderna challenge') behind reaching "
+            "efficiency, the applied motivation (the 'Moderna challenge') behind reaching "
             "pseudoknots that DP cannot represent."
         ),
     ),
