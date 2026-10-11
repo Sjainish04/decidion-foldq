@@ -40,7 +40,7 @@ export function wilsonCi(successes: number, trials: number): Interval {
 
 /** `[15.9%, 48.5%]` — the form used beside a rate. */
 export function formatInterval(interval: Interval): string {
-  if (!Number.isFinite(interval.low)) return "—";
+  if (!Number.isFinite(interval.low)) return "n/a";
   return `[${(interval.low * 100).toFixed(1)}%, ${(interval.high * 100).toFixed(1)}%]`;
 }
 

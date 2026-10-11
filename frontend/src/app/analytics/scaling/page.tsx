@@ -18,11 +18,11 @@ export default function ScalingPage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold">Scaling and encoding</h1>
+        <h1 className="page-title">Scaling and encoding</h1>
         <p className="mt-1 max-w-3xl text-sm text-[var(--text-secondary)]">
           Variable count is what a quantum device would have to hold, so the encoding
           choice is a resource decision. The comparison only means something at{" "}
-          <strong>matched representability</strong> — an encoding that drops structures is
+          <strong>matched representability</strong>: an encoding that drops structures is
           smaller for a reason that costs accuracy.
         </p>
       </header>
@@ -53,11 +53,11 @@ export default function ScalingPage() {
         />
       </ChartCard>
 
-      <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
-        <h2 className="text-base font-semibold">The representability ceiling</h2>
+      <section className="panel p-5 sm:p-6">
+        <h2 className="section-title">The representability ceiling</h2>
         <p className="mt-1 text-sm text-[var(--text-secondary)]">
           Every instance that fails Gate A at <code>min_stem_length=2</code> is rescued at{" "}
-          <code>min_stem_length=1</code>. The ceiling has exactly one cause —{" "}
+          <code>min_stem_length=1</code>. The ceiling has exactly one cause:{" "}
           <strong>lone base pairs</strong>, helices of a single pair that a minimum-length
           filter excludes. Perfect representability is reachable, and the price is the
           variable count in the chart above.

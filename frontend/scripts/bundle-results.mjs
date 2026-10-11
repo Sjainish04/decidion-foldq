@@ -119,3 +119,26 @@ for (const name of EXPERIMENTS) {
   writeFileSync(join(target, `${name}.json`), JSON.stringify(rows));
   console.log(`bundled ${name}: ${rows.length} rows`);
 }
+
+// The curated fixture sequences and their reference structures, so the site can
+// draw the actual molecules the experiments ran on. Same rule as the CSVs: the
+// generated copy is committed, and a missing source only fails if it is absent.
+const fixturesSource = join(here, "..", "..", "data", "fixtures", "curated.json");
+const fixturesTarget = join(target, "fixtures.json");
+if (existsSync(fixturesSource)) {
+  const records = JSON.parse(readFileSync(fixturesSource, "utf8")).records.map(
+    ({ sequence_id, sequence, known_structure, has_pseudoknot, source }) => ({
+      sequence_id,
+      sequence,
+      known_structure,
+      has_pseudoknot,
+      source,
+    })
+  );
+  writeFileSync(fixturesTarget, JSON.stringify(records));
+  console.log(`bundled fixtures: ${records.length} records`);
+} else if (existsSync(fixturesTarget)) {
+  console.log(`kept committed fixtures.json (no source at ${fixturesSource})`);
+} else {
+  throw new Error(`Missing ${fixturesSource} and no committed fixtures.json.`);
+}

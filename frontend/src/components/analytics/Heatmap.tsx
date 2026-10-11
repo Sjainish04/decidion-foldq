@@ -44,14 +44,16 @@ export function Heatmap({ columns, matrix, height = 380, domain = [-1, 1] }: Hea
     xAxis: {
       type: "category",
       data: columns,
-      splitArea: { show: true },
-      axisLabel: { rotate: 40, interval: 0, fontSize: 10 },
+      axisLine: { show: false },
+      axisTick: { show: false },
+      axisLabel: { rotate: 40, interval: 0, fontSize: 10, color: chrome.label },
     },
     yAxis: {
       type: "category",
       data: columns,
-      splitArea: { show: true },
-      axisLabel: { fontSize: 10 },
+      axisLine: { show: false },
+      axisTick: { show: false },
+      axisLabel: { fontSize: 10, color: chrome.label },
     },
     visualMap: {
       min: domain[0],
@@ -60,6 +62,8 @@ export function Heatmap({ columns, matrix, height = 380, domain = [-1, 1] }: Hea
       orient: "horizontal",
       left: "center",
       bottom: 0,
+      itemWidth: 12,
+      itemHeight: 160,
       textStyle: { color: chrome.label },
       // Diverging: cool for negative, neutral at zero, warm for positive. The
       // warm end is the project's brand terracotta.
@@ -74,9 +78,19 @@ export function Heatmap({ columns, matrix, height = 380, domain = [-1, 1] }: Hea
           fontSize: 9,
           formatter: (p: { data: [number, number, number] }) => p.data[2].toFixed(2),
         },
+        // A gap between cells, in the card colour, so the matrix reads as tiles
+        // rather than a smear, with rounded corners to match the cards.
+        itemStyle: { borderColor: chrome.background, borderWidth: 2, borderRadius: 4 },
         // Hover outline, drawn in the axis colour so it stays visible against
         // both a bone and an ink background — ink-on-ink was invisible in dark.
-        emphasis: { itemStyle: { borderColor: chrome.tooltipText, borderWidth: 1 } },
+        emphasis: {
+          itemStyle: {
+            borderColor: chrome.tooltipText,
+            borderWidth: 1.5,
+            shadowBlur: 12,
+            shadowColor: "rgba(10, 22, 40, 0.3)",
+          },
+        },
       },
     ],
   };

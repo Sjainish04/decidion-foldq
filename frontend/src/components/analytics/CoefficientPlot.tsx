@@ -1,7 +1,7 @@
 "use client";
 
 import ReactECharts from "echarts-for-react";
-import { baseOption, CHART_COLORS, valueAxis } from "@/lib/charts/theme";
+import { baseOption, CHART_COLORS, valueAxis, withAlpha } from "@/lib/charts/theme";
 import { useChartTheme } from "@/lib/charts/use-chart-theme";
 
 export interface CoefficientRow {
@@ -79,13 +79,22 @@ export function CoefficientPlot({
             // Colour reinforces the asterisk; it never carries the meaning alone.
             color: c.significant ? CHART_COLORS.emphasis : CHART_COLORS.muted,
             opacity: c.significant ? 1 : 0.55,
+            // Rounded at the value end only; the zero end stays square on the line.
+            borderRadius: c.beta >= 0 ? [0, 5, 5, 0] : [5, 0, 0, 5],
+          },
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 14,
+              shadowColor: withAlpha(c.significant ? CHART_COLORS.emphasis : CHART_COLORS.muted, 0.5),
+            },
           },
         })),
+        barMaxWidth: 22,
         markLine: {
           silent: true,
           symbol: "none",
           data: [{ xAxis: 0 }],
-          lineStyle: { color: CHART_COLORS.axis, type: "solid" },
+          lineStyle: { color: chrome.label, type: "solid", width: 1.2 },
           label: { show: false },
         },
       },
@@ -107,7 +116,7 @@ export function CoefficientPlot({
           const [xLow, y] = api.coord([beta - error, index]);
           const [xHigh] = api.coord([beta + error, index]);
           const half = api.size([0, 1])[1] * 0.18;
-          const style = { stroke: CHART_COLORS.axis, lineWidth: 1 };
+          const style = { stroke: chrome.tooltipText, lineWidth: 1.4, opacity: 0.7 };
           return {
             type: "group",
             children: [

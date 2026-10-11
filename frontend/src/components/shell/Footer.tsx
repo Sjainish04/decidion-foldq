@@ -11,53 +11,56 @@ import Link from "next/link";
  */
 export function Footer() {
   return (
-    <footer className="mt-10 border-t border-[var(--border)] px-6 py-6 text-xs text-[var(--text-secondary)]">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p>© 2026 Decidion AI. All rights reserved.</p>
-          <p className="mt-1">
-            Source code © 2026 Siddhartha Pahari and Jainish Solanki is{" "}
+    <footer className="mt-12 border-t border-[var(--border)] bg-[var(--surface-elevated)]/40 px-4 py-8 text-xs text-[var(--text-secondary)] sm:px-6 lg:px-10">
+      <div className="mx-auto max-w-[1240px]">
+        <div className="flex flex-wrap items-start justify-between gap-6">
+          <div className="space-y-1">
+            <p className="text-sm font-semibold text-[var(--text-primary)]">
+              Decidion <span className="text-[var(--accent-text)]">FoldQ</span>
+            </p>
+            <p>© 2026 Decidion AI. All rights reserved.</p>
+            <p>
+              Source code © 2026 Siddhartha Pahari and Jainish Solanki is{" "}
+              <a
+                href="https://github.com/Sjainish04/decidion-foldq/blob/main/LICENSE"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-2 hover:text-[var(--text-primary)]"
+              >
+                MIT licensed
+              </a>
+              .
+            </p>
+            <p>Decidion FoldQ · WISER Summer Program 2026 · Moderna Challenge</p>
+          </div>
+          <nav aria-label="Footer" className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
+            <Link href="/references" className="underline-offset-2 hover:text-[var(--text-primary)] hover:underline">
+              References
+            </Link>
             <a
-              href="https://github.com/Sjainish04/decidion-foldq/blob/main/LICENSE"
+              href="https://github.com/Sjainish04/decidion-foldq"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline"
+              className="underline-offset-2 hover:text-[var(--text-primary)] hover:underline"
             >
-              MIT licensed
+              Source
             </a>
-            .
-          </p>
-          <p className="mt-1">
-            Decidion FoldQ · WISER Summer Program 2026 · Moderna Challenge
-          </p>
+            <a
+              href="https://github.com/Sjainish04/decidion-foldq/tree/main/results/full"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline-offset-2 hover:text-[var(--text-primary)] hover:underline"
+            >
+              Result data
+            </a>
+          </nav>
         </div>
-        <nav aria-label="Footer" className="flex flex-wrap gap-x-4 gap-y-1">
-          <Link href="/references" className="underline">
-            References
-          </Link>
-          <a
-            href="https://github.com/Sjainish04/decidion-foldq"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline"
-          >
-            Source
-          </a>
-          <a
-            href="https://github.com/Sjainish04/decidion-foldq/tree/main/results/full"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline"
-          >
-            Result data
-          </a>
-        </nav>
+        <p className="mt-6 max-w-3xl border-t border-[var(--border)] pt-4">
+          No quantum-advantage claim is made. ViennaRNA solves pseudoknot-free MFE
+          folding exactly in cubic time; every figure on this site traces to committed
+          experiment output or a live API response.
+        </p>
       </div>
-      <p className="mt-4 max-w-3xl">
-        No quantum-advantage claim is made. ViennaRNA solves pseudoknot-free MFE
-        folding exactly in cubic time; every figure on this site traces to committed
-        experiment output or a live API response.
-      </p>
     </footer>
   );
 }

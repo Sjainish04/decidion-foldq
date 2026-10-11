@@ -11,7 +11,7 @@ vi.mock("echarts-for-react", () => ({
 }));
 
 function option(): Record<string, never> & {
-  series: { itemStyle?: { color?: string }; barMaxWidth?: number; label?: { show: boolean } }[];
+  series: { color?: string; barMaxWidth?: number; label?: { show: boolean } }[];
   yAxis: { axisLabel: { color: string }; max?: number };
   xAxis: { axisLabel?: { color: string } };
   legend: { show: boolean; top: number };
@@ -29,8 +29,10 @@ describe("chart palette", () => {
     // The original defect: itemStyle was set only when a call site passed a
     // colour, so most bars rendered in ECharts' factory indigo (#5470c6-ish) —
     // a colour in neither of this project's palettes.
+    // Bars draw their colour as a gradient, so the flat value lives on the
+    // series (where the legend reads it) and as the gradient's first stop.
     render(<BarChart categories={["a", "b"]} series={[{ name: "s", data: [1, 2] }]} yLabel="n" />);
-    expect(option().series[0].itemStyle?.color).toBe(SERIES_PALETTE[0]);
+    expect(option().series[0].color).toBe(SERIES_PALETTE[0]);
   });
 
   it("gives each series a distinct colour without being told", () => {
@@ -44,7 +46,7 @@ describe("chart palette", () => {
         yLabel="n"
       />,
     );
-    const colors = option().series.map((s) => s.itemStyle?.color);
+    const colors = option().series.map((s) => s.color);
     expect(new Set(colors).size).toBe(2);
   });
 
@@ -58,8 +60,8 @@ describe("chart palette", () => {
     );
     const data = JSON.parse(screen.getByTestId("echart").getAttribute("data-option")!).series[0]
       .data;
-    expect(data[0].itemStyle.color).toBe("#3a7d95");
-    expect(data[1].itemStyle.color).toBe("#8a8578");
+    expect(data[0].itemStyle.color.colorStops[0].color).toBe("#3a7d95");
+    expect(data[1].itemStyle.color.colorStops[0].color).toBe("#8a8578");
   });
 });
 

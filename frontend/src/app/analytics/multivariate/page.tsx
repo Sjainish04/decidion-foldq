@@ -158,17 +158,17 @@ export default function MultivariatePage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold">Analysis &amp; data</h1>
+        <h1 className="page-title">Analysis &amp; data</h1>
         <p className="mt-1 max-w-3xl text-sm text-[var(--text-secondary)]">
           E7 runs multivariate statistics over FoldQ&apos;s own committed experiment
-          output — {analysis.generated_from} — to characterise which instance features
+          output ({analysis.generated_from}) to characterise which instance features
           and design factors actually drive outcomes, whether they overlap with each
           other, and where the data runs out. {analysis.note}
         </p>
       </header>
 
       <ChartCard
-        title="Correlation matrix — E1 instance features"
+        title="Correlation matrix: E1 instance features"
         description={`Pairwise ${correlations.e1.method} correlation between the instance-geometry features and base-pair F1.`}
         source={SOURCE}
         table={correlationTable(correlations.e1, "E1 correlation matrix")}
@@ -177,7 +177,7 @@ export default function MultivariatePage() {
       </ChartCard>
 
       <ChartCard
-        title="Correlation matrix — E3 solver behaviour"
+        title="Correlation matrix: E3 solver behaviour"
         description={`Pairwise ${correlations.e3.method} correlation between instance size, energy terms, accuracy and runtime.`}
         source={SOURCE}
         table={correlationTable(correlations.e3, "E3 correlation matrix")}
@@ -186,7 +186,7 @@ export default function MultivariatePage() {
       </ChartCard>
 
       <ChartCard
-        title="Multicollinearity — variance inflation factors (E1)"
+        title="Multicollinearity: variance inflation factors (E1)"
         description={multicollinearity.note}
         source={SOURCE}
         table={{
@@ -206,14 +206,14 @@ export default function MultivariatePage() {
         />
       </ChartCard>
 
-      <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
-        <h2 className="text-base font-semibold">Multicollinearity is not a problem here</h2>
+      <section className="panel p-5 sm:p-6">
+        <h2 className="section-title">Multicollinearity is not a problem here</h2>
         <p className="mt-1 text-sm text-[var(--text-secondary)]">
           {vifOk ? (
             <>
               Every one of the {vifE1.length} instance-geometry features has a VIF
               between <strong>{fixed2(vifBounds.min)}</strong> and{" "}
-              <strong>{fixed2(vifBounds.max)}</strong> — well under the conventional
+              <strong>{fixed2(vifBounds.max)}</strong>, well under the conventional
               concern threshold of 10. The standardised regression coefficients below
               can be read as approximately independent effects rather than as an
               artifact of correlated predictors.
@@ -229,7 +229,7 @@ export default function MultivariatePage() {
       </section>
 
       <ChartCard
-        title={`Standardised OLS drivers — ${f1Model.outcome}`}
+        title={`Standardised OLS drivers: ${f1Model.outcome}`}
         description={regression.note}
         source={SOURCE}
         table={{
@@ -256,7 +256,7 @@ export default function MultivariatePage() {
       </ChartCard>
 
       <ChartCard
-        title={`Standardised OLS drivers — ${gateBModel.outcome}`}
+        title={`Standardised OLS drivers: ${gateBModel.outcome}`}
         description={regression.note}
         source={SOURCE}
         table={{
@@ -281,8 +281,8 @@ export default function MultivariatePage() {
         />
       </ChartCard>
 
-      <section className="rounded-lg border border-[var(--warning)]/40 bg-[var(--warning)]/10 p-4">
-        <h2 className="text-base font-semibold">
+      <section className="callout-warning p-5 sm:p-6">
+        <h2 className="section-title">
           Instance geometry is a weak predictor on its own
         </h2>
         <p className="mt-1 text-sm text-[var(--text-secondary)]">
@@ -299,7 +299,7 @@ export default function MultivariatePage() {
       </section>
 
       <ChartCard
-        title="PCA — variance explained (E1 instance features)"
+        title="PCA: variance explained (E1 instance features)"
         description={principal_components.note}
         source={SOURCE}
         table={{
@@ -324,8 +324,8 @@ export default function MultivariatePage() {
         />
       </ChartCard>
 
-      <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
-        <h2 className="text-base font-semibold">The instance space is not low-dimensional</h2>
+      <section className="panel p-5 sm:p-6">
+        <h2 className="section-title">The instance space is not low-dimensional</h2>
         <p className="mt-1 text-sm text-[var(--text-secondary)]">
           It takes <strong>{componentsNeeded} of the {pca.columns.length}</strong>{" "}
           components to reach 90% cumulative variance over the standardised
@@ -336,7 +336,7 @@ export default function MultivariatePage() {
       </section>
 
       <ChartCard
-        title="PC1 vs PC2 — E1 instances"
+        title="PC1 vs PC2: E1 instances"
         description="Each point is one E1 instance projected onto the first two principal components."
         source={SOURCE}
         table={{
@@ -360,8 +360,8 @@ export default function MultivariatePage() {
         />
       </ChartCard>
 
-      <section className="rounded-lg border border-[var(--reference)]/40 bg-[var(--reference)]/10 p-4">
-        <h2 className="text-base font-semibold">
+      <section className="rounded-2xl border border-[var(--reference)]/40 bg-[var(--reference)]/10 p-5 sm:p-6">
+        <h2 className="section-title">
           Exact partial dependence, not a modelled approximation
         </h2>
         <p className="mt-1 text-sm text-[var(--text-secondary)]">{partial_dependence.note}</p>
@@ -374,7 +374,7 @@ export default function MultivariatePage() {
       </section>
 
       <ChartCard
-        title="Partial dependence — gate_b"
+        title="Partial dependence: gate_b"
         description="Marginal mean Gate B pass rate by design-factor level, from the E1 full factorial sweep."
         source={SOURCE}
         table={{
@@ -399,7 +399,7 @@ export default function MultivariatePage() {
       </ChartCard>
 
       <ChartCard
-        title="Partial dependence — base_pair_f1"
+        title="Partial dependence: base_pair_f1"
         description="Marginal mean base-pair F1 by design-factor level, from the same E1 sweep."
         source={SOURCE}
         table={{
@@ -426,17 +426,17 @@ export default function MultivariatePage() {
         />
       </ChartCard>
 
-      <section className="rounded-lg border border-[var(--warning)]/40 bg-[var(--warning)]/10 p-4">
-        <h2 className="text-base font-semibold">
-          Out-of-fold is not enough here — the folds are grouped by sequence
+      <section className="callout-warning p-5 sm:p-6">
+        <h2 className="section-title">
+          Out-of-fold is not enough here: the folds are grouped by sequence
         </h2>
         <p className="mt-1 max-w-3xl text-sm text-[var(--text-secondary)]">
           {random_forest.note}
         </p>
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
-          <div className="rounded border border-[var(--border)] bg-[var(--surface)] p-3">
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[var(--shadow-sm)]">
             <p className="text-xs uppercase tracking-wide text-[var(--text-secondary)]">
-              Grouped by {rf.grouped_by ?? "sequence_id"} — the honest figure
+              Grouped by {rf.grouped_by ?? "sequence_id"}: the honest figure
             </p>
             <p className="mt-1 text-2xl font-semibold tabular-nums">R² {fixed3(rf.r2)}</p>
             <p className="mt-1 text-xs text-[var(--text-secondary)]">
@@ -444,9 +444,9 @@ export default function MultivariatePage() {
               sequence the model has never seen.
             </p>
           </div>
-          <div className="rounded border border-[var(--border)] bg-[var(--surface)] p-3">
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[var(--shadow-sm)]">
             <p className="text-xs uppercase tracking-wide text-[var(--text-secondary)]">
-              Row-wise split — inflated by leakage
+              Row-wise split: inflated by leakage
             </p>
             <p className="mt-1 text-2xl font-semibold tabular-nums">R² {fixed3(leaky.r2)}</p>
             <p className="mt-1 text-xs text-[var(--text-secondary)]">
@@ -464,7 +464,7 @@ export default function MultivariatePage() {
       </section>
 
       <ChartCard
-        title="Out-of-fold parity — base_pair_f1 from design factors"
+        title="Out-of-fold parity: base_pair_f1 from design factors"
         description={`Actual vs out-of-fold predicted ${rf.outcome}, from a random forest trained only on ${rf.features.join(", ")}.`}
         source={SOURCE}
         table={{
@@ -487,7 +487,7 @@ export default function MultivariatePage() {
       </ChartCard>
 
       <ChartCard
-        title="Learning curve — base_pair_f1 from design factors"
+        title="Learning curve: base_pair_f1 from design factors"
         description="Train vs out-of-fold test R² as training-set size grows, from the same random forest."
         source={SOURCE}
         table={{
@@ -512,13 +512,13 @@ export default function MultivariatePage() {
       </ChartCard>
 
       {anyNegativeTestScore && (
-        <section className="rounded-lg border border-[var(--warning)]/40 bg-[var(--warning)]/10 p-4">
-          <h2 className="text-base font-semibold">
+        <section className="callout-warning p-5 sm:p-6">
+          <h2 className="section-title">
             Test R² is unstable across training sizes
           </h2>
           <p className="mt-1 text-sm text-[var(--text-secondary)]">
             At a training size of {worstFold.train_size} rows the out-of-fold test R² is{" "}
-            {fixed3(worstFold.test_score)} — worse than predicting the mean — even though
+            {fixed3(worstFold.test_score)}, worse than predicting the mean, even though
             train R² there is already {fixed3(worstFold.train_score)}. Test R² does not
             improve monotonically with training size in this range; the gap between the
             two curves across every row measured is the generalisation cost of relying on
@@ -528,7 +528,7 @@ export default function MultivariatePage() {
       )}
 
       <ChartCard
-        title="Feature importance — base_pair_f1 from design factors"
+        title="Feature importance: base_pair_f1 from design factors"
         description="Permutation importance, mean with one std across folds."
         source={SOURCE}
         table={{
@@ -554,20 +554,20 @@ export default function MultivariatePage() {
       </ChartCard>
 
       {weakest.length > 0 && (
-        <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
-          <h2 className="text-base font-semibold">
+        <section className="panel p-5 sm:p-6">
+          <h2 className="section-title">
             Some importances are not distinguishable from zero
           </h2>
           <p className="mt-1 text-sm text-[var(--text-secondary)]">
             For {joinNames(weakest.map((r) => r.feature))}, permutation importance is
-            smaller than the fold-to-fold standard deviation —{" "}
+            smaller than the fold-to-fold standard deviation, so{" "}
             {weakest.length === 1 ? "this is" : "these are"} noise, not a real effect.
           </p>
         </section>
       )}
 
-      <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
-        <h2 className="text-base font-semibold">Pareto frontiers</h2>
+      <section className="panel p-5 sm:p-6">
+        <h2 className="section-title">Pareto frontiers</h2>
         <p className="mt-1 text-sm text-[var(--text-secondary)]">{pareto.note}</p>
       </section>
 

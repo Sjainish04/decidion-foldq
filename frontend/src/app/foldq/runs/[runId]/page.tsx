@@ -42,14 +42,14 @@ export default function RunPage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold">Run results</h1>
+        <h1 className="page-title">Run results</h1>
         <p className="mt-1 font-mono text-xs text-[var(--text-secondary)]">
           {data.sequence}
         </p>
       </header>
       <Link
         href={`/reports/${data.run_id}`}
-        className="inline-block rounded border border-[var(--border)] px-3 py-1.5 text-sm"
+        className="btn btn-secondary"
       >
         Open decision card
       </Link>

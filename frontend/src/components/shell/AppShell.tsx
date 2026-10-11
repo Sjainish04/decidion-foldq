@@ -15,7 +15,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <SideNav />
       <div className="flex min-w-0 flex-1 flex-col">
         <TopBar />
-        <main id="main" className="min-w-0 flex-1 p-6">
+        <main
+          id="main"
+          className="mx-auto w-full min-w-0 max-w-[1240px] flex-1 px-4 py-6 sm:px-6 lg:px-10 lg:py-10"
+        >
           {children}
         </main>
         <Footer />

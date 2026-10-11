@@ -7,7 +7,7 @@ export function DecisionCardFrame({ html }: { html: string }) {
       title="Decision card"
       srcDoc={html}
       sandbox=""
-      className="h-[70vh] w-full rounded-lg border border-[var(--border)] bg-white"
+      className="h-[70vh] w-full rounded-2xl border border-[var(--border)] bg-white shadow-[var(--shadow-md)]"
     />
   );
 }

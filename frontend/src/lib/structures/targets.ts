@@ -18,7 +18,7 @@ export const RNA_TARGETS: RnaTarget[] = [
   {
     id: "ribosome",
     label: "Ribosomal RNA",
-    description: "Ribosomal subunits and complexes — the largest RNA structures.",
+    description: "Ribosomal subunits and complexes, the largest RNA structures.",
     query: "ribosome",
   },
   {
@@ -42,7 +42,7 @@ export const RNA_TARGETS: RnaTarget[] = [
   {
     id: "viral",
     label: "Viral RNA element",
-    description: "Structured viral elements — frameshift signals, IRES, UTRs.",
+    description: "Structured viral elements: frameshift signals, IRES, UTRs.",
     query: "viral RNA element",
   },
 ];

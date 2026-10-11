@@ -21,13 +21,17 @@ export interface DataTableProps<Row = unknown> {
 
 export function DataTable<Row>({ columns, rows, caption }: DataTableProps<Row>) {
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto rounded-xl border border-[var(--border)]">
       <table className="w-full border-collapse text-sm" aria-label={caption}>
         <caption className="sr-only">{caption}</caption>
         <thead>
-          <tr className="border-b border-[var(--border)] text-left">
+          <tr className="bg-[var(--surface-elevated)] text-left">
             {columns.map((column) => (
-              <th key={column.key} scope="col" className="px-3 py-2 font-medium">
+              <th
+                key={column.key}
+                scope="col"
+                className="whitespace-nowrap px-3 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-primary)]"
+              >
                 {column.label}
               </th>
             ))}
@@ -35,17 +39,22 @@ export function DataTable<Row>({ columns, rows, caption }: DataTableProps<Row>) 
         </thead>
         <tbody>
           {rows.map((row, index) => (
-            <tr key={index} className="border-b border-[var(--border)]/50">
+            <tr
+              key={index}
+              className="border-t border-[var(--border)]/70 transition-colors hover:bg-[var(--surface-elevated)]/50"
+            >
               {columns.map((column) => {
                 const value = (row as Record<string, unknown>)[column.key];
+                // "n/a" for a missing value rather than a blank cell, which a
+                // reader cannot tell apart from a rendering fault.
                 const rendered =
                   value === null || value === undefined
-                    ? "—"
+                    ? "n/a"
                     : column.format
                       ? column.format(value as never)
                       : String(value);
                 return (
-                  <td key={column.key} className="px-3 py-1.5 tabular-nums">
+                  <td key={column.key} className="px-3 py-2 tabular-nums">
                     {rendered}
                   </td>
                 );

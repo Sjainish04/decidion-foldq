@@ -10,15 +10,15 @@ export function StructureCard({
   onFold?: (sequence: string) => void;
 }) {
   return (
-    <article className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
+    <article className="panel panel-link p-5">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <Link
           href={`/structures/${structure.pdb_id}`}
-          className="font-mono text-sm font-semibold text-[var(--accent-text)]"
+          className="font-mono text-base font-bold text-[var(--accent-text)] underline-offset-2 hover:underline"
         >
           {structure.pdb_id}
         </Link>
-        <span className="text-xs tabular-nums">
+        <span className="rounded-full border border-[var(--border)] bg-[var(--surface-elevated)] px-2.5 py-0.5 text-xs font-semibold tabular-nums">
           {structure.resolution === null
             ? "no resolution reported"
             : `${structure.resolution.toFixed(2)} Å`}
@@ -61,7 +61,7 @@ export function StructureCard({
       {onFold && structure.rna_sequence && (
         <button
           onClick={() => onFold(structure.rna_sequence!)}
-          className="mt-3 rounded border border-[var(--border)] px-3 py-1.5 text-xs"
+          className="btn btn-secondary mt-4 px-3.5 py-1.5 text-xs"
         >
           Fold this sequence in FoldQ
         </button>

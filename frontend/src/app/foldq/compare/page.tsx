@@ -32,10 +32,10 @@ export default function ComparePage() {
   if (runs.length < 2) {
     return (
       <div className="max-w-2xl space-y-2">
-        <h1 className="text-2xl font-semibold">Compare runs</h1>
+        <h1 className="page-title">Compare runs</h1>
         <p role="status" className="text-sm text-[var(--text-secondary)]">
           Comparison needs at least two runs from this browser session. Fold the same
-          sequence with two different solvers, then come back — runs are not stored on a
+          sequence with two different solvers, then come back. Runs are not stored on a
           server, so this list is per-session by design.
         </p>
       </div>
@@ -62,7 +62,7 @@ export default function ComparePage() {
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="w-full rounded border border-[var(--border)] bg-[var(--surface-elevated)] p-2 text-sm"
+        className="w-full field p-2 text-sm"
       >
         {runs.map((run) => (
           <option key={run.run_id} value={run.run_id}>
@@ -75,7 +75,7 @@ export default function ComparePage() {
 
   return (
     <div className="space-y-5">
-      <h1 className="text-2xl font-semibold">Compare runs</h1>
+      <h1 className="page-title">Compare runs</h1>
 
       <div className="grid gap-4 sm:grid-cols-2">
         {picker("Run A", left.run_id, setLeftId)}
@@ -83,8 +83,8 @@ export default function ComparePage() {
       </div>
 
       {diff ? (
-        <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
-          <h2 className="text-base font-semibold">Agreement</h2>
+        <section className="panel p-5 sm:p-6">
+          <h2 className="section-title">Agreement</h2>
           <p className="mt-1 text-sm">
             <strong className="tabular-nums">{diff.shared.length}</strong> shared pairs ·{" "}
             {diff.onlyA.length} only in A · {diff.onlyB.length} only in B · F1{" "}
@@ -92,7 +92,7 @@ export default function ComparePage() {
           </p>
         </section>
       ) : (
-        <p className="rounded border border-[var(--warning)]/40 bg-[var(--warning)]/10 p-3 text-sm">
+        <p className="callout-warning p-4 text-sm">
           These runs are not directly comparable by base pair: they fold different
           sequences, or one contains crossing pairs that dot-bracket notation cannot
           express.
@@ -103,9 +103,9 @@ export default function ComparePage() {
         {[left, right].map((run, index) => (
           <div
             key={run.run_id}
-            className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4"
+            className="panel p-5 sm:p-6"
           >
-            <h2 className="mb-2 text-base font-semibold">
+            <h2 className="section-title mb-3">
               Run {index === 0 ? "A" : "B"}
             </h2>
             <RunStats run={run} />

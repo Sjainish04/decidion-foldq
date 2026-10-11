@@ -99,6 +99,11 @@ export interface ChartChrome {
   tooltipBackground: string;
   tooltipBorder: string;
   tooltipText: string;
+  /** The card surface the chart sits on: used behind exported PNGs and as the
+   *  ring around markers, so a point never merges with its neighbour. */
+  background: string;
+  /** Faint track drawn behind each bar, showing the room left to the axis. */
+  track: string;
 }
 
 export const LIGHT_CHROME: ChartChrome = {
@@ -108,6 +113,8 @@ export const LIGHT_CHROME: ChartChrome = {
   tooltipBackground: "#ffffff",
   tooltipBorder: "#d8d0c2",
   tooltipText: "#0a1628",
+  background: "#ffffff",
+  track: "rgba(10, 22, 40, 0.035)",
 };
 
 export const DARK_CHROME: ChartChrome = {
@@ -117,7 +124,88 @@ export const DARK_CHROME: ChartChrome = {
   tooltipBackground: "#0f2540",
   tooltipBorder: "#22364f",
   tooltipText: "#e8edf4",
+  background: "#0f2540",
+  track: "rgba(250, 247, 242, 0.04)",
 };
+
+/** A hex colour at the given opacity, as #rrggbbaa. Anything that is not a
+ *  six-digit hex is returned unchanged rather than guessed at. */
+export function withAlpha(color: string, alpha: number): string {
+  if (!/^#[0-9a-f]{6}$/i.test(color)) return color;
+  return `${color}${Math.round(alpha * 255)
+    .toString(16)
+    .padStart(2, "0")}`;
+}
+
+/** Bar fill: the series colour at full strength where the value is, fading
+ *  toward the baseline. The hue never changes, so the encoding is the same one
+ *  the flat fill carried; the fade only gives the bar depth. */
+export function barFill(color: string, horizontal = false) {
+  return {
+    type: "linear" as const,
+    x: horizontal ? 1 : 0,
+    y: 0,
+    x2: 0,
+    y2: horizontal ? 0 : 1,
+    colorStops: [
+      { offset: 0, color },
+      { offset: 1, color: withAlpha(color, 0.5) },
+    ],
+  };
+}
+
+/** Wash under a line, fading out well before the axis so it reads as emphasis
+ *  for the line, not as a filled quantity of its own. */
+export function areaFill(color: string) {
+  return {
+    type: "linear" as const,
+    x: 0,
+    y: 0,
+    x2: 0,
+    y2: 1,
+    colorStops: [
+      { offset: 0, color: withAlpha(color, 0.26) },
+      { offset: 1, color: withAlpha(color, 0) },
+    ],
+  };
+}
+
+/** Entrance motion: bars and points rise in a short stagger. Browsers asking
+ *  for reduced motion get none, matching the CSS rule in globals.css. */
+export function motion() {
+  const reduced =
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduced) return { animation: false };
+  return {
+    animation: true,
+    animationDuration: 900,
+    animationEasing: "cubicOut" as const,
+    animationDelay: (index: number) => index * 45,
+    animationDurationUpdate: 450,
+  };
+}
+
+/** Every chart can be saved as a PNG at twice screen resolution, on the card's
+ *  own background, for slides and manuscripts. */
+export function toolbox(chrome: ChartChrome) {
+  return {
+    show: true,
+    right: 0,
+    bottom: 0,
+    itemSize: 14,
+    iconStyle: { borderColor: chrome.label },
+    emphasis: { iconStyle: { borderColor: chrome.tooltipText, textFill: chrome.tooltipText } },
+    feature: {
+      saveAsImage: {
+        title: "Save as PNG",
+        pixelRatio: 2,
+        backgroundColor: chrome.background,
+      },
+    },
+  };
+}
 
 /** Shared option skeleton. Callers spread this and override what they need. */
 export function baseOption(chrome: ChartChrome) {
@@ -127,13 +215,22 @@ export function baseOption(chrome: ChartChrome) {
     // Generous bottom and top: the legend sits above the plot and axis names
     // below it, and the previous values let both collide with the tick labels.
     grid: { left: 64, right: 28, top: 44, bottom: 56, containLabel: true },
+    toolbox: toolbox(chrome),
+    ...motion(),
     tooltip: {
       trigger: "axis" as const,
       backgroundColor: chrome.tooltipBackground,
       borderColor: chrome.tooltipBorder,
       borderWidth: 1,
+      padding: [8, 12],
       textStyle: { color: chrome.tooltipText, fontSize: 12 },
-      extraCssText: "box-shadow: 0 4px 16px rgb(10 22 40 / 0.12);",
+      extraCssText:
+        "border-radius: 10px; box-shadow: 0 10px 30px rgb(10 22 40 / 0.18); backdrop-filter: blur(6px);",
+      axisPointer: {
+        type: "shadow" as const,
+        shadowStyle: { color: chrome.track },
+        lineStyle: { color: chrome.axisLine, type: "dashed" as const },
+      },
     },
   };
 }
@@ -147,7 +244,7 @@ export function valueAxis(chrome: ChartChrome, name?: string, max?: number) {
     max,
     axisLine: { show: false },
     axisTick: { show: false },
-    axisLabel: { color: chrome.label, fontSize: 11 },
+    axisLabel: { color: chrome.label, fontSize: 11, fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" },
     // Dashed and faint: gridlines are a reading aid, not part of the data.
     splitLine: { lineStyle: { color: chrome.splitLine, type: "dashed" as const } },
   };
@@ -185,9 +282,10 @@ export function legend(chrome: ChartChrome, show: boolean) {
     show,
     top: 0,
     left: "center" as const,
-    itemWidth: 12,
-    itemHeight: 12,
+    icon: "roundRect",
+    itemWidth: 14,
+    itemHeight: 10,
     itemGap: 18,
-    textStyle: { color: chrome.label, fontSize: 11 },
+    textStyle: { color: chrome.label, fontSize: 12 },
   };
 }

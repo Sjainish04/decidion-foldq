@@ -61,6 +61,18 @@
      its default state, never saw it. Now 5.53 / 5.91 / 4.90. */
   --warning: #8a5a10;
   --danger: #b03a2e;
+
+  /* Depth and atmosphere. Shadows are tinted with ink rather than pure black so
+     they sit warmly on bone; the two glows are the brand terracotta and cyan at
+     low alpha, used only behind content, never under text as a fill. */
+  --shadow-sm: 0 1px 2px rgb(10 22 40 / 0.04), 0 2px 10px rgb(10 22 40 / 0.04);
+  --shadow-md: 0 2px 6px rgb(10 22 40 / 0.05), 0 14px 36px rgb(10 22 40 / 0.08);
+  --shadow-lg: 0 4px 12px rgb(10 22 40 / 0.06), 0 28px 64px rgb(10 22 40 / 0.12);
+  --glow-warm: rgb(217 119 87 / 0.16);
+  --glow-cool: rgb(123 184 201 / 0.2);
+  --glass: rgb(250 247 242 / 0.78);
+  --grid-dot: rgb(10 22 40 / 0.07);
+  --figure-bg: #fffdf9;
 }
 
 .dark {
@@ -85,12 +97,53 @@
   --reference: #4ac27e;
   --warning: #e0a34a;
   --danger: #e8736a;
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.3), 0 2px 10px rgb(0 0 0 / 0.18);
+  --shadow-md: 0 2px 6px rgb(0 0 0 / 0.3), 0 14px 36px rgb(0 0 0 / 0.32);
+  --shadow-lg: 0 4px 12px rgb(0 0 0 / 0.35), 0 28px 64px rgb(0 0 0 / 0.45);
+  --glow-warm: rgb(217 119 87 / 0.14);
+  --glow-cool: rgb(123 184 201 / 0.16);
+  --glass: rgb(10 22 40 / 0.78);
+  --grid-dot: rgb(250 247 242 / 0.06);
+  --figure-bg: #0c1d33;
 }
 
 body {
   background: var(--background);
   color: var(--text-primary);
   font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Page atmosphere: two soft brand glows and a faint dot grid, fixed behind
+   everything. A pseudo-element rather than a background on <body> so it never
+   repaints on scroll and never sits between text and its own background. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60rem 30rem at 85% -10%, var(--glow-cool), transparent 70%),
+    radial-gradient(50rem 28rem at 10% -5%, var(--glow-warm), transparent 70%),
+    radial-gradient(var(--grid-dot) 1px, transparent 1px) 0 0 / 22px 22px;
+  mask-image: linear-gradient(to bottom, black, black 40%, transparent 85%);
+}
+
+::selection {
+  background: rgb(217 119 87 / 0.28);
+}
+
+/* In the base layer so a component's own focus treatment (an `outline-none`
+   field with a ring, say) can override it; unlayered, it would beat every
+   utility class. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--accent-strong);
+    outline-offset: 2px;
+  }
 }
 
 code,
@@ -111,4 +164,240 @@ samp,
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Shared surfaces and controls. Defined once here so every page draws the same
+   card, heading and button, instead of each repeating a long utility string. */
+@layer components {
+  .panel {
+    border-radius: 1rem;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .panel-link {
+    transition:
+      transform 180ms ease,
+      box-shadow 180ms ease,
+      border-color 180ms ease;
+  }
+  .panel-link:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--quantum-inspired);
+  }
+
+  .callout-warning {
+    border-radius: 1rem;
+    border: 1px solid color-mix(in srgb, var(--warning) 40%, transparent);
+    background: color-mix(in srgb, var(--warning) 10%, transparent);
+  }
+
+  .page-title {
+    font-size: clamp(1.85rem, 1.35rem + 1.5vw, 2.6rem);
+    line-height: 1.08;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+  }
+
+  .section-title {
+    font-size: 1.125rem;
+    line-height: 1.3;
+    font-weight: 600;
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-text);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 999px;
+    padding: 0.5rem 1.1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.25rem;
+    transition:
+      transform 160ms ease,
+      box-shadow 160ms ease,
+      background-color 160ms ease,
+      border-color 160ms ease;
+  }
+  .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .btn:not(:disabled):hover {
+    transform: translateY(-1px);
+  }
+
+  /* White on --accent-strong is 4.63:1; the darker stop only raises it. */
+  .btn-primary {
+    color: #ffffff;
+    background: linear-gradient(180deg, #c3512c, #a9431f);
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 0.18) inset,
+      0 8px 20px -8px rgb(195 81 44 / 0.7);
+  }
+  .btn-primary:not(:disabled):hover {
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 0.18) inset,
+      0 12px 26px -8px rgb(195 81 44 / 0.8);
+  }
+
+  .btn-secondary {
+    color: var(--text-primary);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+  }
+  .btn-secondary:not(:disabled):hover {
+    border-color: var(--quantum-inspired);
+  }
+
+  .chip {
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 0.35rem 0.85rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease,
+      color 160ms ease;
+  }
+  .chip:hover {
+    color: var(--text-primary);
+    border-color: var(--quantum-inspired);
+  }
+  .chip[aria-pressed="true"] {
+    color: var(--text-primary);
+    border-color: var(--quantum-inspired);
+    background: color-mix(in srgb, var(--quantum-inspired) 14%, var(--surface));
+  }
+
+  .field {
+    border-radius: 0.6rem;
+    border: 1px solid var(--border);
+    background: var(--surface-elevated);
+    color: var(--text-primary);
+    transition:
+      border-color 160ms ease,
+      box-shadow 160ms ease;
+  }
+  .field:focus {
+    outline: none;
+    border-color: var(--accent-strong);
+    box-shadow: 0 0 0 3px rgb(195 81 44 / 0.18);
+  }
+
+  /* A figure's own canvas: a slightly lifted plate inside the card, so drawings
+     read as figures rather than as decoration on the card itself. */
+  .figure-plate {
+    border-radius: 0.85rem;
+    border: 1px solid var(--border);
+    background:
+      radial-gradient(var(--grid-dot) 1px, transparent 1px) 0 0 / 16px 16px,
+      var(--figure-bg);
+  }
+}
+
+/* Figure motion. Only decorative SVG geometry animates; text never fades, so a
+   contrast check run mid-animation measures the final colours. */
+@keyframes draw-stroke {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes grow-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.svg-draw {
+  stroke-dasharray: 1;
+  animation: draw-stroke 1.4s cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+
+.svg-pop {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pop-in 420ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.svg-fade {
+  animation: fade-in 700ms ease both;
+}
+
+.bar-grow {
+  transform-origin: left center;
+  animation: grow-x 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* A ring meter fills from zero to its value. --v is set per element. */
+@keyframes ring-sweep {
+  from {
+    stroke-dashoffset: var(--v);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.ring-sweep {
+  animation: ring-sweep 1.3s cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+
+/* Formulas on the theory page: set like a slide, light on ink in both themes,
+   so the equations read as the page's figures. */
+.formula {
+  overflow-x: auto;
+  border-radius: 0.9rem;
+  border: 1px solid #22364f;
+  background:
+    radial-gradient(30rem 10rem at 100% 0%, rgb(217 119 87 / 0.18), transparent 70%),
+    linear-gradient(135deg, #0a1628, #0f2540);
+  color: #e8edf4;
+  padding: 1rem 1.25rem;
+  box-shadow: var(--shadow-md);
+  font-size: 0.8rem;
+  line-height: 1.7;
 }

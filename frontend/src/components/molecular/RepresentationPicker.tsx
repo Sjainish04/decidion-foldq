@@ -41,7 +41,7 @@ export function RepresentationPicker({
         value={value}
         disabled={disabled}
         onChange={(event) => onChange(event.target.value as PolymerRepresentationType)}
-        className="rounded border border-[var(--border)] bg-[var(--surface-elevated)] px-2 py-1 text-xs text-[var(--text-primary)] disabled:opacity-60"
+        className="field px-2 py-1 text-xs text-[var(--text-primary)] disabled:opacity-60"
       >
         {OPTIONS.map((option) => (
           <option key={option.value} value={option.value}>

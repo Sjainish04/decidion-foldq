@@ -35,7 +35,7 @@ export function gateLadder(gates: GateReport): GateStatus[] {
         name: "Representable",
         question: "Is the reference structure in the candidate set?",
         state: "fail",
-        detail: `Only ${(gates.representable_fraction * 100).toFixed(0)}% of the reference's pairs are reachable. This is a hard ceiling — no optimizer can recover a structure the candidate set never held.`,
+        detail: `Only ${(gates.representable_fraction * 100).toFixed(0)}% of the reference's pairs are reachable. This is a hard ceiling: no optimizer can recover a structure the candidate set never held.`,
         attributionPrefix: "candidate generation",
       };
 
@@ -51,7 +51,7 @@ export function gateLadder(gates: GateReport): GateStatus[] {
         ? {
             state: "indeterminate" as GateState,
             detail:
-              "Exact ground truth is unavailable above roughly 22 variables. Not a failure — an unanswered question.",
+              "Exact ground truth is unavailable above roughly 22 variables. Not a failure, an unanswered question.",
             attributionPrefix: "indeterminate",
           }
         : gates.is_qubo_ground_state

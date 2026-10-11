@@ -62,8 +62,8 @@ export function StructureExport({ result }: { result: FoldResponse }) {
   ];
 
   return (
-    <section className="rounded-lg border border-[var(--border)] p-4">
-      <h3 className="text-base font-semibold">Open in another viewer</h3>
+    <section className="panel p-5 sm:p-6">
+      <h3 className="section-title">Open in another viewer</h3>
       <p className="mt-1 text-sm text-[var(--text-secondary)]">
         Download this structure in a standard format, then load it into any RNA drawing tool.
       </p>
@@ -76,7 +76,7 @@ export function StructureExport({ result }: { result: FoldResponse }) {
               onClick={() =>
                 downloadText(`${stem}.${format.extension}`, format.build(), "text/plain")
               }
-              className="w-full rounded border border-[var(--border)] px-3 py-2 text-left text-sm hover:bg-[var(--surface-2)]"
+              className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)]/60 px-3 py-2.5 text-left text-sm transition-colors hover:border-[var(--quantum-inspired)] hover:bg-[var(--surface-elevated)]"
             >
               <span className="font-medium">{format.label}</span>
               <span className="mt-0.5 block text-xs text-[var(--text-secondary)]">
@@ -99,7 +99,7 @@ export function StructureExport({ result }: { result: FoldResponse }) {
             >
               {tool.name}
             </a>
-            <span className="text-[var(--text-secondary)]"> — {tool.note}</span>
+            <span className="text-[var(--text-secondary)]">: {tool.note}</span>
           </li>
         ))}
       </ul>

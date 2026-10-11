@@ -202,7 +202,7 @@ export function MolstarViewer({
       <div
         ref={container}
         style={{ height }}
-        className="relative w-full overflow-hidden rounded-lg border border-[var(--border)] bg-black"
+        className="relative w-full overflow-hidden rounded-2xl border border-[var(--border)] bg-black shadow-[var(--shadow-md)]"
       />
       {error ? (
         <p role="alert" className="mt-2 text-sm text-[var(--danger)]">

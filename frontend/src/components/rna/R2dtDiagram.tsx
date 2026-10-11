@@ -63,14 +63,14 @@ export function R2dtDiagram({ sequence }: { sequence: string }) {
   }, [sequence]);
 
   return (
-    <section className="rounded-lg border border-[var(--border)] p-4">
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h3 className="text-base font-semibold">Template diagram (R2DT)</h3>
+    <section className="panel p-5 sm:p-6">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h3 className="section-title">Template diagram (R2DT)</h3>
         <button
           type="button"
           onClick={run}
           disabled={pending}
-          className="rounded border border-[var(--border)] px-3 py-1 text-sm hover:bg-[var(--surface-2)] disabled:opacity-50"
+          className="btn btn-secondary"
         >
           {pending ? "Drawing…" : result ? "Redraw" : "Draw with R2DT"}
         </button>
@@ -119,7 +119,7 @@ export function R2dtDiagram({ sequence }: { sequence: string }) {
                   ? `Secondary structure diagram drawn from the ${result.template} template`
                   : "Secondary structure diagram, computed layout"
               }
-              className="mx-auto max-w-full bg-white"
+              className="mx-auto max-w-full rounded-xl border border-[var(--border)] bg-white p-3 shadow-[var(--shadow-sm)]"
             />
             <figcaption className="mt-2 text-sm text-[var(--text-secondary)]">
               {result.templated ? (

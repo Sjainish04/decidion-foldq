@@ -18,7 +18,7 @@ export function SolverPicker() {
           id="solver"
           value={solver}
           onChange={(event) => setSolver(event.target.value)}
-          className="mt-1 w-full rounded border border-[var(--border)] bg-[var(--surface-elevated)] p-2 text-sm"
+          className="mt-1 w-full field p-2 text-sm"
         >
           {(data?.solvers ?? [solver]).map((name) => (
             <option key={name} value={name}>
@@ -37,7 +37,7 @@ export function SolverPicker() {
           type="number"
           value={seed}
           onChange={(event) => setSeed(Number(event.target.value))}
-          className="mt-1 w-full rounded border border-[var(--border)] bg-[var(--surface-elevated)] p-2 text-sm"
+          className="mt-1 w-full field p-2 text-sm"
         />
         <p className="mt-1 text-xs text-[var(--text-secondary)]">
           The same sequence, solver and seed always produce the same run.
@@ -57,7 +57,7 @@ export function SolverPicker() {
           <p className="mt-1 text-xs text-[var(--warning)]">
             The crossing penalty is disabled, so the candidate may contain crossing
             pairs. ViennaRNA cannot represent or score those, and its reference fold can
-            hold at most one of any two crossing helices — so{" "}
+            hold at most one of any two crossing helices, so{" "}
             <strong>precision against a nested reference is capped</strong> even when the
             structure is right.
           </p>

@@ -12,7 +12,7 @@ export function SequenceInput() {
         RNA sequence
       </label>
       <p className="mb-1 mt-0.5 text-xs text-[var(--text-secondary)]">
-        A, U, C, G. DNA input is accepted — T is converted to U. Use public,
+        A, U, C, G. DNA input is accepted: T is converted to U. Use public,
         synthetic, or randomly generated sequences only.
       </p>
       <textarea
@@ -23,7 +23,7 @@ export function SequenceInput() {
         onChange={(event) => setSequence(event.target.value)}
         aria-invalid={error !== null}
         aria-describedby={error ? "sequence-error" : "sequence-stats"}
-        className="w-full rounded border border-[var(--border)] bg-[var(--surface-elevated)] p-2 font-mono text-sm"
+        className="w-full field p-2 font-mono text-sm"
       />
       {error ? (
         <p id="sequence-error" role="alert" className="mt-1 text-xs text-[var(--danger)]">

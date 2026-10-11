@@ -14,7 +14,7 @@ const MolstarViewer = dynamic(
     loading: () => (
       <div
         role="status"
-        className="flex h-[480px] items-center justify-center rounded-lg border border-[var(--border)] bg-black text-sm text-[var(--text-secondary)]"
+        className="flex h-[480px] items-center justify-center rounded-2xl border border-[var(--border)] bg-black text-sm text-[var(--text-secondary)]"
       >
         Loading the 3D viewer…
       </div>
@@ -40,7 +40,7 @@ export default function StructureDetailPage() {
     <div className="space-y-5">
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="font-mono text-2xl font-semibold">{data.pdb_id}</h1>
+          <h1 className="page-title font-mono">{data.pdb_id}</h1>
           <p className="mt-1 max-w-3xl text-sm text-[var(--text-secondary)]">
             {data.title}
           </p>
@@ -49,7 +49,7 @@ export default function StructureDetailPage() {
           href={`https://www.rcsb.org/structure/${data.pdb_id}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="rounded border border-[var(--border)] px-3 py-1.5 text-sm"
+          className="btn btn-secondary"
         >
           View on RCSB ↗
         </a>
@@ -66,13 +66,13 @@ export default function StructureDetailPage() {
       />
 
       {data.rna_sequence && (
-        <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
-          <h2 className="text-base font-semibold">RNA entity sequence</h2>
+        <section className="panel p-5 sm:p-6">
+          <h2 className="section-title">RNA entity sequence</h2>
           <p className="mb-2 mt-1 text-xs text-[var(--text-secondary)]">
-            {data.rna_length} nt, as deposited. This is the sequence FoldQ folds — the
+            {data.rna_length} nt, as deposited. This is the sequence FoldQ folds; the
             structure above is the experimental answer to compare a prediction against.
           </p>
-          <pre className="overflow-x-auto rounded border border-[var(--border)] bg-[var(--surface-elevated)] p-3">
+          <pre className="overflow-x-auto field p-3">
             <code className="font-mono text-xs">{data.rna_sequence}</code>
           </pre>
         </section>

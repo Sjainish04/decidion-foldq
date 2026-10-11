@@ -28,17 +28,17 @@ export default function StructuresPage() {
   return (
     <div className="space-y-5">
       <header>
-        <h1 className="text-2xl font-semibold">Structural evidence</h1>
+        <h1 className="page-title">Structural evidence</h1>
         <p className="mt-1 max-w-3xl text-sm text-[var(--text-secondary)]">
           RNA-containing entries from the RCSB Protein Data Bank, ranked best resolution
-          first. <strong>Only experimentally determined structures are listed</strong> —
+          first. <strong>Only experimentally determined structures are listed</strong>:
           X-ray, cryo-EM and NMR. Computed models are excluded rather than ranked lower,
           and every card names its method and the date the record was retrieved.
         </p>
       </header>
 
       <section role="group" aria-label="RNA target class">
-        <h2 className="mb-2 text-base font-semibold">1 — Pick a target</h2>
+        <h2 className="section-title mb-3">1. Pick a target</h2>
         <div className="flex flex-wrap gap-2">
           {RNA_TARGETS.map((option) => {
             const active = option.id === targetId;
@@ -48,11 +48,7 @@ export default function StructuresPage() {
                 aria-pressed={active}
                 title={option.description}
                 onClick={() => setTargetId(active ? null : option.id)}
-                className={
-                  active
-                    ? "rounded border border-[var(--quantum-inspired)] bg-[var(--quantum-inspired)]/15 px-3 py-1.5 text-sm"
-                    : "rounded border border-[var(--border)] px-3 py-1.5 text-sm text-[var(--text-secondary)]"
-                }
+                className="chip"
               >
                 {option.label}
               </button>
@@ -66,7 +62,7 @@ export default function StructuresPage() {
         )}
       </section>
 
-      <h2 className="text-base font-semibold">2 — Pick a structure</h2>
+      <h2 className="section-title">2. Pick a structure</h2>
 
       <div className="flex flex-wrap gap-4">
         <label className="text-sm">
@@ -75,7 +71,7 @@ export default function StructuresPage() {
             value={text}
             onChange={(event) => setText(event.target.value)}
             placeholder="overrides the target class…"
-            className="rounded border border-[var(--border)] bg-[var(--surface-elevated)] p-2 text-sm"
+            className="field p-2 text-sm"
           />
         </label>
         <label className="text-sm">
@@ -87,7 +83,7 @@ export default function StructuresPage() {
             max="20"
             value={maxResolution}
             onChange={(event) => setMaxResolution(Number(event.target.value))}
-            className="w-28 rounded border border-[var(--border)] bg-[var(--surface-elevated)] p-2 text-sm"
+            className="w-28 field p-2 text-sm"
           />
         </label>
       </div>
@@ -95,7 +91,7 @@ export default function StructuresPage() {
       {isLoading && <p role="status">Searching RCSB…</p>}
       {error && (
         <p role="alert" className="text-sm text-[var(--danger)]">
-          {(error as Error).message}. The rest of the application is unaffected — only
+          {(error as Error).message}. The rest of the application is unaffected: only
           structure views depend on RCSB.
         </p>
       )}

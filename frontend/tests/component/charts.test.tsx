@@ -27,11 +27,11 @@ describe("DataTable", () => {
     expect(screen.getByText("0.873")).toBeInTheDocument();
   });
 
-  it("renders an em dash for null rather than blank", () => {
+  it("renders n/a for null rather than blank", () => {
     render(
       <DataTable columns={columns} rows={[{ solver: "x", meanF1: null }]} caption="c" />,
     );
-    expect(screen.getByText("—")).toBeInTheDocument();
+    expect(screen.getByText("n/a")).toBeInTheDocument();
   });
 });
 

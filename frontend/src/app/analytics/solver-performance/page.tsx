@@ -15,10 +15,10 @@ export default function SolverPerformancePage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold">Solver performance</h1>
+        <h1 className="page-title">Solver performance</h1>
         <p className="mt-1 max-w-3xl text-sm text-[var(--text-secondary)]">
           Every solver in the registry run across the same QUBO instances at a fixed
-          seed. Gate C — did the solver reach the QUBO ground state — can only be
+          seed. Gate C (did the solver reach the QUBO ground state?) can only be
           decided where an exact reference exists;{" "}
           <strong>
             {indeterminate} of {totalRuns} runs are indeterminate

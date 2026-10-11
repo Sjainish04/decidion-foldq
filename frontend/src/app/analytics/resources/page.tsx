@@ -39,13 +39,13 @@ export default function ResourcesPage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold">Quantum resource accounting</h1>
+        <h1 className="page-title">Quantum resource accounting</h1>
         <p className="mt-1 max-w-3xl text-sm text-[var(--text-secondary)]">
           QAOA <strong>does not beat classical heuristics</strong> on these instances.
           At the most favourable setting measured it reaches the QUBO ground state on
           two thirds of runs, while tabu, local search, simulated annealing and
           path-integral SQA reach it on every determinate run. Reporting that plainly,
-          with the circuit cost that bought it, is the point of this page — and the{" "}
+          with the circuit cost that bought it, is the point of this page. The{" "}
           <strong>sampling budget turns out to move the result further than circuit
           depth does</strong>, which the conventional depth-only table hides.
         </p>
@@ -107,7 +107,7 @@ export default function ResourcesPage() {
       </ChartCard>
 
       {!repsSeparable && (
-        <p className="rounded border border-[var(--warning)]/40 bg-[var(--warning)]/10 p-3 text-sm">
+        <p className="callout-warning p-4 text-sm">
           <strong>Those intervals overlap, so the table above does not establish that
           deeper circuits help.</strong> At {qaoa[0].circuits} circuits per row the
           apparent trend is within sampling noise. Stated because an ordered column
@@ -115,11 +115,11 @@ export default function ResourcesPage() {
         </p>
       )}
 
-      <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
-        <h2 className="text-base font-semibold">Depth does not compensate for a thin sample</h2>
+      <section className="panel p-5 sm:p-6">
+        <h2 className="section-title">Depth does not compensate for a thin sample</h2>
         <p className="mb-3 mt-1 text-sm text-[var(--text-secondary)]">
-          The full grid. The deepest circuit on the smallest budget —{" "}
-          <code>reps=3</code> at 256 shots — reaches the ground state less often than
+          The full grid. The deepest circuit on the smallest budget (
+          <code>reps=3</code> at 256 shots) reaches the ground state less often than
           the shallowest circuit on the largest budget. At these sizes the binding
           constraint was measurement, not circuit expressivity.
         </p>
@@ -146,21 +146,21 @@ export default function ResourcesPage() {
       </section>
 
       {shotsSeparable && (
-        <p className="rounded border border-[var(--reference)]/40 bg-[var(--reference)]/10 p-3 text-sm">
+        <p className="rounded-2xl border border-[var(--reference)]/40 bg-[var(--reference)]/10 p-4 text-sm">
           <strong>Unlike the reps table, this separation is real:</strong> the smallest
           and largest shot budgets have non-overlapping intervals. Where circuit depth
           cannot be shown to matter at this sample size, the sampling budget can.
         </p>
       )}
 
-      <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
-        <h2 className="text-base font-semibold">CVaR against the expectation objective</h2>
+      <section className="panel p-5 sm:p-6">
+        <h2 className="section-title">CVaR against the expectation objective</h2>
         <p className="mb-3 mt-1 text-sm text-[var(--text-secondary)]">
-          CVaR was run at one configuration only —{" "}
+          CVaR was run at one configuration only (
           <strong>
             reps={objective.setting.reps}, {objective.setting.shots} shots, noiseless
-          </strong>{" "}
-          — so it is compared here against the expectation circuits at that same
+          </strong>
+          ), so it is compared here against the expectation circuits at that same
           setting. At it the two are <strong>indistinguishable</strong>: identical
           ground-state rate on 9 circuits each. Comparing CVaR against expectation
           pooled over every shot budget would show a gap, but the gap would be the
@@ -204,11 +204,11 @@ export default function ResourcesPage() {
         />
       </ChartCard>
 
-      <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
-        <h2 className="text-base font-semibold">Cost of targeting a real device</h2>
+      <section className="panel p-5 sm:p-6">
+        <h2 className="section-title">Cost of targeting a real device</h2>
         <p className="mb-3 mt-1 text-sm text-[var(--text-secondary)]">
-          The same circuits transpiled onto <code>fake_hanoi</code> — local IBM
-          calibration data, <strong>no live hardware and no queue</strong> — against an
+          The same circuits transpiled onto <code>fake_hanoi</code> (local IBM
+          calibration data, <strong>no live hardware and no queue</strong>) against an
           ideal simulator. Matched on reps, shots and objective, so the difference is
           routing, not shot noise. SWAP cost is folded into the two-qubit gate count
           rather than reported separately.
@@ -227,13 +227,13 @@ export default function ResourcesPage() {
         />
       </section>
 
-      <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
-        <h2 className="text-base font-semibold">What classical methods achieve here</h2>
+      <section className="panel p-5 sm:p-6">
+        <h2 className="section-title">What classical methods achieve here</h2>
         <p className="mb-3 mt-1 text-sm text-[var(--text-secondary)]">
           At sizes where an exact reference exists, these QUBO instances are easy.
           Simulated annealing reaches the optimum on every determinate run in a fraction
           of a second. There is no room for an advantage claim in a regime classical
-          methods already own — which is itself a finding about where quantum
+          methods already own, which is itself a finding about where quantum
           optimization should be pointed.
         </p>
         <DataTable

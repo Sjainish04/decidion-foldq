@@ -2,11 +2,13 @@
 
 import ReactECharts from "echarts-for-react";
 import {
+  barFill,
   baseOption,
   categoryAxis,
   legend,
   SERIES_PALETTE,
   valueAxis,
+  withAlpha,
 } from "@/lib/charts/theme";
 import { useChartTheme } from "@/lib/charts/use-chart-theme";
 
@@ -55,40 +57,59 @@ export function BarChart({
     // 44px band above the plot is what keeps a full-height bar's printed value
     // from being clipped.
     yAxis: valueAxis(chrome, yLabel, yMax),
-    series: series.map((s, index) => ({
-      name: s.name,
-      type: "bar",
-      data: s.colors
-        ? s.data.map((value, i) => ({
-            value,
-            itemStyle: { color: s.colors?.[i] ?? SERIES_PALETTE[index % SERIES_PALETTE.length] },
-          }))
-        : s.data,
-      itemStyle: {
-        color: s.color ?? SERIES_PALETTE[index % SERIES_PALETTE.length],
-        // A small radius on the top corners only: enough to soften the bar
-        // without turning a quantitative mark into a decorative one.
-        borderRadius: [3, 3, 0, 0],
-      },
-      // Bars were rendering ~230px wide with three categories, which reads as
-      // decorative blocks rather than a measurement. Capped, and the category
-      // gap widened so groups separate from each other more than the series
-      // within a group do.
-      barMaxWidth: 46,
-      barGap: "12%",
-      barCategoryGap: "34%",
-      // The value on the bar, so the chart is readable without hovering — and
-      // still readable in a screenshot or a printed page, which a tooltip is not.
-      label: {
-        show: true,
-        position: "top" as const,
-        color: chrome.label,
-        fontSize: 11,
-        formatter: (p: { value: number }) =>
-          Number.isFinite(p.value) ? p.value.toFixed(decimals) : "",
-      },
-      emphasis: { focus: "series" as const },
-    })),
+    series: series.map((s, index) => {
+      const color = s.color ?? SERIES_PALETTE[index % SERIES_PALETTE.length];
+      return {
+        name: s.name,
+        type: "bar",
+        // The flat series colour: legend and tooltip swatches read this, and
+        // the bars draw the same hue as a gradient (see barFill).
+        color,
+        data: s.colors
+          ? s.data.map((value, i) => {
+              const own = s.colors?.[i] ?? color;
+              return {
+                value,
+                itemStyle: { color: barFill(own), borderRadius: [6, 6, 0, 0] },
+                emphasis: { itemStyle: { shadowBlur: 18, shadowColor: withAlpha(own, 0.5) } },
+              };
+            })
+          : s.data,
+        itemStyle: {
+          color: barFill(color),
+          // A small radius on the top corners only: enough to soften the bar
+          // without turning a quantitative mark into a decorative one.
+          borderRadius: [6, 6, 0, 0],
+        },
+        // A faint full-height track behind each bar shows the room left to the
+        // axis maximum, which matters most where the axis is pinned to 1.
+        showBackground: true,
+        backgroundStyle: { color: chrome.track, borderRadius: [6, 6, 0, 0] },
+        // Bars were rendering ~230px wide with three categories, which reads as
+        // decorative blocks rather than a measurement. Capped, and the category
+        // gap widened so groups separate from each other more than the series
+        // within a group do.
+        barMaxWidth: 46,
+        barGap: "12%",
+        barCategoryGap: "34%",
+        // The value on the bar, so the chart is readable without hovering — and
+        // still readable in a screenshot or a printed page, which a tooltip is not.
+        label: {
+          show: true,
+          position: "top" as const,
+          color: chrome.label,
+          fontSize: 11,
+          fontWeight: 600,
+          fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
+          formatter: (p: { value: number }) =>
+            Number.isFinite(p.value) ? p.value.toFixed(decimals) : "",
+        },
+        emphasis: {
+          focus: "series" as const,
+          itemStyle: { shadowBlur: 18, shadowColor: withAlpha(color, 0.5) },
+        },
+      };
+    }),
   };
 
   return <ReactECharts option={option} style={{ height }} notMerge />;

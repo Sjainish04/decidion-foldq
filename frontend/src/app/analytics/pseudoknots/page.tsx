@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { ChartCard } from "@/components/analytics/ChartCard";
 import { BarChart } from "@/components/analytics/BarChart";
+import { StructureView } from "@/components/rna/StructureView";
+import { FIXTURES, pairsFromBrackets } from "@/lib/rna/fixtures";
 import { CHART_COLORS } from "@/lib/charts/theme";
 import { pseudoknotComparison } from "@/lib/charts/transforms";
 
@@ -14,9 +16,9 @@ export default function PseudoknotsPage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold">Pseudoknots</h1>
+        <h1 className="page-title">Pseudoknots</h1>
         <p className="mt-1 max-w-3xl text-sm text-[var(--text-secondary)]">
-          Disabling the crossing penalty — one term in the QUBO — reaches structures
+          Disabling the crossing penalty, one term in the QUBO, reaches structures
           dynamic programming has no representation for. Single-bracket dot-bracket
           notation <strong>cannot express a crossing</strong>, so ViennaRNA does not
           score poorly on these fixtures; it structurally cannot return the answer.
@@ -56,8 +58,33 @@ export default function PseudoknotsPage() {
         />
       </ChartCard>
 
-      <section className="rounded-lg border border-[var(--warning)]/40 bg-[var(--warning)]/10 p-4">
-        <h2 className="text-base font-semibold">Fixture provenance</h2>
+      <section className="panel p-5 sm:p-6">
+        <h2 className="section-title">What a crossing looks like</h2>
+        <p className="mb-4 mt-1 max-w-3xl text-sm text-[var(--text-secondary)]">
+          The two pseudoknotted fixtures, drawn from their reference structures. Bases sit
+          on a circle in sequence order and every arc is a base pair, so two helices that
+          interleave show up as arcs that cross. Single-bracket dot-bracket has no way to
+          write those pairs, which is why ViennaRNA cannot return them.
+        </p>
+        <div className="grid gap-5 md:grid-cols-2">
+          {FIXTURES.filter((f) => f.has_pseudoknot).map((f) => (
+            <StructureView
+              key={f.sequence_id}
+              sequence={f.sequence}
+              pairs={pairsFromBrackets(f.known_structure)}
+              label={`${f.sequence_id} reference structure`}
+              layout="circular"
+              size={360}
+            />
+          ))}
+        </div>
+        <p className="mt-3 text-xs text-[var(--text-secondary)]">
+          Source: <code>data/fixtures/curated.json</code>
+        </p>
+      </section>
+
+      <section className="callout-warning p-5 sm:p-6">
+        <h2 className="section-title">Fixture provenance</h2>
         <p className="mt-1 text-sm text-[var(--text-secondary)]">
           Stated plainly rather than left for a reader to discover. The provenance below
           is rendered from the <code>source</code> column of the committed CSV.
@@ -65,7 +92,7 @@ export default function PseudoknotsPage() {
         <ul className="mt-2 space-y-1 text-sm">
           {knotted.map((row) => (
             <li key={row.sequenceId}>
-              <code>{row.sequenceId}</code> — {row.source}
+              <code>{row.sequenceId}</code>: {row.source}
             </li>
           ))}
         </ul>

@@ -15,9 +15,9 @@ export default function EnergyPage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold">Energy model and attribution</h1>
+        <h1 className="page-title">Energy model and attribution</h1>
         <p className="mt-1 max-w-3xl text-sm text-[var(--text-secondary)]">
-          Energy coefficients come from ViennaRNA&apos;s Turner primitives — never
+          Energy coefficients come from ViennaRNA&apos;s Turner primitives, never
           reimplemented constants. Hairpin closure is charged in the linear term and
           refunded in the quadratic term when a helix nests inside, which is how a
           k-body predicate fits a degree-2 model.
@@ -46,15 +46,15 @@ export default function EnergyPage() {
           yLabel="runs"
         />
       </ChartCard>
-      <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
-        <h2 className="text-base font-semibold">
+      <section className="panel p-5 sm:p-6">
+        <h2 className="section-title">
           Does the surrogate rank candidates correctly within a sequence?
         </h2>
         <p className="mb-3 mt-1 max-w-3xl text-sm text-[var(--text-secondary)]">
           A correlation pooled across sequences of different lengths is partly
           measuring length: longer RNAs have more stems and more negative energies.
-          The optimizer never chooses between sequences — it chooses among candidates
-          for one RNA — so this measures agreement <strong>within</strong> each
+          The optimizer never chooses between sequences: it chooses among candidates
+          for one RNA, so this measures agreement <strong>within</strong> each
           sequence, over {fidelity.sequences} candidate ensembles.{" "}
           {fidelity.degenerate} further sequences produced ensembles too small or too
           flat to rank and are excluded rather than counted as agreement.
